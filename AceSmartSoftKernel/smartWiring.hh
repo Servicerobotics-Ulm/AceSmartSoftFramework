@@ -48,9 +48,10 @@
 
 #include "smartComponent.hh"
 #include "smartCommWiring.hh"
-#include "smartQuery.hh"
 
+#include "smartQueryServerHandler.hh"
 #include "smartProcessingPatterns.hh"
+
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -193,6 +194,8 @@ namespace SmartACE {
   /// forward declaration
   class WiringSlave;
 
+  // forward declaration
+  template<class R, class A> class QueryServer;
 
   /** @internal
    *  Handler for slave part of wiring pattern.

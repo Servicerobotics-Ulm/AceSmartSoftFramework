@@ -34,6 +34,8 @@
 
 #include "smartConfig.hh"
 
+#include "smartState.hh"
+
 // used to initialize the naming service as a dynamic service
 #include <ace/Service_Config.h>
 
@@ -148,9 +150,8 @@ int SmartACE::SmartComponent::handle_signal (int signum, siginfo_t *, ucontext_t
        SMARTSOFT_PRINT(ACE_TEXT("%s is not yet fully initilized -> clean up resources directly within signal-handler and exit(0)"), componentName.c_str());
        if(getStateSlave() != NULL) {
           // state pattern initialized -> set shutdown state and close pattern immediatelly
-//FIXME: use stateSlave again
-//          getStateSlave()->setWaitState("Shutdown");
-//          getStateSlave()->shutdown(); // shutdown the pattern itself
+          getStateSlave()->setWaitState("Shutdown");
+          getStateSlave()->shutdown(); // shutdown the pattern itself
        }
        this->signalSmartTasksToStop();
        this->cleanUpInternalResources();
@@ -159,8 +160,7 @@ int SmartACE::SmartComponent::handle_signal (int signum, siginfo_t *, ucontext_t
 
     if(getStateSlave() != NULL) {
        // state pattern initialized, thus use shutdown state
-    	//FIXME: use stateSlave again
-//       getStateSlave()->setWaitState("Shutdown");
+       getStateSlave()->setWaitState("Shutdown");
     } else {
        SmartGuard guard(mutex);
        runtimeCondVar.broadcast();
@@ -194,13 +194,12 @@ Smart::StatusCode SmartACE::SmartComponent::run( void )
    ///////////////////////////////////////////////////////////
    if(this->state != NULL)
    {
-	   //FIXME: use stateSlave again
       // block this thread till component is commanded to shut down...
-//      getStateSlave()->acquire("shutdown");
-//         // the stateSlave is safe to shut down because there are
-//         // no further state changes possible out of the "Shutdown" MainState
-//         getStateSlave()->shutdown();
-//      getStateSlave()->release("shutdown");
+      getStateSlave()->acquire("shutdown");
+         // the stateSlave is safe to shut down because there are
+         // no further state changes possible out of the "Shutdown" MainState
+         getStateSlave()->shutdown();
+      getStateSlave()->release("shutdown");
    } else {
      // block this thread until component is commaned to shut down...
      this->waitOnRuntimeCondVar();

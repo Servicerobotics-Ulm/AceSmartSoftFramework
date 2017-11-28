@@ -55,12 +55,14 @@ SmartACE::QueryClient<SmartACE::CommExampleValues,SmartACE::CommExampleResult> *
 class UserThreadA : public SmartACE::Task
 {
 public:
-  UserThreadA() {};
+  UserThreadA()
+  : SmartACE::Task(component)
+  {};
   ~UserThreadA() {};
-  int svc(void);
+  int task_execution();
 };
 
-int UserThreadA::svc(void)
+int UserThreadA::task_execution()
 {
   SmartACE::QueryId  id1, id2;
   SmartACE::CommExampleTime q1,q2;
@@ -131,12 +133,14 @@ int UserThreadA::svc(void)
 class UserThreadB : public SmartACE::Task
 {
 public:
-  UserThreadB() {};
+  UserThreadB()
+  : SmartACE::Task(component)
+  {};
   ~UserThreadB() {};
-  int svc(void);
+  int task_execution();
 };
 
-int UserThreadB::svc(void)
+int UserThreadB::task_execution()
 {
   int i=0;
   std::list<int> l;

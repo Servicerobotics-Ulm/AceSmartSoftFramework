@@ -74,12 +74,15 @@ SmartACE::StateSlave *state;
 class UserThreadA : public SmartACE::ManagedTask
 {
 private:
-  SmartACE::StatusCode status;
+  Smart::StatusCode status;
   int v;
 public:
   UserThreadA(SmartACE::SmartComponent *comp)
   :  SmartACE::ManagedTask(comp)
-  {};
+  {
+	  status = Smart::SMART_OK;
+	  v = 0;
+  };
 
   ~UserThreadA() {};
 
@@ -96,12 +99,13 @@ int UserThreadA::on_entry()
 int UserThreadA::on_execute(void)
 {
   status = state->acquire("odd");
-  if (status == SmartACE::SMART_OK) {
+  if (status ==  Smart::SMART_OK) {
     v += 2;
     std::cout << "odd " << v << std::endl;
-    ACE_OS::sleep(1);
   }
   status = state->release("odd");
+
+  this->sleep_for(std::chrono::milliseconds(100));
 
   return 0;
 }
@@ -115,12 +119,15 @@ int UserThreadA::on_execute(void)
 class UserThreadB : public SmartACE::ManagedTask
 {
 private:
-  SmartACE::StatusCode status;
+  Smart::StatusCode status;
   int v;
 public:
   UserThreadB(SmartACE::SmartComponent *comp)
   :  SmartACE::ManagedTask(comp)
-  {};
+  {
+	  status = Smart::SMART_OK;
+	  v=0;
+  };
 
   ~UserThreadB() {};
 
@@ -137,12 +144,13 @@ int UserThreadB::on_entry()
 int UserThreadB::on_execute(void)
 {
   status = state->acquire("even");
-  if (status == SmartACE::SMART_OK) {
+  if (status ==  Smart::SMART_OK) {
     v += 2;
     std::cout << "even " << v << std::endl;
-    ACE_OS::sleep(1);
   }
   status = state->release("even");
+
+  this->sleep_for(std::chrono::milliseconds(100));
 
   return 0;
 }
@@ -162,12 +170,14 @@ class UserThreadC : public SmartACE::ManagedTask
 {
 private:
   SmartACE::CommExampleTime r,a;
-  SmartACE::StatusCode status;
+  Smart::StatusCode status;
 
 public:
   UserThreadC(SmartACE::SmartComponent *comp)
   :  SmartACE::ManagedTask(comp)
-  {};
+  {
+	  status = Smart::SMART_OK;
+  };
 
   ~UserThreadC() {};
 
@@ -185,7 +195,7 @@ int UserThreadC::on_entry()
 int UserThreadC::on_execute(void)
 {
     status = state->acquire("nonneutral");
-    if (status == SmartACE::SMART_OK) {
+    if (status ==  Smart::SMART_OK) {
       //
       // we use two blocking queries within the protected section
       // to demonstrate that both blocking queries are cancelled
@@ -202,10 +212,10 @@ int UserThreadC::on_execute(void)
 
       status = timeClient->query(r,a);
 
-      if (status == SmartACE::SMART_OK) {
+      if (status ==  Smart::SMART_OK) {
         std::cout << "time : received answer : "; a.print();
       } else {
-        std::cout << "time : no answer, query status : " << SmartACE::StatusCodeConversion(status) << std::endl;
+        std::cout << "time : no answer, query status : " << status << std::endl;
       }
 
       //
@@ -215,14 +225,16 @@ int UserThreadC::on_execute(void)
 
       status = timeClient->query(r,a);
 
-      if (status == SmartACE::SMART_OK) {
+      if (status ==  Smart::SMART_OK) {
         std::cout << "time : received answer : "; a.print();
       } else {
-        std::cout << "time : no answer, query status : " << SmartACE::StatusCodeConversion(status) << std::endl;
+        std::cout << "time : no answer, query status : " << status << std::endl;
       }
     
     }
     status = state->release("nonneutral");
+
+    this->sleep_for(std::chrono::milliseconds(100));
 
   return 0;
 }
@@ -245,12 +257,12 @@ int main (int argc, char *argv[])
     stateHandler = new PrintStateChangeHandler();
     state = new SmartACE::StateSlave(component,stateHandler);
 
-    if (state->defineStates("Both","odd")  != SmartACE::SMART_OK) std::cerr << "ERROR: define state" << std::endl;
-    if (state->defineStates("Both","even") != SmartACE::SMART_OK) std::cerr << "ERROR: define state" << std::endl;
-    if (state->defineStates("Odd","odd")   != SmartACE::SMART_OK) std::cerr << "ERROR: define state" << std::endl;
-    if (state->defineStates("Even","even") != SmartACE::SMART_OK) std::cerr << "ERROR: define state" << std::endl;
+    if (state->defineStates("Both","odd")  !=  Smart::SMART_OK) std::cerr << "ERROR: define state" << std::endl;
+    if (state->defineStates("Both","even") !=  Smart::SMART_OK) std::cerr << "ERROR: define state" << std::endl;
+    if (state->defineStates("Odd","odd")   !=  Smart::SMART_OK) std::cerr << "ERROR: define state" << std::endl;
+    if (state->defineStates("Even","even") !=  Smart::SMART_OK) std::cerr << "ERROR: define state" << std::endl;
 
-    if (state->activate() != SmartACE::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
+    if (state->activate() !=  Smart::SMART_OK) std::cerr << "ERROR: activate state" << std::endl;
 
     //
     //
@@ -266,7 +278,7 @@ int main (int argc, char *argv[])
     user2.start();
     user3.start();
 
-    if (state->setWaitState("Alive") != SmartACE::SMART_OK) std::cerr << "ERROR: set state to Alive" << std::endl;
+    if (state->setWaitState("Alive") !=  Smart::SMART_OK) std::cerr << "ERROR: set state to Alive" << std::endl;
     component->run();
   } catch (const std::exception &ex) {
     std::cerr << ex.what() << std::endl;

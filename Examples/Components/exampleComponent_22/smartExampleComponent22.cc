@@ -48,9 +48,10 @@ SmartACE::SmartComponent *component;
 class TimeQueryHandler : public SmartACE::QueryServerHandler<SmartACE::CommExampleTime,SmartACE::CommExampleTime>
 {
 public:
-  void handleQuery(SmartACE::QueryServer<SmartACE::CommExampleTime,SmartACE::CommExampleTime> & server,
-		     const SmartACE::QueryId id,
-		     const SmartACE::CommExampleTime& r) throw()
+	TimeQueryHandler(SmartACE::QueryServer<SmartACE::CommExampleTime,SmartACE::CommExampleTime> *server)
+	: SmartACE::QueryServerHandler<SmartACE::CommExampleTime,SmartACE::CommExampleTime>(server)
+	  { }
+  void handleQuery(const SmartACE::QueryId &id, const SmartACE::CommExampleTime& r) throw()
     {
       SmartACE::CommExampleTime a;
 
@@ -73,7 +74,7 @@ public:
       std::cout << "time service " << id << " sent answer time: ";
       a.print();
 
-      server.answer(id,a);
+      server->answer(id,a);
     };
 };
 
@@ -89,8 +90,8 @@ int main (int argc, char *argv[])
   try {
     component = new SmartACE::SmartComponent("exampleComponent22",argc,argv);
     // Create an object
-    TimeQueryHandler timeHandler;
-    SmartACE::QueryServer<SmartACE::CommExampleTime,SmartACE::CommExampleTime> timeServant(component,"time", timeHandler);
+    SmartACE::QueryServer<SmartACE::CommExampleTime,SmartACE::CommExampleTime> timeServant(component,"time");
+    TimeQueryHandler timeHandler(&timeServant);
 
     component->run();
   } catch (const std::exception &ex) {

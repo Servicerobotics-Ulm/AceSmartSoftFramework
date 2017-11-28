@@ -52,12 +52,14 @@ private:
   std::list<std::string> mainstates;
   std::list<std::string> substates;
 
-  SmartACE::StatusCode status;
+  Smart::StatusCode status;
 
 public:
   UserThread(SmartACE::SmartComponent *comp) 
   :  SmartACE::ManagedTask(comp)
-  {};
+  {
+	  status = Smart::SMART_OK;
+  };
   
 ~UserThread() {};
 
@@ -71,8 +73,9 @@ int UserThread::on_execute(void)
     // already activated
     //
     status = stateMaster->getAllMainStates(mainstates, "exampleComponent20");
-    while (status != SmartACE::SMART_OK) {
-      std::cout << "status still " << SmartACE::StatusCodeConversion(status) << " ... wait another second" << std::endl;
+    while (status !=  Smart::SMART_OK) {
+    	if(this->test_canceled()) return 0;
+      std::cout << "status still " << status << " ... wait another second" << std::endl;
       ACE_OS::sleep(1);
       status = stateMaster->getAllMainStates(mainstates, "exampleComponent20");
     }
@@ -93,72 +96,77 @@ int UserThread::on_execute(void)
     std::cout << "Now wait 5 seconds ..." << std::endl;
 
     ACE_OS::sleep(5);
-
+    if(this->test_canceled()) return 0;
 
     //
     // now set main state
     //
     std::cout << "set mainstate <Both> ..."; std::cout.flush();
     status = stateMaster->setWaitState("Both", "exampleComponent20");
-    if (status == SmartACE::SMART_OK) {
+    if (status ==  Smart::SMART_OK) {
       std::cout << "... mainstate <Both> set" << std::endl;
     } else {
-      std::cout << "... error set mainstate <Both> : " << SmartACE::StatusCodeConversion(status) << " " << status << std::endl;
+      std::cout << "... error set mainstate <Both> : " << Smart::StatusCodeConversion(status) << " " << status << std::endl;
     }
 
     std::cout << "now wait 20 secs ..." << std::endl;
-    ACE_OS::sleep(20);
+    ACE_OS::sleep(10);
+    if(this->test_canceled()) return 0;
 
     std::cout << "set mainstate <Odd> ..."; std::cout.flush();
     status = stateMaster->setWaitState("Odd", "exampleComponent20");
-    if (status == SmartACE::SMART_OK) {
+    if (status ==  Smart::SMART_OK) {
       std::cout << "... mainstate <Odd> set" << std::endl;
     } else {
-      std::cout << "... error set mainstate <Odd> : " << SmartACE::StatusCodeConversion(status) << " " << status << std::endl;
+      std::cout << "... error set mainstate <Odd> : " << Smart::StatusCodeConversion(status) << " " << status << std::endl;
     }
 
     std::cout << "now wait 20 secs ..." << std::endl;
-    ACE_OS::sleep(20);
+    ACE_OS::sleep(10);
+    if(this->test_canceled()) return 0;
 
     std::cout << "set mainstate <Even> ..."; std::cout.flush();
     status = stateMaster->setWaitState("Even", "exampleComponent20");
-    if (status == SmartACE::SMART_OK) {
+    if (status ==  Smart::SMART_OK) {
       std::cout << "... mainstate <Even> set" << std::endl;
     } else {
-      std::cout << "... error set mainstate <Even> : " << SmartACE::StatusCodeConversion(status) << " " << status << std::endl;
+      std::cout << "... error set mainstate <Even> : " << Smart::StatusCodeConversion(status) << " " << status << std::endl;
     }
 
     std::cout << "now wait 20 secs ..." << std::endl;
-    ACE_OS::sleep(20);
+    ACE_OS::sleep(10);
+    if(this->test_canceled()) return 0;
 
     std::cout << "ordered component deactivation ..."; std::cout.flush();
     status = stateMaster->setWaitState("Neutral", "exampleComponent20");
-    if (status == SmartACE::SMART_OK) {
+    if (status ==  Smart::SMART_OK) {
       std::cout << "... component deactivated (Neutral state)" << std::endl;
     } else {
-      std::cout << "... error deactivate component : " << SmartACE::StatusCodeConversion(status) << " " << status << std::endl;
+      std::cout << "... error deactivate component : " << Smart::StatusCodeConversion(status) << " " << status << std::endl;
     }
 
     std::cout << "now wait 20 secs ..." << std::endl;
-    ACE_OS::sleep(20);
+    ACE_OS::sleep(10);
+    if(this->test_canceled()) return 0;
 
     std::cout << "set mainstate <Both> ..."; std::cout.flush();
     status = stateMaster->setWaitState("Both", "exampleComponent20");
-    if (status == SmartACE::SMART_OK) {
+    if (status ==  Smart::SMART_OK) {
       std::cout << "... mainstate <Both> set" << std::endl;
     } else {
-      std::cout << "... error set mainstate <Both> : " << SmartACE::StatusCodeConversion(status) << " " << status << std::endl;
+      std::cout << "... error set mainstate <Both> : " << Smart::StatusCodeConversion(status) << " " << status << std::endl;
     }
 
     std::cout << "now wait 20 secs ..." << std::endl;
-    ACE_OS::sleep(20);
+    ACE_OS::sleep(10);
+    if(this->test_canceled()) return 0;
 
     std::cout << "forced component deactivation ..."; std::cout.flush();
     status = stateMaster->setWaitState("deactivated", "exampleComponent20");
-    if (status == SmartACE::SMART_OK) {
+    if (status ==  Smart::SMART_OK) {
       std::cout << "... forced deactivation done (Neutral)" << std::endl;
     } else {
-      std::cout << "... error forced deactivation : " << SmartACE::StatusCodeConversion(status) << " " << status << std::endl;
+      std::cout << "... error forced deactivation : " << Smart::StatusCodeConversion(status) << " " << status << std::endl;
     }
 
   return 0;

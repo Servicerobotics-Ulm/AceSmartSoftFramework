@@ -32,6 +32,8 @@
 
 #include "smartWiring.hh"
 
+#include "smartQuery.hh"
+
 /////////////////////////////////////////////////////////////////////////
 //
 // master part of wiring pattern

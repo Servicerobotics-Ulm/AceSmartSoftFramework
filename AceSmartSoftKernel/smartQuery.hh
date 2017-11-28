@@ -46,19 +46,12 @@
 #include "smartComponent.hh"
 #include "smartQueryServerPattern.hh"
 #include "smartQueryClientPattern.hh"
+#include "smartQueryServerHandler.hh"
 
 //
 // needed for the add() / remove() interface for wiring
 //
-#include "smartCommWiring.hh"
-
-namespace SmartACE {
-  class WiringSlave;
-}
-
-namespace SmartACE {
-  typedef int QueryId;
-}
+#include "smartWiring.hh"
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -491,47 +484,6 @@ namespace SmartACE {
 /////////////////////////////////////////////////////////////////////////
 
 namespace SmartACE {
-
-  // forward declaration
-  template<class R, class A> class QueryServer;
-
-  /** Handler Class for QueryServer for incoming requests.
-   *
-   *  Used by the QueryServer to handle incoming queries.
-   *  The user should provide the handleQuery() method by
-   *  subclassing and register an instance of this handler
-   *  class with the QueryServer.
-   */
-  template<class R, class A>
-  class QueryServerHandler : public Smart::IQueryServerHandler<R,A,QueryId>
-  {
-  public:
-	QueryServerHandler(QueryServer<R,A>* server)
-	:	Smart::IQueryServerHandler<R,A,QueryId>(server)
-	{  }
-    virtual ~QueryServerHandler() {}
-
-    /** Handler method for an incoming query request.
-     *
-     *  This method is called by the communication pattern every time
-     *  a new query request is received. It must be provided by the
-     *  component developer to handle incoming requests. Since the
-     *  method is executed by the communication thread, it must be
-     *  very fast and non-blocking.
-     *
-     *  Usually the request and the id will be inserted into a queue
-     *  and another working thread processes the request and provides
-     *  the result. The ThreadedQueryHandler decorator provides such
-     *  a processing pattern.
-     *
-     *  @param server   query server processing the request.
-     *  @param id       id of new query
-     *  @param request the request itself */
-    virtual void handleQuery(const QueryId &id, const R& request) = 0;
-  };
-
-
-
   /** server query template.
    *  Server part of query pattern to perform two-way communication.
    *

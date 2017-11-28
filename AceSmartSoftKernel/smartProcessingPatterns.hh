@@ -36,7 +36,9 @@
 #include <smartIActiveQueueInputHandlerDecorator_T.h>
 
 #include "smartMessageQueue.hh"
-#include "smartSend.hh"
+
+#include "smartQueryServerHandler.hh"
+//#include "smartSend.hh"
 
 namespace SmartACE {
 

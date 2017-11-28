@@ -39,14 +39,12 @@
 #include "smartIniParameter.hh"
 #include "smartMessageQueue.hh"
 
-//FIXME
-//#include "smartState.hh"
+#include "smartState.hh"
 
 #include "smartSend.hh"
 #include "smartQuery.hh"
 #include "smartEvent.hh"
-//FIXME
-//#include "smartParameter.hh"
+#include "smartParameter.hh"
 
 //<alexej date="2015-10-22">
 #include "smartPush.hh"
