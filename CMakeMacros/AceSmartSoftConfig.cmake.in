@@ -1,0 +1,87 @@
+# --------------------------------------------------------------------------
+#
+#  Copyright (C) 2013 Alex Lotz
+#
+#        lotz@fh-ulm.de
+#
+#        Alex Lotz
+#        University of Applied Sciences
+#        Prittwitzstr. 10
+#        D-89075 Ulm
+#        Germany
+#
+#  This file is part of the "SmartSoft Communication Library".
+#  It provides standardized patterns for communication between
+#  different components.
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License, or (at your option) any later version.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# --------------------------------------------------------------------------
+
+# - Configuration file for the SmartSoft package
+
+# To use the SmartSoft library in your project, just link against the SmartSoftKernel target like this:
+#
+# PEOJECT(<YourPorjectName>)
+#
+# components are optional (Kernel component is always included by default)
+# FIND_PACKAGE(SmartSoft 
+#    COMPONENTS Kernel MonitoringMaster MonitoringSlave NamingService 
+#    PATHS $ENV{SMART_ROOT_ACE}
+# )
+#
+# ADD_EXECUTABLE(${PROJECT_NAME} ...)
+# TARGET_LINK_LIBRARIES(${PROJECT_NAME} SmartSoftKernel)
+
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
+
+# include OS-specific configs (if available)
+IF(EXISTS "$ENV{SMART_ROOT_ACE}/SmartOSConfig.cmake")
+  # In build tree
+  INCLUDE("$ENV{SMART_ROOT_ACE}/SmartOSConfig.cmake")
+ENDIF()
+
+# find the ACE library which is the main SmartSoft dependency 
+FIND_PACKAGE(ACE 6.0.2 PATHS $ENV{SMART_ROOT_ACE} /opt/smartSoftAce)
+
+# always add the Kernel component by default and always as the first element
+IF(DEFINED @PROJECT_NAME@_FIND_COMPONENTS)
+  LIST(FIND @PROJECT_NAME@_FIND_COMPONENTS Kernel IDX)
+  IF(${IDX} EQUAL -1)
+    LIST(INSERT @PROJECT_NAME@_FIND_COMPONENTS 0 Kernel)
+  ELSEIF(${IDX} GREATER 0)
+    LIST(REMOVE_AT @PROJECT_NAME@_FIND_COMPONENTS ${IDX})
+    LIST(INSERT @PROJECT_NAME@_FIND_COMPONENTS 0 Kernel)
+  ENDIF()
+ELSE()
+  LIST(APPEND @PROJECT_NAME@_FIND_COMPONENTS Kernel)
+ENDIF()
+
+# include all required components
+IF(@PROJECT_NAME@_FIND_COMPONENTS)
+  FOREACH(_comp ${@PROJECT_NAME@_FIND_COMPONENTS})
+    IF(NOT TARGET ${_comp})
+      SET(COMPONENT_FILE "${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@${_comp}Targets.cmake")
+      IF(EXISTS ${COMPONENT_FILE})
+        GET_FILENAME_COMPONENT(COMPONENT_DIR ${COMPONENT_FILE} DIRECTORY)
+        MESSAGE("-- Found @PROJECT_NAME@ component '${_comp}' in '${COMPONENT_DIR}'")
+        INCLUDE(${COMPONENT_FILE})
+        UNSET(COMPONENT_FILE)
+        UNSET(COMPONENT_DIR)
+      ENDIF(EXISTS ${COMPONENT_FILE})
+    ENDIF(NOT TARGET ${_comp})
+  ENDFOREACH()
+ENDIF(@PROJECT_NAME@_FIND_COMPONENTS)
+

@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# compare to 3 because 1st is the script name itself, 2nd is the grep call and 3rd is the actual binary SmartSoftNamingService
+if [ `ps -Al | grep -c SmartSoftNaming` -eq 1 ]
+then 
+  echo "shuttting down SmartSoft Naming Service ..."
+  killall SmartSoftNamingService
+  if test -e /tmp/SMART_NAMES
+  then 
+    rm /tmp/SMART_NAMES
+  fi
+  echo "starting SmartSoft Naming Service ..."
+  if test -e $SMART_ROOT_ACE/bin/NamingService/SmartSoftNamingService
+  then
+    $SMART_ROOT_ACE/bin/NamingService/SmartSoftNamingService &
+    echo "SmartSoft Naming Service is running!"
+  else
+    if test -e /usr/bin/SmartSoftNamingService
+    then
+      /usr/bin/SmartSoftNamingService &
+      echo "SmartSoft Naming Service is running!"
+    else
+      echo "SmartSoftNamingService NOT found!"
+    fi
+  fi
+else 
+  if test -e /tmp/SMART_NAMES
+  then 
+    rm /tmp/SMART_NAMES
+  fi
+  echo "starting SmartSoft Service ..."
+  if test -e $SMART_ROOT_ACE/bin/NamingService/SmartSoftNamingService
+  then
+    $SMART_ROOT_ACE/bin/NamingService/SmartSoftNamingService &
+    echo "SmartSoft Naming Service is running!"
+  else
+    if test -e /usr/bin/SmartSoftNamingService
+    then
+      /usr/bin/SmartSoftNamingService &
+      echo "SmartSoft Naming Service is running!"
+    else
+      echo "SmartSoftNamingService NOT found!"
+    fi
+  fi
+fi
+

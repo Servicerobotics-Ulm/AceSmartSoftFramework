@@ -76,10 +76,12 @@ protected:
    ACE_Time_Value reactorIdleTime;
 
    // internal thread that runs the reactor-event-loop
-   int svc(void);
+   int task_execution();
 
    // use this call-back in derived classes to handle further events besides those of Reactor
    virtual int customEventsCallback();
+
+	virtual void on_shutdown();
 
 private:
    ACE_thread_t reactorOwnerThread;

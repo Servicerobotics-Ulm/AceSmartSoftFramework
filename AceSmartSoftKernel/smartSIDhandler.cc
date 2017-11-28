@@ -37,8 +37,7 @@
 //
 /////////////////////////////////////////////////////////////////////////
 SmartACE::SIDhandler::SIDhandler(Smart::IComponent *component)
-:	ITask(component)
-,	Task(component)
+:	Task(component)
 ,	sid_mutex()
 {
    // set the disconnect list to NULL
@@ -99,7 +98,7 @@ void SmartACE::SIDhandler::sign_off(void *handle)
    sid_mutex.release();
 }
 
-int SmartACE::SIDhandler::svc()
+int SmartACE::SIDhandler::task_execution()
 {
    SmartDisconnectHandleStruct *cptr;
    SmartMessageBlock *mblk;
@@ -108,7 +107,7 @@ int SmartACE::SIDhandler::svc()
    void (*internalServInitDisc)(void *,int);
    //<alexej date="2010-03-09">
 
-   while(1)
+   while(!this->test_canceled())
    {
       //blocking get message from internal queue
       if( this->getq(mblk) == -1 )
@@ -146,11 +145,6 @@ int SmartACE::SIDhandler::svc()
    return msg_queue()->close();
 }
 
-int SmartACE::SIDhandler::close(u_long)
-{
-   return 0;
-}
-
 int SmartACE::SIDhandler::enqueue(void *ptr,
    //<alexej date="2010-03-09">
       void (*internalServInitDisc)(void *,int),
@@ -174,6 +168,10 @@ int SmartACE::SIDhandler::enqueue(void *ptr,
 
 	// put message object onto the message queue
 	return this->putq(mblk);
+}
+
+void SmartACE::SIDhandler::on_shutdown() {
+	// do nothing
 }
 
 int SmartACE::SIDhandler::stop_mqueue(void)

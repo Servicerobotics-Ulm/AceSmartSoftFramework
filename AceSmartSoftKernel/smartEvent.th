@@ -1,0 +1,1853 @@
+// --------------------------------------------------------------------------
+//
+//  Copyright (C) 2002/2004/2008 Christian Schlegel
+//                2009 Alex Lotz
+//
+//        lotz@hs-ulm.de
+//        schlegel@hs-ulm.de
+//
+//        Prof. Dr. Christian Schlegel
+//        University of Applied Sciences
+//        Prittwitzstr. 10
+//        D-89075 Ulm
+//        Germany
+//
+//
+//  This file is part of ACE/SmartSoft.
+//
+//  ACE/SmartSoft is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  ACE/SmartSoft is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with ACE/SmartSoft.  If not, see <http://www.gnu.org/licenses/>.
+//
+// --------------------------------------------------------------------------
+
+/////////////////////////////////////////////////////////////////////////
+//
+// client part of event template
+//
+/////////////////////////////////////////////////////////////////////////
+
+//
+// static handle method called by ACE object
+//
+template<class P, class E> void SmartACE::EventClient<P,E>::hndEvent(void* ptr, const SmartMessageBlock *user, const int cltId)
+{
+  EventClient<P,E> *lthis = (EventClient<P,E> *)ptr;
+  EventClientList  *lptr;
+
+  //
+  // hint: mutexConnection need not be acquired here since client can not get
+  //       disconnected or destroyed while this handler is being executed. The
+  //       server posseses the mutexClientList all the time this handler is being
+  //       executed. Since this mutex is also needed to finish a disconnect, this
+  //       handler is first finished for sure before a disconnect is executed.
+  //
+  //       Acquiring mutexConnection in handlers can even result in deadlocks.
+  //       Calling queryRequest holds the mutexConnection and a concurrent call
+  //       to the answer member function at the server holds the counterpart
+  //       mutexClientList. Neither call can be finished if the handlers now
+  //       also try to get the mutexConnection or the mutexClientList.
+  //
+  lthis->mutexEventList.acquire();
+
+  for( lptr = lthis->events; lptr != 0; lptr = lptr->next )
+    if( lptr->id == cltId )
+      break;
+
+  if( lptr != 0 ) {
+    if (lptr->mode == Smart::single) {
+      //
+      // in single mode, we use the flags "eventAvailable" and "eventFired"
+      //
+      if (lptr->eventFired == 0) {
+        // not yet fired
+        lptr->eventAvailable = 1;
+        lptr->eventFired     = 1;
+        lptr->e.set(user);
+
+        // always signal both condition variables since both are used ...
+        lptr->condW.signal();
+        lptr->condWO.signal();
+
+        Smart::EventInputType<E,EventId> input;
+        input.event = lptr->e;
+        input.event_id = lptr->id;
+        lthis->notify_input(input);
+      } else {
+        //
+        // we should never reach this section since a single event
+        // can only fire once and therefore we simply ignore this
+        //
+      }
+    }
+    if (lptr->mode == Smart::continuous) {
+      //
+      // in continuous mode, only the "eventAvailable" flag is needed
+      //
+      lptr->eventAvailable = 1;
+      lptr->e.set(user);
+
+      // always signal both condition variables since both are used ...
+      lptr->condW.signal();
+      lptr->condWO.signal();
+
+      Smart::EventInputType<E,EventId> input;
+      input.event_id = lptr->id;
+      input.event = lptr->e;
+      lthis->notify_input(input);
+    }
+  } else {
+    //
+    // do nothing since event has been received after event e.g. has been deactivated
+    // and therefore corresponding entry does not exist any longer. Doesn't matter
+    // since in this case no thread is waiting for the event since removing an entry
+    // from the list of active events is only possible without having an active
+    // blocking wait.
+    //
+  }
+
+  lthis->mutexEventList.release();
+}
+
+//
+// static handle method called by ACE
+//
+template<class P, class E> void SmartACE::EventClient<P,E>::hndAckActivate(void *ptr, const int &cltId)
+{
+   EventClient<P,E> *lthis = (EventClient<P,E> *)ptr;
+
+   lthis->monitorActivation.signal(cltId); 
+}
+
+//
+// static handle method called by ACE
+//
+//<alexej date="2010-03-18">
+template<class P, class E> void SmartACE::EventClient<P,E>::hndAckConn(void *ptr, int cid, int status)
+//</alexej>
+{
+   EventClient<P,E> *lthis = (EventClient<P,E> *)ptr;
+
+   lthis->monitorConnect.signal(cid, status);
+}
+
+//
+// static handle method called by ACE object
+//
+//<alexej date="2010-03-09">
+template<class P, class E> void SmartACE::EventClient<P,E>::hndServDisc(void* ptr, int cid)
+//</alexej>
+{
+  EventClient<P,E> *lthis = (EventClient<P,E> *)ptr;
+
+  lthis->component->enqueue(ptr,
+      &EventClient<P,E>::internalServerInitiatedDisconnect,
+      cid);
+}
+
+//
+// static handle method called by ACE object
+//
+template<class P, class E> void SmartACE::EventClient<P,E>::hndAckDisc(void *ptr)
+{
+   EventClient<P,E> *lthis = (EventClient<P,E> *)ptr;
+
+   lthis->monitorDisconnect.signal();
+}
+
+
+//
+// static internal interface methods used by wiring service
+//
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::internalConnect(void *ptr,const std::string & srv, const std::string & svc)
+{
+  EventClient<P,E>* lthis = (EventClient<P,E> *)ptr;
+
+  return lthis->connect(srv,svc);
+}
+
+
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::internalDisconnect(void* ptr)
+{
+  EventClient<P,E>* lthis = (EventClient<P,E> *)ptr;
+
+  return lthis->disconnect();
+}
+
+//<alexej date="2010-03-18">
+template<class P, class E>
+void SmartACE::EventClient<P,E>::internalServerInitiatedDisconnect(void *ptr, int cid)
+//</alexej>
+{
+   EventClient<P,E> *lthis = (EventClient<P,E> *)ptr;
+
+   lthis->mutexConnection.acquire();
+      if(cid == lthis->connectionID)
+      {
+         lthis->disconnect();
+      }
+   lthis->mutexConnection.release();
+}
+
+//
+// private helper method to clean up list of events
+//
+template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::removeActivationId(const SmartACE::EventId id) throw()
+{
+  EventClientList *lptr  = 0;
+  EventClientList *hlptr = 0;
+  Smart::StatusCode  result;
+
+  result = Smart::SMART_ERROR;
+
+  mutexEventList.acquire();
+
+  for (lptr = events; lptr != 0; lptr = lptr->next )
+    if (lptr->id == id)
+      break;
+
+  if (lptr == 0) {
+    result = Smart::SMART_WRONGID;
+  } else {
+    //
+    // now delete list entry
+    //
+    // since we have already found an entry with the correct id, we know
+    // that the entry is still in the list ... each id also occurs only
+    // once in the list
+    //
+    if (id == events->id) {
+      //
+      // first entry in list therefore remove head of list ...
+      //
+      component->removeCV(&(lptr->condW));
+      component->removeCV(&(lptr->condWO));
+
+      lptr   = events;
+      events = lptr->next;
+      delete lptr;
+    } else {
+      //
+      // not first entry in list, must therefore be second or later one ...
+      //
+      lptr = events;
+      while (lptr->next != 0) {
+        if (lptr->next->id == id) {
+          hlptr      = lptr->next;
+          lptr->next = lptr->next->next;
+          component->removeCV(&(hlptr->condW));
+          component->removeCV(&(hlptr->condWO));
+          delete hlptr;
+        } else {
+          lptr = lptr->next;
+        }
+      }
+    }
+  }
+
+  mutexEventList.release();
+
+  return result;
+}
+
+
+//
+// default constructor
+//
+template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(void) throw(SmartACE::SmartError)
+: Smart::IEventClientPattern<P,E,EventId>(0)
+{
+  std::cerr << "CommPattern (event): ERROR: Entered default constructor EventClient" << std::endl;
+
+  throw(SmartACE::SmartError(Smart::SMART_ERROR,"CommPattern (eventClient): ERROR: Entered default constructor EventClient"));
+}
+
+//
+// standard constructor port
+//
+template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m,const std::string& port, WiringSlave* slave) throw(SmartACE::SmartError)
+: Smart::IEventClientPattern<P,E,EventId>(m)
+{
+  Smart::StatusCode status;
+
+  // set the configuration flags appropriately
+  statusConnected    = 0;
+  statusManagedPort  = 0;
+  portname           = port;
+  statusUserBlocking = true;
+  eventCnt           = 0;
+  events             = 0;
+  component          = m;
+  wiringslave        = slave;
+  serverProxy        = 0;
+
+  // set monitors to be controlled by the component
+  component->addSmartMonitor(&monitorConnect);
+  component->addSmartMonitor(&monitorDisconnect);
+  component->addSmartMonitor(&monitorActivation);
+
+  // set a default timeout value of one second for every connection procedure
+  monitorConnect.enableTimedMode(ACE_Time_Value(1));
+
+  //<alexej date="2009-10-26">
+   connectionID = 0;
+   component->sign_on((void*)this);
+
+   // initialize new Connector instance
+   connector = new EventClientConnector(component->getReactorTask()->getImpl());
+  //</alexej>
+
+  status = this->add(slave, port);
+
+  if (status == Smart::SMART_PORTALREADYUSED) {
+    //
+    // port name already in use therefore throw exception
+    //
+    throw(SmartACE::SmartError(Smart::SMART_PORTALREADYUSED,"CommPattern (eventClient): ERROR: port name already in use"));
+  } else if (status != Smart::SMART_OK) {
+    //
+    // throw exception since something went wrong
+    //
+    throw(SmartACE::SmartError(Smart::SMART_ERROR,"CommPattern (eventClient): ERROR: something went wrong"));
+  }
+}
+
+//
+// standard constructor
+//
+template<class P,class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m) throw (SmartACE::SmartError)
+: Smart::IEventClientPattern<P,E,EventId>(m)
+{
+  // set the configuration flags appropriately
+  statusConnected    = 0;
+  statusManagedPort  = 0;
+  portname           = "";
+  statusUserBlocking = true;
+  eventCnt           = 0;
+  events             = 0;
+  component          = m;
+  wiringslave        = 0;
+  serverProxy        = 0;
+
+  // set monitors to be controlled by the component
+  component->addSmartMonitor(&monitorConnect);
+  component->addSmartMonitor(&monitorDisconnect);
+  component->addSmartMonitor(&monitorActivation);
+
+  // set a default timeout value of one second for every connection procedure
+  monitorConnect.enableTimedMode(ACE_Time_Value(1));
+
+  //<alexej date="09.10.2008">
+   connectionID = 0;
+   component->sign_on((void*)this);
+
+   // initialize new Connector instance
+   connector = new EventClientConnector(component->getReactorTask()->getImpl());
+  //</alexej>
+}
+
+//
+// standard constructor already wired
+//
+template<class P,class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m,const std::string& srv,const std::string& svc) throw (SmartACE::SmartError)
+: Smart::IEventClientPattern<P,E,EventId>(m,srv,svc)
+{
+  Smart::StatusCode status;
+  int flag;
+
+  // set the configuration flags appropriately
+  statusConnected    = 0;
+  statusManagedPort  = 0;
+  portname           = "";
+  statusUserBlocking = true;
+  eventCnt           = 0;
+  events             = 0;
+  component          = m;
+  wiringslave        = 0;
+  serverProxy        = 0;
+
+  // set monitors to be controlled by the component
+  component->addSmartMonitor(&monitorConnect);
+  component->addSmartMonitor(&monitorDisconnect);
+  component->addSmartMonitor(&monitorActivation);
+
+  // set a default timeout value of one second for every connection procedure
+  monitorConnect.enableTimedMode(ACE_Time_Value(1));
+
+  //<alexej date="09.10.2008">
+   connectionID = 0;
+   component->sign_on((void*)this);
+
+   // initialize new Connector instance
+   connector = new EventClientConnector(component->getReactorTask()->getImpl());
+  //</alexej>
+
+  // Now connect to the server side of the event pattern
+  //std::cout << "Try to connect to (" << srv << ":event<" << P::identifier() << "," << E::identifier() << ">:" << svc << ") ..." << std::endl;
+  SMARTSOFT_PRINT(ACE_TEXT("Try to connect to (%s:EventServer<%s,%s>:%s) ...\n"), srv.c_str(), P::identifier().c_str(), E::identifier().c_str(), svc.c_str() );
+
+  do {
+    status = this->connect(srv,svc);
+
+    if (status == Smart::SMART_OK) {
+      flag = 1;
+      //std::cout << "... connected to (" << srv << ":event<" << P::identifier() << "," << E::identifier() << ">:" << svc << ")" << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("... connected to (%s:EventServer<%s,%s>:%s)\n"), srv.c_str(), P::identifier().c_str(), E::identifier().c_str(), svc.c_str() );
+    } else if (status == Smart::SMART_SERVICEUNAVAILABLE) {
+      //std::cout << "CommPattern (EventClient): INFO: not yet found in naming service ..." << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("CommPattern (EventClient): INFO: not yet found in naming service ...\n") );
+      ACE_OS::sleep(1);
+      flag = 0;
+    } else if (status == Smart::SMART_INCOMPATIBLESERVICE) {
+      //std::cout << "CommPattern (eventClient): ERROR: incompatible service ..." << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("CommPattern (EventClient): ERROR: incompatible service ...\n") );
+      flag = 1;
+      throw(SmartACE::SmartError(status,"CommPattern (EventClient): ERROR: incompatible service"));
+    } else {
+      //std::cout << "CommPattern (eventClient): ERROR: something went wrong ..." << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("CommPattern (EventClient): ERROR: something went wrong ...\n") );
+      flag = 1;
+      throw(SmartACE::SmartError(status,"CommPattern (EventClient): ERROR: something went wrong"));
+    };
+  } while (flag == 0);
+}
+
+//
+// destructor
+//
+template<class P,class E> inline SmartACE::EventClient<P,E>::~EventClient(void) throw()
+{
+  EventClientList *lptr = 0;
+
+  //
+  // remove port from managed set of ports and disconnect from server even if not
+  // exposed as port or connected to a server since this is handled correctly inside
+  // remove() and disconnect(). Disconnect automatically deactivates all still active
+  // events.
+  //
+  this->remove();
+  this->disconnect();
+
+  // free memory
+  mutexEventList.acquire();
+  while ( events != 0 ) {
+    lptr = events;
+    events = events->next;
+    delete lptr;
+  }
+  mutexEventList.release();
+
+  //<alexej date="2009-10-26">
+  mutexConnection.acquire();
+	// sign off ServerInitiated disconnect monitoring
+	component->sign_off((void*)this);
+
+	// shut down connector
+	connector->close();
+   delete connector;
+  mutexConnection.release();
+
+  component->removeSmartMonitor(&monitorConnect);
+  component->removeSmartMonitor(&monitorDisconnect);
+  component->removeSmartMonitor(&monitorActivation);
+  //</alexej>
+
+  // client does not bind object at naming service,
+  // therefore no unbind of objects needed here
+}
+
+//
+//
+//
+template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::add(WiringSlave* slave, const std::string& port) throw()
+{
+  Smart::StatusCode status;
+
+  mutexConnection.acquire();
+
+  // first remove eventually valid registration
+  this->remove();
+
+  // now add client
+  portname          = port;
+  statusManagedPort = 1;
+
+  wiringslave = slave;
+  status      = this->wiringslave->add(port, (void*)this, &EventClient<P,E>::internalConnect, &EventClient<P,E>::internalDisconnect);
+
+  mutexConnection.release();
+
+  return status;
+}
+
+//
+//
+//
+template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::remove() throw()
+{
+  Smart::StatusCode status;
+
+  mutexConnection.acquire();
+
+  if (statusManagedPort == 1) {
+    status = this->wiringslave->remove(portname);
+
+    portname          = "";
+    statusManagedPort = 0;
+
+  } else {
+    status = Smart::SMART_OK;
+  }
+
+  mutexConnection.release();
+
+  return status;
+}
+
+//
+//
+//
+template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::connect(const std::string& srv, const std::string& svc) throw()
+{
+  Smart::StatusCode result;
+
+  result = Smart::SMART_ERROR;
+
+  mutexConnection.acquire();
+
+  // first disconnect eventually valid connection
+  this->disconnect();
+
+	/** Possible Return values:
+	 * OK -> SMART_OK:	connection established
+	 * service unavailable: SMART_SERVICEUNAVAILABLE
+	 * service incompatible: naming service
+	 * communication error: SMART_ERROR_COMMUNICATION
+	 * unknown error: SMART_ERROR
+	 * */
+
+  SmartACE::NSValueType value;
+
+   if(component->getName().compare(SMART_NONS) == 0)
+   {
+      ACE_INET_Addr conn_addr;
+      if( conn_addr.string_to_addr(svc.c_str()) == 0) {
+	      if(srv.compare(SMART_NONS) != 0) {
+		      SMARTSOFT_PRINT( ACE_TEXT("- <EventClient> Warning: no naming service used so SERVER parameter of connect will be ignored!\n") );
+	      }
+	      value.setInetAddr(conn_addr);
+	      result = Smart::SMART_OK;
+      }
+   }
+   else
+   {
+      SmartACE::NSKeyType key;
+      key.names[SmartACE::NSKeyType::COMP_NAME] = srv.c_str();
+      key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Event");
+      key.names[SmartACE::NSKeyType::SERVICE_NAME] = svc.c_str();
+      key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = P::identifier().c_str();
+      key.names[SmartACE::NSKeyType::COMMOBJ2_NAME] = E::identifier().c_str();
+
+      if( SmartACE::NAMING::instance()->resolve(key, value) == 0 )
+      {
+         result = Smart::SMART_OK;
+      } else {
+         // name is NOT available in naming service -> check whether similar name is available (with a different communication object)
+         SmartACE::NSKeyType searchPattern;
+         searchPattern.names[SmartACE::NSKeyType::COMP_NAME] = srv.c_str();
+         searchPattern.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Event");
+         searchPattern.names[SmartACE::NSKeyType::SERVICE_NAME] = svc.c_str();
+
+         ACE_Unbounded_Queue<SmartACE::NSKeyType> similar_names = SmartACE::NAMING::instance()->getEntriesForMatchingPattern(searchPattern);
+         if( similar_names.size() > 0 )
+         {
+            // a similar service is available, but is incompatible
+            result = Smart::SMART_INCOMPATIBLESERVICE;
+         } else {
+            // neither exact service available nor similar service found -> service is completely missing
+            result = Smart::SMART_SERVICEUNAVAILABLE;
+         }
+      }
+   }
+
+	if( result == Smart::SMART_OK )
+	{
+		ACE_Time_Value timeout(1);
+		ACE_Synch_Options options(ACE_Synch_Options::USE_TIMEOUT, timeout);
+
+		ACE_NEW_RETURN(serverProxy, EventClientServiceHandler(component->getReactorTask()->getImpl()), Smart::SMART_ERROR_COMMUNICATION);
+
+		serverProxy->setCallbackFkts((void *)this,
+									&EventClient<P,E>::hndEvent,
+                           &EventClient<P,E>::hndAckConn,
+									&EventClient<P,E>::hndServDisc,
+									&EventClient<P,E>::hndAckDisc,
+                           &EventClient<P,E>::hndAckActivate);
+
+		if (connector->connect (serverProxy, value.getInetAddr(), options) == -1) {
+         if(errno == ECONNREFUSED || errno == ETIME || errno == EWOULDBLOCK) {
+            // remote acceptor is not available or ping times are too large
+			   result = Smart::SMART_ERROR_COMMUNICATION;
+         }else{
+            result = Smart::SMART_ERROR;
+         }
+         serverProxy->trigger_shutdown();
+      }
+      else
+      {
+         // acquire monitor recursive-mutex
+         monitorConnect.acquire();
+
+         // increment current connection-id;
+         connectionID++;
+
+         // reset connection monitor
+         monitorConnect.prepare(connectionID);
+
+         // send connection id to server
+         result = serverProxy->connect(connectionID, value.getUUID());
+
+         // if connection is performed out of main function (main thread)
+         // it can happen, that reactor is not running till now and
+         // thus no CONN_ACK can be received so special treatment is necessary
+         if(result == Smart::SMART_OK)
+         {
+            // wait on incomming connection for a period of time
+            result = monitorConnect.wait(); 
+         }
+
+
+         if(result == Smart::SMART_OK) {
+            if( static_cast<Smart::StatusCode>(monitorConnect.getStatusA0()) == Smart::SMART_OK)
+            {
+               // connection successfull
+               statusConnected = 1;
+
+               SmartACE::NSKeyType key;
+               key.names[SmartACE::NSKeyType::COMP_NAME] = component->getName().c_str();
+               key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Event");
+               key.names[SmartACE::NSKeyType::SERVICE_NAME] = ACE_TEXT("Client");
+               key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = P::identifier().c_str();
+               key.names[SmartACE::NSKeyType::COMMOBJ2_NAME] = E::identifier().c_str();
+               ACE_TString name = key;
+
+               SMARTSOFT_PRINT( ACE_TEXT("- %s connected to <%s:%d>\n"), name.c_str(), value.getInetAddr().get_host_addr(), value.getInetAddr().get_port_number() );
+               result = Smart::SMART_OK;
+            }else{
+               // connection rejected by the server due to server not ready or wrong "session-identifier"
+               result = Smart::SMART_SERVICEUNAVAILABLE;
+            }
+         } else if(result == Smart::SMART_TIMEOUT || result == Smart::SMART_ERROR) {
+            // on timeout discard the connection
+            serverProxy->discard();
+
+            serverProxy->trigger_shutdown();
+            result = Smart::SMART_SERVICEUNAVAILABLE;
+         } else {
+            result = Smart::SMART_ERROR_UNKNOWN;
+         }
+
+         monitorConnect.release();
+		} // end if(connector->connect==0)
+	} // end if(result==SMART_OK)
+  //</alexej>
+
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::disconnect() throw()
+{
+  Smart::StatusCode result;
+  Smart::StatusCode status;
+
+  mutexConnection.acquire();
+
+  if (statusConnected == 0) {
+    result = Smart::SMART_OK;
+  } else {
+    //
+    // from now on no new activate etc. can be initiated anymore since we hold the
+    // mutexConnection and it is released only after the status is already set to
+    // "disconnected"
+    //
+
+    result = Smart::SMART_OK;
+
+    mutexEventList.acquire();
+
+    //<alexej date="2011-01-24">
+    while(events != NULL)
+    {
+      status = this->deactivate(events->id);
+      if (status != Smart::SMART_OK) {
+        result = status;
+      }
+    }
+    //</alexej>
+
+    mutexEventList.release();
+
+    //
+    // it is important to set statusConnected to 0 AFTER calling deactivate for every
+    // event activation since deactivate itself checks the statusConnected flag and
+    // executes deactivate only in case a connection to a server is available
+    //
+    statusConnected = 0;
+
+    //<alexej date="2009-10-26">
+
+    //
+    //
+    //
+    monitorDisconnect.acquire();
+       //
+       // reset condition variable with pseudo cid (not really needen in disconnect)
+       //
+       monitorDisconnect.prepare();
+
+       //
+       // send disconnect message to server
+       //
+       result = serverProxy->disconnect();
+
+       //
+       // now wait for acknowledge-disconnect message
+       //
+       if(result == Smart::SMART_OK) 
+       {
+          // wait on incomming connection for a period of time
+          result = monitorDisconnect.wait(); 
+       } else {
+          result = Smart::SMART_ERROR_COMMUNICATION;
+       }
+
+       //
+       // free the memory
+       //
+       serverProxy->trigger_shutdown();
+
+    //
+    //
+    //
+    monitorDisconnect.release();
+    //</alexej>
+  }
+
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::blocking(const bool b) throw()
+{
+  Smart::StatusCode result = Smart::SMART_OK;
+  EventClientList *lptr = 0;
+
+  mutexConnection.acquire();
+
+  statusUserBlocking = b;
+
+  mutexEventList.acquire();
+
+  for( lptr = events; lptr != 0; lptr = lptr->next ) {
+    lptr->condW.blockingUser(statusUserBlocking);
+    lptr->condWO.blockingUser(statusUserBlocking);
+  }
+
+  mutexEventList.release();
+
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activate(const Smart::EventMode &m, const P& p, EventId& id) throw()
+{
+   EventClientList *lptr;
+   Smart::StatusCode result;
+
+   mutexConnection.acquire();
+
+   if (statusConnected == 0) {
+      //
+      // no connection available
+      //
+      id     = 0;
+      result = Smart::SMART_DISCONNECTED;
+
+      mutexConnection.release();
+
+      return result;
+   }
+
+   mutexEventList.acquire();
+
+   eventCnt++;
+   lptr                 = new EventClientList;
+   lptr->id             = eventCnt;
+   lptr->mode           = m;
+   lptr->eventFired     = 0;
+   lptr->eventAvailable = 0;
+   lptr->next           = events;
+   events = lptr;
+
+   lptr->condW.blockingUser(statusUserBlocking);
+   lptr->condWO.blockingUser(statusUserBlocking);
+   component->addCV(&(lptr->condW));
+   component->addCV(&(lptr->condWO));
+
+   id = eventCnt;
+
+   mutexEventList.release();
+
+   //
+   // now call ACE object to send request message
+   //
+   result = Smart::SMART_OK;
+
+   //<alexej date="2009-10-26">
+
+   //
+   //
+   //
+   monitorActivation.acquire();
+
+   //
+   // get parameter commObj-stream
+   //
+   SmartMessageBlock *any;
+   p.get(any);
+
+   //
+   //
+   //
+   monitorActivation.prepare(id);
+
+   //
+   // call activate message
+   //
+   result = serverProxy->activate(m, id, any);
+
+   //
+   // wait on aknowledge activate up to a second
+   //
+   if(result == Smart::SMART_OK)
+   {
+      // result causes to remove current event on failure
+      result = monitorActivation.wait();
+   }
+
+   monitorActivation.release();
+   //</alexej>
+
+
+   if (result != Smart::SMART_OK) {
+      //
+      // remove list entry
+      //
+      this->removeActivationId(id);
+   }
+
+   mutexConnection.release();
+
+   return result;
+}
+
+
+//
+//
+//
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::deactivate(const EventId &id) throw()
+{
+  Smart::StatusCode result;
+  EventClientList *lptr;
+
+  mutexConnection.acquire();
+
+  if (statusConnected == 0) {
+    //
+    // no connection available and still active event is not possible
+    //
+    result = Smart::SMART_ERROR;
+
+    mutexConnection.release();
+
+    return result;
+  }
+
+  mutexEventList.acquire();
+
+  for (lptr = events; lptr != 0; lptr = lptr->next)
+    if (lptr->id == id)
+      break;
+
+  if( lptr == 0 ) {
+    mutexEventList.release();
+
+    result = Smart::SMART_WRONGID;
+  } else {
+    //
+    // the signalling has to be done within the mutex protected block to make sure that
+    // lptr still points to valid variables
+    //
+    lptr->condW.blockingPattern(false);
+    lptr->condWO.blockingPattern(false);
+
+    //
+    // remove list entry
+    //
+    this->removeActivationId(id);
+
+    mutexEventList.release();
+
+    //
+    // while calling deactivate we have to release the mutex since otherwise concurrently
+    // running firings from the server can not be finished and therefore deactivate can
+    // not be executed at the server side ... see same problem in query ...
+    //
+
+    result = Smart::SMART_OK;
+
+    //<alexej date="2009-10-26">
+
+    //
+    // call deactivate message (oneway)
+    //
+    result = serverProxy->deactivate(id);
+    //</alexej>
+
+  }
+
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::tryEvent(const EventId &id) throw()
+{
+  EventClientList *lptr;
+  Smart::StatusCode  result;
+
+  result = Smart::SMART_ERROR;
+
+  mutexEventList.acquire();
+
+  for (lptr = events; lptr != 0; lptr = lptr->next)
+    if (lptr->id == id)
+      break;
+
+  if( lptr == 0 ) {
+    result = Smart::SMART_WRONGID;
+  } else if (lptr->mode == Smart::single) {
+    if ((lptr->eventFired == 1) && (lptr->eventAvailable == 1)) {
+      // event fired and is available
+      result = Smart::SMART_OK;
+    } else if ((lptr->eventFired == 1) && (lptr->eventAvailable == 0)) {
+      // event already fired and not available anymore
+      result = Smart::SMART_PASSIVE;
+    } else if (lptr->eventFired == 0) {
+      // event not yet fired
+      result = Smart::SMART_ACTIVE;
+    } else {
+      // this does not make sense
+      result = Smart::SMART_ERROR;
+    }
+  } else if (lptr->mode == Smart::continuous) {
+    if (lptr->eventAvailable == 1) {
+      // event fired and is available
+      result = Smart::SMART_OK;
+    } else if (lptr->eventAvailable == 0) {
+      // currently no event available
+      result = Smart::SMART_ACTIVE;
+    } else {
+      // this does not make sense
+      result = Smart::SMART_ERROR;
+    }
+  } else {
+    result = Smart::SMART_ERROR;
+  }
+
+  mutexEventList.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getEvent(const EventId &id, E& e, const std::chrono::steady_clock::duration &timeout) throw()
+{
+  EventClientList *lptr;
+  Smart::StatusCode result;
+
+  result = Smart::SMART_ERROR;
+
+  mutexEventList.acquire();
+
+  for (lptr = events; lptr != 0; lptr = lptr ->next)
+    if (lptr->id == id)
+      break;
+
+  if (lptr == 0) {
+    result = Smart::SMART_WRONGID;
+  } else if (lptr->mode == Smart::single) {
+    if ((lptr->eventFired == 1) && (lptr->eventAvailable == 1)) {
+      // event fired and is available => consume it
+      e = lptr->e;
+      lptr->eventAvailable = 0;
+      result = Smart::SMART_OK;
+    } else if ((lptr->eventFired == 1) && (lptr->eventAvailable == 0)) {
+      // event already fired and not available anymore
+      result = Smart::SMART_PASSIVE;
+    } else if (lptr->eventFired == 0) {
+      // event not yet fired => wait for it
+      mutexEventList.release();
+
+      // important hint:
+      //
+      // I use a CV with memory in the single mode to make sure that the event is not missed when it
+      // fires just between the above mutexEventList.release() and the following call to wait() ...
+      //
+      result = lptr->condW.wait(convertToAceTimeFrom(timeout));
+
+      mutexEventList.acquire();
+      if(result == Smart::SMART_OK) {
+          //
+          // got event, in case that several concurrent calls waited for the event to arrive then
+          // every call gets the same fired event
+          //
+          lptr->eventAvailable = 0;
+          lptr->eventFired     = 1;
+          e = lptr->e;
+      } else if(result == Smart::SMART_TIMEOUT) {
+    	  // timeout occurred -> do nothing, just return result
+      } else {
+        //
+        // has been cancelled ... two possible reasons, either standard cancel where event is
+        // still active but blocking waits are not allowed or cancelled by the "deactivate"
+        // member function
+        //
+        for (lptr = events; lptr != 0; lptr = lptr->next)
+          if (lptr->id == id)
+            break;
+
+        if (lptr == 0) {
+          //
+          // when cancelled and id is not valid any longer, then either a "deactivation" or a
+          // "disconnect" is responsible for the cancelled call
+          //
+          mutexConnection.acquire();
+          if (statusConnected == 0) {
+            result = Smart::SMART_DISCONNECTED;
+          } else {
+            result = Smart::SMART_NOTACTIVATED;
+          }
+          mutexConnection.release();
+        } else {
+          //
+          // since id still valid, it is a standard "cancel" of a blocking method
+          //
+          result = Smart::SMART_CANCELLED;
+        }
+      }
+    } else {
+      //  this does not make sense
+      result = Smart::SMART_ERROR;
+    }
+  } else if (lptr->mode == Smart::continuous) {
+    if (lptr->eventAvailable == 1) {
+      // event fired and is available
+      lptr->eventAvailable = 0;
+      lptr->condW.reset();
+      e = lptr->e;
+      result = Smart::SMART_OK;
+    } else if (lptr->eventAvailable == 0) {
+      // wait for the next firing
+      mutexEventList.release();
+
+      // important hint:
+      //
+      // The problem is that an event arriving just after releasing the mutexEventList and before
+      // calling the wait() is missed. This is the reason why I use a CV with memory for the single
+      // activation. A CV with memory can not be used here since we then would rush through the wait
+      // once we have received an event. I therefore reset the CV each time an event is consumed.
+      // The CV then blocks again the next time if meanwhile no event occured.
+      result = lptr->condW.wait();
+
+      mutexEventList.acquire();
+      if (result != Smart::SMART_OK) {
+        //
+        // has been cancelled ... two possible reasons, either standard cancel where event is
+        // still active but blocking waits are not allowed or cancelled by the "deactivate"
+        // member function
+        //
+        for (lptr = events; lptr != 0; lptr = lptr->next)
+          if (lptr->id == id)
+            break;
+
+        if (lptr == 0) {
+          //
+          // when cancelled and id is not valid any longer, then either a "deactivation" or a
+          // "disconnect" is responsible for the cancelled call
+          //
+          mutexConnection.acquire();
+          if (statusConnected == 0) {
+            result = Smart::SMART_DISCONNECTED;
+          } else {
+            result = Smart::SMART_NOTACTIVATED;
+          }
+          //<alexej date="2010-03-26">
+          mutexConnection.release();
+          //</alexej>
+        } else {
+          //
+          // since id still valid, it is a standard "cancel" of a blocking method
+          //
+          result = Smart::SMART_CANCELLED;
+        }
+      } else {
+        //
+        // got event, in case that several concurrent calls waited for the event to arrive then
+        // every call gets the same fired event
+        //
+        lptr->eventAvailable = 0;
+        lptr->condW.reset();
+        e = lptr->e;
+        result = Smart::SMART_OK;
+      }
+    } else {
+      // this does not make sense
+      result = Smart::SMART_ERROR;
+    }
+  } else {
+    result = Smart::SMART_ERROR;
+  }
+
+  mutexEventList.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getNextEvent(const EventId &id, E& e, const std::chrono::steady_clock::duration &timeout) throw()
+{
+  EventClientList *lptr;
+  Smart::StatusCode result;
+
+  mutexEventList.acquire();
+
+  for (lptr = events; lptr != 0; lptr = lptr ->next)
+    if (lptr->id == id)
+      break;
+
+  if (lptr == 0) {
+    result = Smart::SMART_WRONGID;
+  } else if (lptr->mode == Smart::single) {
+    if (lptr->eventFired == 1) {
+      // fired already and therefore waiting makes no sense
+      result = Smart::SMART_PASSIVE;
+    } else if (lptr->eventFired == 0) {
+      // event not yet fired, wait for it
+      mutexEventList.release();
+
+      //
+      // see important hint in getEvent() ...
+      //
+      result = lptr->condW.wait(convertToAceTimeFrom(timeout));
+
+      mutexEventList.acquire();
+
+      if (result == Smart::SMART_TIMEOUT) {
+    	  // timeout occurred -> do nothing, just return result
+      } else if (result != Smart::SMART_OK) {
+        //
+        // has been cancelled ... two possible reasons, either standard cancel where event is
+        // still active but blocking waits are not allowed or cancelled by the "deactivate"
+        // member function
+        //
+        for (lptr = events; lptr != 0; lptr = lptr->next)
+          if (lptr->id == id)
+            break;
+
+        if (lptr == 0) {
+          //
+          // when cancelled and id is not valid any longer, then either a "deactivation" or a
+          // "disconnect" is responsible for the cancelled call
+          //
+          mutexConnection.acquire();
+          if (statusConnected == 0) {
+            result = Smart::SMART_DISCONNECTED;
+          } else {
+            result = Smart::SMART_NOTACTIVATED;
+          }
+          mutexConnection.release();
+        } else {
+          //
+          // since id still valid, it is a standard "cancel" of a blocking method
+          //
+          result = Smart::SMART_CANCELLED;
+        }
+      } else {
+        //
+        // got event, in case that several concurrent calls waited for the event to arrive then
+        // every call gets the same fired event
+        //
+        lptr->eventAvailable = 0;
+        lptr->eventFired     = 1;
+        e = lptr->e;
+      }
+    } else {
+      // this does not make sense
+      result = Smart::SMART_ERROR;
+    }
+  } else if (lptr->mode == Smart::continuous) {
+    //
+    // wait for the next firing ... therefore use the CV without memory
+    //
+    // Important: the CV with memory can not be used here since the memory is just to indicate
+    //            whether data is available or not. Calling reset here would reset the data
+    //            available indicator which is different to waiting for the next time the
+    //            event fires !
+    mutexEventList.release();
+
+    result = lptr->condWO.wait();
+
+    mutexEventList.acquire();
+
+    if (result != Smart::SMART_OK) {
+      //
+      // has been cancelled ... two possible reasons, either standard cancel where event is
+      // still active but blocking waits are not allowed or cancelled by the "deactivate"
+      // member function
+      //
+      for (lptr = events; lptr != 0; lptr = lptr->next)
+        if (lptr->id == id)
+          break;
+
+      if (lptr == 0) {
+        //
+        // when cancelled and id is not valid any longer, then either a "deactivation" or a
+        // "disconnect" is responsible for the cancelled call
+        //
+        mutexConnection.acquire();
+        if (statusConnected == 0) {
+          result = Smart::SMART_DISCONNECTED;
+        } else {
+          result = Smart::SMART_NOTACTIVATED;
+        }
+        //<alexej date="2010-03-26">
+        mutexConnection.release();
+        //</alexej>
+      } else {
+        //
+        // since id still valid, it is a standard "cancel" of a blocking method
+        //
+        result = Smart::SMART_CANCELLED;
+      }
+    } else {
+      //
+      // got event, in case that several concurrent calls waited for the event to arrive then
+      // every call gets the same fired event
+      //
+      lptr->eventAvailable = 0;
+      lptr->condW.reset();
+
+      e = lptr->e;
+      result = Smart::SMART_OK;
+    }
+  } else {
+    // this does not make sense
+    result = Smart::SMART_ERROR;
+  }
+
+  mutexEventList.release();
+
+  return result;
+}
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////
+//
+// server part of event template
+//
+/////////////////////////////////////////////////////////////////////////
+
+//
+// static handle method called by ACE object
+//
+//<alexej date="2010-03-18">
+template<class P,class E,class S>
+void SmartACE::EventServer<P,E,S>::hndConnect(void *ptr, const EventServerServiceHandler *client, int cid, const ACE_Utils::UUID &serviceID)
+//</alexej>
+{
+  EventServer<P,E,S>* lthis = (EventServer<P,E,S> *)ptr;
+  EventClientList* cptr;
+  EventServerServiceHandler *client_ptr;
+
+  lthis->mutexClientList.acquire();
+
+  client_ptr = const_cast<EventServerServiceHandler*>(client);
+
+  if (lthis->serverReady == 0) {
+    //
+    // don't accept any new clients since server is in process of destruction or not yet ready
+    //
+    client_ptr->acknowledgmentConnect(cid, Smart::SMART_SERVICEUNAVAILABLE);
+  } else {
+
+      if( serviceID != *(lthis->service_identifier) ) {
+         // reject connection due to wrong service-identifier
+         // this is the case if naming-service entries are out-dated
+         client_ptr->acknowledgmentConnect(cid, Smart::SMART_SERVICEUNAVAILABLE);
+      } else if( client_ptr->acknowledgmentConnect(cid, Smart::SMART_OK) == Smart::SMART_OK ) {
+         // Acknowledgement successfully transmitted, now add client to the list
+
+         //
+         // make new client list entry
+         //
+         cptr           = new EventClientList;
+
+         //<alexej date="13.11.2008">
+         //cptr->client   = SmartSendClientPattern::_duplicate(client); //old
+
+         //better: cptr->clientProxy has to be const itself (not cast to not const)
+         cptr->clientProxy = client_ptr;
+         cptr->connection_id = cid;
+         //</alexej>
+
+         cptr->next     = lthis->clients;
+         lthis->clients = cptr;
+      }
+  }
+
+  lthis->mutexClientList.release();
+}
+
+//
+// static handle method called by ACE object
+//
+template<class P,class E,class S>
+void SmartACE::EventServer<P,E,S>::hndDiscard(void* ptr, const EventServerServiceHandler *client)
+{
+   EventServer<P,E,S>* lthis  = (EventServer<P,E,S> *)ptr;
+   EventClientList* cptr      = 0;
+   EventClientList* hcptr     = 0;
+
+   lthis->mutexClientList.acquire();
+
+   //
+   // first remove entries from head as long as they match the client object
+   //
+   while ( (lthis->clients != 0) && (client == lthis->clients->clientProxy) )
+   {
+      // iterate to the next element in the list
+      cptr = lthis->clients;
+      lthis->clients = lthis->clients->next;
+
+      // clean up current node
+      //cptr->clientProxy->close(1);
+      delete cptr;
+   }
+
+   //
+   // now search through the rest of the list which might be empty already. If the
+   // length is greater than zero, than the first element never matches and never
+   // gets deleted
+   //
+   cptr = lthis->clients;
+   if (cptr == 0) {
+      // list contains no element anymore => ready
+   } else {
+      // list can now contain one or more elements with the first element matching never
+      while (cptr->next != 0) {
+         if ( client == cptr->next->clientProxy ) {
+            hcptr      = cptr->next;
+            cptr->next = cptr->next->next;
+            // clean up current node
+            //hcptr->clientProxy->close(1);
+            delete hcptr;
+         } else {
+            cptr = cptr->next;
+         }
+      }
+   }
+
+   if (lthis->serverReady == 0) {
+      // If the server is not ready yet the monitor-signal has no effect.
+      // If server is in process of destruction then the monitor is signalled
+      // to release the destructor of the server.
+      if(lthis->clients == 0) {
+         lthis->monitorServerInitiatedDisconnect.broadcast();
+      }
+   }
+
+   lthis->mutexClientList.release();
+}
+
+
+//
+// static handle method called by ACE object
+//
+template<class P,class E,class S>
+void SmartACE::EventServer<P,E,S>::hndDisconnect(void* ptr, const EventServerServiceHandler *client)
+{
+   EventServer<P,E,S>* lthis  = (EventServer<P,E,S> *)ptr;
+   EventClientList* cptr      = 0;
+   EventClientList* hcptr     = 0;
+
+   lthis->mutexClientList.acquire();
+
+   //
+   // remove client from list of clients
+   //
+
+   //
+   // first remove entries from head as long as they match the client object
+   //
+   while ( (lthis->clients != 0) && (client == lthis->clients->clientProxy) )
+   {
+      cptr = lthis->clients;
+      lthis->clients = lthis->clients->next;
+      // acknowledge disconnect
+      if( cptr->clientProxy->acknowledgmentDisconnect() == Smart::SMART_OK ) {
+         // clean up current node
+         cptr->clientProxy->trigger_shutdown();
+         delete cptr;
+      }
+   }
+
+   //
+   // now search through the rest of the list which might be empty already. If the
+   // length is greater than zero, than the first element never matches and never
+   // gets deleted
+   //
+   cptr = lthis->clients;
+   if (cptr == 0) {
+      // list contains no element anymore => ready
+   } else {
+      // list can now contain one or more elements with the first element matching never
+      while (cptr->next != 0) {
+         if ( client == cptr->next->clientProxy ) {
+            hcptr      = cptr->next;
+            cptr->next = cptr->next->next;
+            // acknowledge disconnect
+            if( hcptr->clientProxy->acknowledgmentDisconnect() == Smart::SMART_OK ) {
+               // clean up current node
+               hcptr->clientProxy->trigger_shutdown();
+               delete hcptr;
+            }
+         } else {
+            cptr = cptr->next;
+         }
+      }
+   }
+
+   if (lthis->serverReady == 0) {
+      // If the server is not ready yet the monitor-signal has no effect.
+      // If server is in process of destruction then the monitor is signalled
+      // to release the destructor of the server.
+      if(lthis->clients == 0) {
+         lthis->monitorServerInitiatedDisconnect.broadcast();
+      }
+   }
+
+   lthis->mutexClientList.release();
+}
+
+//
+// static handle method called by ACE object
+//
+template<class P,class E,class S>
+void SmartACE::EventServer<P,E,S>::hndActivate(void *ptr, const EventServerServiceHandler *client, const int &mode, const int &cltId, const SmartMessageBlock *user)
+{
+  EventServer<P,E,S>* lthis = (EventServer<P,E,S> *)ptr;
+  EventServerList* lptr;
+
+  lthis->mutexEventList.acquire();
+
+  lptr = new EventServerList;
+  lptr->p.set(user);
+  lptr->eventMode = static_cast<Smart::EventMode>(mode);
+  lptr->clientId  = cltId;
+  //<alexej date="2009-10-26">
+   lptr->clientProxy   = const_cast<EventServerServiceHandler*>(client);
+  //</alexej>
+  lptr->eventCnt  = 0;
+  lptr->next      = lthis->events;
+  lthis->events   = lptr;
+
+  // acknowledge activation of event with identifier cltId
+  lptr->clientProxy->acknowledgmentActivate(cltId);
+
+  //<alexej date="2015-01-20">
+  // this is a new hook to detect whenever a new event activation occurs
+  lthis->testHandler->onActivation(lptr->p);
+  //</alexej>  
+
+  lthis->mutexEventList.release();
+}
+
+template<class P,class E,class S> void SmartACE::EventServer<P,E,S>::hndDeactivate(void *ptr, const EventServerServiceHandler *client, const int &cltId)
+{
+  EventServer<P,E,S>* lthis = (EventServer<P,E,S> *)ptr;
+  EventServerList* cptr;
+  EventServerList* hcptr;
+
+  lthis->mutexEventList.acquire();
+
+  //
+  // first remove entries from head as long as they match the client object and the id
+  //
+  //<alexej date="2009-10-26">
+  while ((lthis->events != 0) && (client == lthis->events->clientProxy) && (cltId == lthis->events->clientId))
+  //</alexej>
+  {
+    cptr = lthis->events;
+    lthis->events = lthis->events->next;
+    //<alexej date="2009-10-26">
+    cptr->clientProxy = NULL;
+    //</alexej>
+    delete cptr;
+  }
+
+  //
+  // now search through the rest of the list which might be empty already. If the
+  // length is greater than zero, then the first element never matches and never
+  // gets deleted
+  //
+  cptr = lthis->events;
+  if (cptr == 0) {
+    // list contains no element anymore => ready
+  } else {
+    // list can now contain one or more elements with the first element matching never
+    while (cptr->next != 0) {
+      //<alexej date="2009-10-26">
+      //if ((client->_is_equivalent(cptr->next->client)) && (cltId == cptr->next->clientId)) {
+      if ((client == cptr->next->clientProxy) && (cltId == cptr->next->clientId)) {
+        hcptr      = cptr->next;
+        cptr->next = cptr->next->next;
+        //<alexej date="2009-10-26">
+        hcptr->clientProxy = NULL;
+        //</alexej>
+        delete hcptr;
+      } else {
+        cptr = cptr->next;
+      }
+    }
+  }
+
+  lthis->mutexEventList.release();
+}
+//</alexej>
+
+
+//
+// default constructor
+//
+template<class P, class E, class S> inline SmartACE::EventServer<P,E,S>::EventServer(void) throw(SmartACE::SmartError)
+{
+  std::cerr << "CommPattern (event): ERROR: Entered default constructor EventServer" << std::endl;
+
+  throw(SmartACE::SmartError(Smart::SMART_ERROR,"CommPattern (event): ERROR: Entered default constructor EventServer"));
+}
+
+//
+// standard constructor
+//
+template<class P, class E, class S>
+inline SmartACE::EventServer<P,E,S>::EventServer(SmartComponent* m,
+                                            const std::string& svc,
+											EventTestHandler<P,E,S> *handler) throw()
+  : Smart::IEventServerPattern<P,E,S,EventId>(m,svc,handler),
+	uuid_genrator(),
+    service_identifier(0),
+    component(m),
+    service(svc),
+    serverReady(0)
+{
+   mutexClientList.acquire();
+
+   // reset list, counter and other stuff
+   clients = 0;
+
+   component->addSmartMonitor(&monitorServerInitiatedDisconnect);
+
+   mutexEventList.acquire();
+   events   = 0;
+   mutexEventList.release();
+
+   //<alexej date="2010-03-18">
+   acceptor = new EventServerAcceptor
+      (
+         (void *)this,
+         &EventServer<P,E,S>::hndConnect,
+         &EventServer<P,E,S>::hndDiscard,
+         &EventServer<P,E,S>::hndDisconnect,
+         &EventServer<P,E,S>::hndActivate,
+         &EventServer<P,E,S>::hndDeactivate,
+         component->getReactorTask()->getImpl()
+      );
+
+
+   // local variables
+   bool use_ns = true;
+   Smart::StatusCode result = Smart::SMART_OK;
+
+   SmartACE::NSKeyType key;
+   key.names[SmartACE::NSKeyType::COMP_NAME] = component->getName().c_str();
+   key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Event");
+   key.names[SmartACE::NSKeyType::SERVICE_NAME] = service.c_str();
+   key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = P::identifier().c_str();
+   key.names[SmartACE::NSKeyType::COMMOBJ2_NAME] = E::identifier().c_str();
+   ACE_TString name = key; // get string representation of the key
+
+   SmartACE::NSValueType value;
+
+   if(component->getName().compare(SMART_NONS) == 0)
+   {
+      ACE_INET_Addr addr_to_listen;
+      if(addr_to_listen.string_to_addr(svc.c_str()) == 0) {
+         use_ns = false;
+         value.setInetAddr(addr_to_listen);
+      } else {
+         result = Smart::SMART_ERROR;
+      }
+   }
+
+   if(result == Smart::SMART_OK)
+   {
+      // try to open acceptor
+      if( acceptor->open (value.getInetAddr(), component->getReactorTask()->getImpl()) == 0 ) {
+         // acceptor successfull opened
+         // get the real inet adress
+         ACE_INET_Addr addr_to_listen;
+         if( acceptor->acceptor().get_local_addr(addr_to_listen) == 0 ) {
+            if(use_ns) {
+               // temporary dummy variable
+               SmartACE::NSValueType dummy;
+
+               // check if port is already used
+               if( SmartACE::NAMING::instance()->resolve(key, dummy) == 0 ) {
+                  SMARTSOFT_PRINT(ACE_TEXT("- %s is already in use - will be rebound silently.\n"), name.c_str() );
+                  result = Smart::SMART_PORTALREADYUSED;
+               }
+
+               //<alexej date="2010-03-18">
+               uuid_genrator.init();
+               service_identifier = uuid_genrator.generate_UUID();
+               //</alexej>
+               value.set(addr_to_listen, *service_identifier);
+
+               if( SmartACE::NAMING::instance()->rebind(key, value) == 0 ) {
+                  serverReady = 1;
+                  SMARTSOFT_PRINT( ACE_TEXT("- %s is ready and running on address: <%s:%d>\n"), name.c_str(), addr_to_listen.get_host_addr(), addr_to_listen.get_port_number() );
+               }else{
+                  SMARTSOFT_PRINT( ACE_TEXT("- %s rebinding error!"), name.c_str() );
+               }
+
+            }else{
+               serverReady = 1;
+               SMARTSOFT_PRINT( ACE_TEXT("- %s is ready and running on address: <%s:%d>\n"), name.c_str(), addr_to_listen.get_host_addr(), addr_to_listen.get_port_number() );
+            }
+         } // end if(use_ns)
+      } // end if(acceptor->get_local_addr() == 0)
+   } // end if(result == Smart::SMART_OK)
+
+   mutexClientList.release();
+}
+
+//
+// default destructor
+//
+template<class P, class E, class S> inline SmartACE::EventServer<P,E,S>::~EventServer(void) throw()
+{
+	this->serverInitiatedDisconnect();
+
+   //<alexej date="2010-03-18">
+   if(component->getName().compare(SMART_NONS) != 0)
+   {
+      SmartACE::NSKeyType key;
+      key.names[SmartACE::NSKeyType::COMP_NAME] = component->getName().c_str();
+      key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Event");
+      key.names[SmartACE::NSKeyType::SERVICE_NAME] = service.c_str();
+      key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = P::identifier().c_str();
+      key.names[SmartACE::NSKeyType::COMMOBJ2_NAME] = E::identifier().c_str();
+
+      SmartACE::NAMING::instance()->unbind(key);
+   }
+
+   if(service_identifier != 0)
+      delete service_identifier;
+  //</alexej>
+}
+
+
+template<class P, class E, class S> inline void SmartACE::EventServer<P,E,S>::serverInitiatedDisconnect()
+{
+	  EventClientList *cptr = 0;
+	  EventClientList *prevcptr = 0;
+
+	  mutexClientList.acquire();
+	  //
+	  // since we now have the mutex, connects and disconnects from clients can not be
+	  // executed while modifying the server state to serverReady = 0. From now on any
+	  // tries to connect to this server are rejected
+	  //
+	  serverReady = 0;
+
+	  monitorServerInitiatedDisconnect.reset();
+
+	  acceptor->close_handler();
+
+	  cptr = clients;
+	  while (cptr != 0) {
+	    if( cptr->clientProxy->serverInitiatedDisconnect( cptr->connection_id ) != Smart::SMART_OK )
+	    {
+	      // clientProxy could not communicate SID message.
+	      // The reason can be that the connection is broken or a communication error occured.
+	      // Since we are now in the destructor, it is safe to just remove this reference.
+	      if(clients == cptr) {
+	        // the current cptr is the first element
+	        // we will remove the first element, so set the clients pointer to the next lement
+	        clients = clients->next;
+	        // clean up
+	        cptr->clientProxy->trigger_shutdown();
+	        delete cptr;
+	        // set the current pointer to the beginning of the list
+	        cptr = clients;
+	      } else {
+	        // cptr points NOT to the first element in the list
+	        prevcptr->next = cptr->next;
+	        cptr->clientProxy->trigger_shutdown();
+	        delete cptr;
+	        cptr = prevcptr->next;
+	      }
+	    } else {
+	      prevcptr = cptr;
+	      cptr = cptr->next;
+	    }
+	  }
+
+	  if(clients == 0) {
+		  monitorServerInitiatedDisconnect.broadcast();
+	  }
+	  mutexClientList.release();
+
+	  //
+	  // - pending disconnects from clients can now get the mutexClientList and can
+	  //   therefore execute their disconnect
+	  // - since serverReady == 0, from now on all modifications on the list of clients
+	  //   are rejected inside the disconnect handler
+	  // - therefore one can step through the list of clients without requiring to hold
+	  //   the mutexClientList and can call disconnect at the client side
+	  // - the server has to call the client's disconnect outside the mutexClientList since
+	  //   the client calls back the server within the disconnect member function and the
+	  //   server handler requires the mutexClientList
+	  // - Concurrent calls to the client's disconnect member function from this server
+	  //   and from the client are not critical since disconnects are executed sequentially
+	  //   in the client due to the client's mutexConnection
+	  //
+
+	  //<alexej date="2009-11-10">
+		  monitorServerInitiatedDisconnect.wait();
+	     component->removeSmartMonitor(&monitorServerInitiatedDisconnect);
+
+		  acceptor->close();
+	     delete acceptor;
+	  //</alexej>
+}
+
+//
+// puts the current state s into event server object and calls the testEvent methods
+// with this state and the specific parameters
+//
+template<class P, class E, class S> Smart::StatusCode SmartACE::EventServer<P,E,S>::put(const S& s) throw()
+{
+  EventServerList *lptr;
+  E               e;
+
+  Smart::StatusCode status = Smart::SMART_OK;
+
+  mutexClientList.acquire();
+
+  mutexEventList.acquire();
+
+  for (lptr = events; lptr != 0; lptr = lptr->next) {
+	  //FIXME: call the notification method
+    if (this->testHandler->testEvent(lptr->p, e, s)) {
+      if ((lptr->eventMode == Smart::single) && (lptr->eventCnt != 0)) {
+        //
+        // this a single activation which already fired, therefore
+        // do not fire again
+        //
+      } else {
+        //
+        // event fires
+        //
+        lptr->eventCnt++;
+
+    //<alexej date="2009-11-10">
+         //
+         // Message data buffer (for holding serialized CommObj data)
+         //
+         SmartMessageBlock *any = 0;
+
+         //
+         // Get(serialize) CommObj data and store it in MessageBlock
+         //
+         e.get(any);
+
+         //
+         // send Message to client
+         //
+         status = lptr->clientProxy->event(any, lptr->clientId);
+         //ACE_DEBUG((LM_DEBUG, ACE_TEXT("event()\n") ));
+
+
+         //
+         // Release(free) message memory, otherwise memory leaks will ocur.
+         //
+         any->release();
+   //</alexej>
+
+      }
+    }
+  }
+
+  mutexEventList.release();
+
+  mutexClientList.release();
+
+  return status;
+}
+

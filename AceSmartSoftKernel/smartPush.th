@@ -1,0 +1,1664 @@
+// --------------------------------------------------------------------------
+//
+//  Copyright (C) 2002/2004/2008 Christian Schlegel
+//                2009 Alex Lotz
+//
+//        lotz@hs-ulm.de
+//        schlegel@hs-ulm.de
+//
+//        Prof. Dr. Christian Schlegel
+//        University of Applied Sciences
+//        Prittwitzstr. 10
+//        D-89075 Ulm
+//        Germany
+//
+//
+//  This file is part of ACE/SmartSoft.
+//
+//  ACE/SmartSoft is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  ACE/SmartSoft is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with ACE/SmartSoft.  If not, see <http://www.gnu.org/licenses/>.
+//
+// --------------------------------------------------------------------------
+
+/////////////////////////////////////////////////////////////////////////
+//
+// client part of push timed template
+//
+/////////////////////////////////////////////////////////////////////////
+
+//
+// static handle method called by ACE object
+//
+template<class T> void SmartACE::PushClient<T>::hndUpdate(void* ptr,const SmartMessageBlock *user, int sid)
+{
+  PushClient<T> *lthis = (PushClient<T> *)ptr;
+
+  lthis->mutexConnection.acquire();
+    if(lthis->statusSubscribed == 1 && sid == lthis->session_id)
+    {
+      // signal new data
+      lthis->data.set(user);
+      // set new state: data-available
+      lthis->dataAvailable = 1;
+
+      // signal to release getUpdateWait() call
+      lthis->cond.signal();
+
+      // notify all observers about the change
+      lthis->notify_input(lthis->data);
+    }
+  lthis->mutexConnection.release();
+}
+
+//
+// static handle method called by ACE
+//
+//<alexej date="2010-03-18">
+template<class T> void SmartACE::PushClient<T>::hndAckConn(void *ptr, int cid, int status)
+//</alexej>
+{
+   PushClient<T> *lthis = (PushClient<T> *)ptr;
+
+   lthis->monitorConnect.signal(cid, status);
+}
+
+//
+// static handle method called by ACE object
+//
+//<alexej date="2010-03-18">
+template<class T> void SmartACE::PushClient<T>::hndServDisc(void* ptr, int cid)
+//</alexej>
+{
+  PushClient<T> *lthis = (PushClient<T> *)ptr;
+
+  lthis->component->enqueue(ptr,
+      &PushClient<T>::internalServerInitiatedDisconnect,
+      cid);
+}
+
+//
+// static handle method called by ACE object
+//
+template<class T> void SmartACE::PushClient<T>::hndAckDisc(void *ptr)
+{
+   PushClient<T> *lthis = (PushClient<T> *)ptr;
+
+   lthis->monitorDisconnect.signal();
+}
+
+
+//
+// static handle method called by ACE object
+//
+template<class T> void SmartACE::PushClient<T>::hndAckSubscribe(void *ptr, int active)
+{
+  PushClient<T> *lthis = (PushClient<T> *)ptr;
+
+  lthis->monitorSubscription.signal(0, active);
+}
+
+
+//
+// static handle method called by ACE object
+//
+template<class T> void SmartACE::PushClient<T>::hndServerInformation(void *ptr, unsigned long cycleTimeMs, int active)
+{
+   PushClient<T> *lthis = (PushClient<T> *)ptr;
+
+   lthis->monitorServerInfo.acquire();
+      lthis->minCycleTime.msec(cycleTimeMs);
+      lthis->monitorServerInfo.signal(0, active);
+   lthis->monitorServerInfo.release();
+}
+
+//
+// static handle method called by ACE object
+//
+template<class T> void SmartACE::PushClient<T>::hndServerStateChange(void* ptr, int &state)
+{
+  PushClient<T> *lthis = (PushClient<T> *)ptr;
+
+  lthis->mutexConnection.acquire();
+     if (lthis->statusSubscribed == 1) {
+       // (if unsubscribed then state of server always deactivated to simplify
+       //  state interpretation in getUpdateWait ... )
+
+       lthis->dataAvailable = 0;
+       lthis->statusServer  = state;
+
+       if (lthis->statusServer == 0) {
+         lthis->cond.blockingPattern(false);
+       } else {
+         lthis->cond.blockingPattern(true);
+       }
+     }
+  lthis->mutexConnection.release();
+}
+
+//
+// static internal interface methods used by wiring service
+//
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::internalConnect(void *ptr,const std::string& srv, const std::string & svc)
+{
+  PushClient<T>* lthis = (PushClient<T> *)ptr;
+
+  return lthis->connect(srv,svc);
+}
+
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::internalDisconnect(void *ptr)
+{
+  PushClient<T>* lthis = (PushClient<T> *)ptr;
+
+  return lthis->disconnect();
+}
+
+//<alexej date="2010-03-18">
+template<class T>
+void SmartACE::PushClient<T>::internalServerInitiatedDisconnect(void *ptr, int cid)
+//</alexej>
+{
+   PushClient<T> *lthis = (PushClient<T> *)ptr;
+
+   lthis->mutexConnection.acquire();
+      if(cid == lthis->connectionID)
+      {
+         lthis->disconnect();
+      }
+   lthis->mutexConnection.release();
+}
+
+//
+// default constructor
+//
+template<class T> inline SmartACE::PushClient<T>::PushClient(void) throw(SmartACE::SmartError)
+:	Smart::IPushClientPattern<T>(0)
+{
+  std::cerr << "CommPattern (push timed): ERROR: Entered default constructor PushClient" << std::endl;
+  component = 0;
+  statusServer      = 0;
+  statusConnected   = 0;
+  statusManagedPort = 0;
+  portname          = 0;
+  wiringslave       = 0;
+  statusSubscribed  = 0;
+  dataAvailable     = 0;
+  serverProxy       = 0;
+  connectionID = 0;
+  session_id = 0;
+  connector = 0;
+  throw(SmartACE::SmartError(Smart::SMART_ERROR,"CommPattern (PushClient): ERROR: Entered default constructor PushClient"));
+}
+
+//
+// standard constructor port
+//
+template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* component,const std::string& port, WiringSlave* slave) throw(SmartACE::SmartError)
+:	Smart::IPushClientPattern<T>(component)
+,	component(component)
+{
+  Smart::StatusCode status;
+
+  // set the configuration flags appropriately
+  statusServer      = 0;
+  statusConnected   = 0;
+  statusManagedPort = 0;
+  portname          = port;
+  wiringslave       = slave;
+  statusSubscribed  = 0;
+  dataAvailable     = 0;
+  serverProxy       = 0;
+
+  cond.blockingUser(true);
+  cond.blockingPattern(false);
+  component->addCV(&cond);
+
+  // set monitors to be controlled by the component
+  component->addSmartMonitor(&monitorConnect);
+  component->addSmartMonitor(&monitorDisconnect);
+  component->addSmartMonitor(&monitorServerInfo);
+  component->addSmartMonitor(&monitorSubscription);
+
+  // set a default timeout value of one second for every connection procedure
+  monitorConnect.enableTimedMode(ACE_Time_Value(1));
+
+  //<alexej date="2009-04-29">
+   connectionID = 0;
+   session_id = 0;
+   component->sign_on((void*)this);
+
+   // initialize new Connector instance
+   connector = new PushClientConnector(component->getReactorTask()->getImpl());
+   //serverProxy will be initialized later - on connect
+  //</alexej>
+
+
+  status = this->add(slave,port);
+
+  if (status == Smart::SMART_PORTALREADYUSED) {
+    //
+    // port name already in use therefore throw exception
+    //
+    throw(SmartACE::SmartError(Smart::SMART_PORTALREADYUSED,"CommPattern (PushClient): ERROR: port name already in use"));
+  } else if (status != Smart::SMART_OK) {
+    //
+    // throw exception since something went wrong
+    //
+    throw(SmartACE::SmartError(Smart::SMART_ERROR,"CommPattern (PushClient): ERROR: something went wrong"));
+  }
+}
+
+//
+// standard constructor
+//
+template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* component) throw(SmartACE::SmartError)
+:	Smart::IPushClientPattern<T>(component)
+,	component(component)
+{
+  // set the configuration flag appropriately
+  statusServer      = 0;
+  statusConnected   = 0;
+  statusManagedPort = 0;
+  portname          = "";
+  wiringslave       = 0;
+  statusSubscribed  = 0;
+  dataAvailable     = 0;
+  serverProxy       = 0;
+
+  cond.blockingUser(true);
+  cond.blockingPattern(false);
+  component->addCV(&cond);
+
+  // set monitors to be controlled by the component
+  component->addSmartMonitor(&monitorConnect);
+  component->addSmartMonitor(&monitorDisconnect);
+  component->addSmartMonitor(&monitorServerInfo);
+  component->addSmartMonitor(&monitorSubscription);
+
+  // set a default timeout value of one second for every connection procedure
+  monitorConnect.enableTimedMode(ACE_Time_Value(1));
+
+  //<alexej date="2009-04-29">
+   connectionID = 0;
+   session_id = 0;
+   component->sign_on((void*)this);
+
+   // initialize new Connector instance
+   connector = new PushClientConnector(component->getReactorTask()->getImpl());
+   //serverProxy will be initialized later - on connect
+  //</alexej>
+
+}
+
+//
+// standard constructor already wired
+//
+template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* component,const std::string& srv,const std::string& svc) throw(SmartACE::SmartError)
+:	Smart::IPushClientPattern<T>(component,srv,svc)
+,	component(component)
+{
+  Smart::StatusCode status;
+  int flag;
+
+  // set the configuration flags appropriately
+  statusServer      = 0;
+  statusConnected   = 0;
+  statusManagedPort = 0;
+  portname          = "";
+  wiringslave       = 0;
+  statusSubscribed  = 0;
+  dataAvailable     = 0;
+  serverProxy       = 0;
+
+  cond.blockingUser(true);
+  cond.blockingPattern(false);
+  component->addCV(&cond);
+
+  // set monitors to be controlled by the component
+  component->addSmartMonitor(&monitorConnect);
+  component->addSmartMonitor(&monitorDisconnect);
+  component->addSmartMonitor(&monitorServerInfo);
+  component->addSmartMonitor(&monitorSubscription);
+
+  // set a default timeout value of one second for every connection procedure
+  monitorConnect.enableTimedMode(ACE_Time_Value(1));
+
+  //<alexej date="2009-04-29">
+   connectionID = 0;
+   session_id = 0;
+   component->sign_on((void*)this);
+
+   // initialize new Connector instance
+   connector = new PushClientConnector(component->getReactorTask()->getImpl());
+   //serverProxy will be initialized later - on connect
+  //</alexej>
+
+
+  // Now connect to the server side of the push Timed pattern
+  //std::cout << "Try to connect to (" << srv << ":Push<" << T::identifier() << ">:" << svc << ") ..." << std::endl;
+  SMARTSOFT_PRINT(ACE_TEXT("Try to connect to (%s:PushServer<%s>:%s) ...\n"), srv.c_str(), T::identifier().c_str(), svc.c_str() );
+
+  do {
+    status = this->connect(srv,svc);
+
+    if (status == Smart::SMART_OK) {
+      flag = 1;
+      //std::cout << "... connected to (" << srv << ":Push<" << T::identifier() << ">:" << svc << ")" << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("... connected to (%s:PushServer<%s>:%s)\n"), srv.c_str(), T::identifier().c_str(), svc.c_str() );
+    } else if (status == Smart::SMART_SERVICEUNAVAILABLE) {
+      //std::cout << "CommPattern (PushClient): INFO: not yet found in naming service ..." << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("CommPattern (PushClient): INFO: not yet found in naming service ...\n") );
+      ACE_OS::sleep(1);
+      flag = 0;
+    } else if (status == Smart::SMART_INCOMPATIBLESERVICE) {
+      //std::cout << "CommPattern (PushClient): ERROR: incompatible service ..." << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("CommPattern (PushClient): ERROR: incompatible service ...\n") );
+      flag = 1;
+      throw(SmartACE::SmartError(status,"CommPattern (PushClient): ERROR: incompatible service"));
+    } else {
+      //<alexej date="2009-10-14">
+      //std::cout << "CommPattern (PushClient): ERROR: something went wrong ..." << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("CommPattern (PushClient): ERROR: something went wrong ...\n") );
+      flag = 1;
+      throw(SmartACE::SmartError(status,"CommPattern (PushClient): ERROR: something went wrong"));
+      //</alexej>
+    };
+  } while (flag == 0);
+}
+
+//
+// destructor
+//
+template<class T> inline SmartACE::PushClient<T>::~PushClient(void) throw()
+{
+  //
+  // remove port from managed set of ports and disconnect from server even if not
+  // exposed as port or connected to a server since this is handled correctly inside
+  // remove() and disconnect(). Disconnect automatically unsubscribes from server.
+  //
+  component->removeCV(&cond);
+
+  this->remove();
+  this->disconnect();
+
+  //<alexej date="2009-04-29">
+  mutexConnection.acquire();
+	// sign off ServerInitiated disconnect monitoring
+	component->sign_off((void*)this);
+
+	// shut down connector
+	connector->close();
+   delete connector;
+  mutexConnection.release();
+
+  component->removeSmartMonitor(&monitorConnect);
+  component->removeSmartMonitor(&monitorDisconnect);
+  component->removeSmartMonitor(&monitorServerInfo);
+  component->removeSmartMonitor(&monitorSubscription);
+  //</alexej>
+
+  // client does not bind object at naming service,
+  // therefore no unbind of objects needed here
+}
+
+//
+//
+//
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::add(WiringSlave* slave, const std::string& port) throw()
+{
+  Smart::StatusCode status;
+
+  mutexConnection.acquire();
+
+  // first remove eventually valid registration
+  this->remove();
+
+  // now add client
+  portname          = port;
+  statusManagedPort = 1;
+
+  wiringslave = slave;
+  status      = this->wiringslave->add(port,(void*)this,&PushClient<T>::internalConnect,&PushClient<T>::internalDisconnect);
+
+  mutexConnection.release();
+
+  return status;
+}
+
+//
+//
+//
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::remove() throw()
+{
+  Smart::StatusCode status;
+
+  mutexConnection.acquire();
+
+  if (statusManagedPort == 1) {
+    status = this->wiringslave->remove(portname);
+
+    portname          = "";
+    statusManagedPort = 0;
+
+  } else {
+    status = Smart::SMART_OK;
+  }
+
+  mutexConnection.release();
+
+  return status;
+}
+
+//
+//
+//
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::connect(const std::string& srv, const std::string& svc) throw()
+{
+  Smart::StatusCode result;
+
+  result = Smart::SMART_ERROR;
+
+  mutexConnection.acquire();
+
+  // first disconnect eventually valid connection
+  this->disconnect();
+
+	/** Possible Return values:
+	 * OK -> SMART_OK:	connection established
+	 * service unavailable: SMART_SERVICEUNAVAILABLE
+	 * service incompatible: naming service
+	 * communication error: SMART_ERROR_COMMUNICATION
+	 * unknown error: SMART_ERROR
+	 * */
+
+   SmartACE::NSValueType value;
+
+   if(component->getName().compare(SMART_NONS) == 0)
+   {
+      ACE_INET_Addr conn_addr;
+      if( conn_addr.string_to_addr(svc.c_str()) == 0) {
+         if(srv.compare(SMART_NONS) != 0) {
+            SMARTSOFT_PRINT( ACE_TEXT("- <PushClient> Warning: no naming service used so SERVER parameter of connect will be ignored!\n") );
+         }
+         value.setInetAddr(conn_addr);
+         result = Smart::SMART_OK;
+      }
+   }
+   else
+   {
+      SmartACE::NSKeyType key;
+      key.names[SmartACE::NSKeyType::COMP_NAME] = srv.c_str();
+      key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Push");
+      key.names[SmartACE::NSKeyType::SERVICE_NAME] = svc.c_str();
+      key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = T::identifier().c_str();
+
+      if( SmartACE::NAMING::instance()->resolve(key, value) == 0 )
+      {
+         result = Smart::SMART_OK;
+      } else {
+         // name is NOT available in naming service -> check whether similar name is available (with a different communication object)
+         SmartACE::NSKeyType searchPattern;
+         searchPattern.names[SmartACE::NSKeyType::COMP_NAME] = srv.c_str();
+         searchPattern.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Push");
+         searchPattern.names[SmartACE::NSKeyType::SERVICE_NAME] = svc.c_str();
+
+         ACE_Unbounded_Queue<SmartACE::NSKeyType> similar_names = SmartACE::NAMING::instance()->getEntriesForMatchingPattern(searchPattern);
+         if( similar_names.size() > 0 )
+         {
+            // a similar service is available, but is incompatible
+            result = Smart::SMART_INCOMPATIBLESERVICE;
+         } else {
+            // neither exact service available nor similar service found -> service is completely missing
+            result = Smart::SMART_SERVICEUNAVAILABLE;
+         }
+      }
+   }
+
+	if( result == Smart::SMART_OK )
+	{
+		ACE_Time_Value timeout(1);
+		ACE_Synch_Options options(ACE_Synch_Options::USE_TIMEOUT, timeout);
+
+		ACE_NEW_RETURN(serverProxy, PushClientServiceHandler(component->getReactorTask()->getImpl()), Smart::SMART_ERROR_COMMUNICATION);
+
+		serverProxy->setCallbackFkts((void *)this,
+									&PushClient<T>::hndUpdate,
+                           &PushClient<T>::hndAckConn,
+									&PushClient<T>::hndServDisc,
+									&PushClient<T>::hndAckDisc,
+									&PushClient<T>::hndAckSubscribe,
+									&PushClient<T>::hndServerInformation,
+									&PushClient<T>::hndServerStateChange);
+
+		if (connector->connect (serverProxy, value.getInetAddr(), options) == -1) {
+         if(errno == ECONNREFUSED || errno == ETIME || errno == EWOULDBLOCK) {
+            // remote acceptor is not available or ping times are too large
+			   result = Smart::SMART_ERROR_COMMUNICATION;
+         }else{
+            result = Smart::SMART_ERROR;
+         }
+         serverProxy->trigger_shutdown();
+      }
+      else
+      {
+         // acquire monitor recursive-mutex
+         monitorConnect.acquire();
+
+         // increment current connection-id;
+         connectionID++;
+
+         // reset connection monitor
+         monitorConnect.prepare(connectionID);
+
+         // send connection id to server
+         result = serverProxy->connect(connectionID, value.getUUID());
+
+         // if connection is performed out of main function (main thread)
+         // it can happen, that reactor is not running till now and
+         // thus no CONN_ACK can be received so special treatment is necessary
+         if(result == Smart::SMART_OK)
+         {
+            // wait on incomming connection for a period of time
+            result = monitorConnect.wait(); 
+         }
+
+
+         if(result == Smart::SMART_OK) {
+            if( static_cast<Smart::StatusCode>(monitorConnect.getStatusA0()) == Smart::SMART_OK)
+            {
+               // connection successfull
+               statusConnected = 1;
+
+               SmartACE::NSKeyType key;
+               key.names[SmartACE::NSKeyType::COMP_NAME] = component->getName().c_str();
+               key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Push");
+               key.names[SmartACE::NSKeyType::SERVICE_NAME] = ACE_TEXT("Client");
+               key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = T::identifier().c_str();
+               ACE_TString name = key;
+
+               SMARTSOFT_PRINT( ACE_TEXT("- %s connected to <%s:%d>\n"), name.c_str(), value.getInetAddr().get_host_addr(), value.getInetAddr().get_port_number() );
+               result = Smart::SMART_OK;
+            }else{
+               // connection rejected by the server due to server not ready or wrong "session-identifier"
+               result = Smart::SMART_SERVICEUNAVAILABLE;
+            }
+         } else if(result == Smart::SMART_TIMEOUT || result == Smart::SMART_ERROR) {
+            // on timeout discard the connection
+            serverProxy->discard();
+
+            serverProxy->trigger_shutdown();
+            result = Smart::SMART_SERVICEUNAVAILABLE;
+         } else {
+            result = Smart::SMART_ERROR_UNKNOWN;
+         }
+
+         monitorConnect.release();
+		} // end if(connector->connect==0)
+	} // end if(result==SMART_OK)
+  //</alexej>
+
+
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::disconnect() throw()
+{
+  Smart::StatusCode result;
+
+  mutexConnection.acquire();
+
+  if (statusConnected == 0) {
+    result = Smart::SMART_OK;
+  } else {
+    //
+    // from now on no new getUpdate / getUpdateWait can be initiated anymore since
+    // we hold the mutexConnection and it is released only after the status is already
+    // set to "disconnected"
+    //
+
+    this->unsubscribe();
+
+    // hint: blocking calls etc. at the client are signalled inside unsubscribe()
+
+    //
+    // it is important to set statusConnected to 0 AFTER calling unsubscribe since
+    // unsubscribe itself checks the statusConnected flag and executes unsubscribe
+    // only in case a connection to a server is available
+    //
+    statusConnected = 0;
+
+    //
+    // now perform clean up operations at the server
+    //
+    result = Smart::SMART_OK;
+
+    //<alexej date="2009-04-29">
+
+    //
+    //
+    //
+    monitorDisconnect.acquire();
+       //
+       // reset condition variable with pseudo cid (not really needen in disconnect)
+       //
+       monitorDisconnect.prepare();
+
+       //
+       // send disconnect message to server
+       //
+       result = serverProxy->disconnect();
+
+       //
+       // now wait for acknowledge-disconnect message
+       //
+       if(result == Smart::SMART_OK)
+       {
+          // wait on incomming connection for a period of time
+          result = monitorDisconnect.wait(); 
+       } else {
+          result = Smart::SMART_ERROR_COMMUNICATION;
+       }
+
+       //
+       // free the memory
+       //
+       serverProxy->trigger_shutdown();
+
+    //
+    //
+    //
+    monitorDisconnect.release();
+    //</alexej>
+  }
+
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::subscribe(const int &n) throw()
+{
+   Smart::StatusCode result;
+   int             state = 0;
+
+   mutexConnection.acquire();
+
+   if (statusConnected == 0) {
+      //
+      // no connection available
+      //
+      result = Smart::SMART_DISCONNECTED;
+
+      mutexConnection.release();
+
+      return result;
+   }
+
+   if (statusSubscribed == 1) {
+      //
+      // already subscribed
+      //
+      result = Smart::SMART_OK;
+
+      mutexConnection.release();
+
+      return result;
+   }
+
+   // check whether update cycle makes sense
+   if (n < 1) {
+      mutexConnection.release();
+
+      return Smart::SMART_ERROR;
+   }
+
+   result = Smart::SMART_OK;
+
+   //<alexej date="2009-11-19">
+
+   monitorSubscription.acquire();
+
+   monitorSubscription.prepare(0);
+
+   result = serverProxy->subscribe(n, ++session_id);
+
+   if(result == Smart::SMART_OK)
+   {
+      //acknowledge disconnect can only be expected, if disconnect message is sent correctly
+      result = monitorSubscription.wait();
+   }
+   //</alexej>
+
+
+   if (result == Smart::SMART_OK) {
+      state = monitorSubscription.getStatusA0();
+   }
+
+   monitorSubscription.release();
+
+   if (result == Smart::SMART_OK) {
+      dataAvailable    = 0;
+      statusSubscribed = 1;
+      statusServer     = state;
+
+      if (statusServer == 1) {
+         //
+         // see detailed documentation on that type of condition variable
+         //
+         cond.blockingPattern(true);
+      }
+   } else {
+      dataAvailable    = 0;
+      statusSubscribed = 0;
+
+      //
+      // see detailed documentation on that type of condition variable
+      //
+      // setting the cancel flag inside the condition variable avoids
+      // blocking calls while this client is unsubscribed. The cancel
+      // flag causes a wait on the CV to return immediately. The cancel
+      // flag mechanism avoids infinite blocking waits when getUpdateWait
+      // and unsubscribe are executed concurrently. Otherwise unsubscribe
+      // could be executed between the test on subscribe and the waitForCond
+      // of the getUpdateWait method. Since getUpdateWait must release the
+      // mutexConnection before calling waitForCond we would now block
+      // infinitely.
+      //
+
+      // (if unsubscribed then state of server always deactivated to simplify
+      //  state interpretation in getUpdateWait ... )
+      statusServer = 0;
+      cond.blockingPattern(false);
+
+      result = Smart::SMART_ERROR;
+   }
+
+   mutexConnection.release();
+
+   return result;
+}
+
+//
+//
+//
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::unsubscribe() throw()
+{
+  Smart::StatusCode result;
+
+  mutexConnection.acquire();
+
+  if ((statusConnected == 0) && (statusSubscribed == 1)) {
+    //
+    // no connection available and still subscribed is not possible
+    //
+    result = Smart::SMART_ERROR;
+
+    mutexConnection.release();
+
+    return result;
+  }
+
+  if (statusSubscribed == 0) {
+    //
+    // already unsubscribed, connection status not relevant
+    //
+    result = Smart::SMART_OK;
+
+    mutexConnection.release();
+
+    return result;
+  }
+
+  result = Smart::SMART_OK;
+  //<alexej date="09.10.2008">
+  result = serverProxy->unsubscribe();
+  //</alexej>
+
+
+  if (result == Smart::SMART_OK) {
+    // successfully unsubscribed
+    statusSubscribed = 0;
+    dataAvailable    = 0;
+    statusServer     = 0;
+
+    cond.blockingPattern(false);
+  } else {
+    result = Smart::SMART_ERROR;
+  }
+
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::blocking(const bool b) throw()
+{
+  Smart::StatusCode result = Smart::SMART_OK;
+
+  cond.blockingUser(b);
+
+  return result;
+}
+
+//
+//
+//
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdate(T& d) throw()
+{
+  Smart::StatusCode result;
+
+  mutexConnection.acquire();
+  if (statusConnected == 1) {
+    if (statusSubscribed == 1) {
+      if (dataAvailable == 1) {
+        if (statusServer == 1) {
+          d = data;
+          result = Smart::SMART_OK;
+        } else {
+          result = Smart::SMART_NODATA;
+        }
+      } else {
+        result = Smart::SMART_NOTACTIVATED;
+      }
+    } else {
+      result = Smart::SMART_UNSUBSCRIBED;
+    }
+  } else {
+    result = Smart::SMART_DISCONNECTED;
+  }
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdateWait(T& d, const std::chrono::steady_clock::duration &timeout) throw()
+{
+  Smart::StatusCode status;
+  Smart::StatusCode result;
+
+  //
+  // Now wait till the condition variable gets triggered the next time.
+  // Blocks only if client is connected and subscribed to a service provider which
+  // is also activated.
+  // See details of this type of condition variable and how the "reset"/"cancel"
+  // methods are applied within subscribe/unsubscribe and within the state change
+  // handler.
+  //
+  if(timeout == std::chrono::steady_clock::duration::zero()) {
+	  // max_time means infinite blocking until released (no timeout value needs to be passed to cond-var)
+	  status = cond.wait();
+  } else {
+	  status = cond.wait(convertToAceTimeFrom(timeout));
+  }
+
+  mutexConnection.acquire();
+
+  if (status == Smart::SMART_OK) {
+    //
+    // condition variable triggered with SMART_OK and therefore new data available
+    //
+    d = data;
+    result = Smart::SMART_OK;
+  } else if (status == Smart::SMART_CANCELLED) {
+    //
+    // "cancelled" can mean "server is passive", "got unsubscribed", "got disconnected" or "got cancelled due to state change"
+    //
+    if (statusServer == 1) {
+      // connected(1),subscribed(1),server(1) => therefore "cancelled" results from enforced state change
+      result = Smart::SMART_CANCELLED;
+    } else if (statusSubscribed == 1) {
+      // connected(1),subscribed(1),server(0) => server got deactivated
+      result = Smart::SMART_NOTACTIVATED;
+    } else if (statusConnected == 1) {
+      // connected(1),subscribed(0),server(0) => client got unsubscribed
+      result = Smart::SMART_UNSUBSCRIBED;
+    } else if (statusConnected == 0) {
+      // connected(0),subscribed(0),server(0) => client got disconnected
+      result = Smart::SMART_DISCONNECTED;
+    } else {
+      result = Smart::SMART_ERROR;
+    }
+  } else if(status == Smart::SMART_TIMEOUT) {
+	  result = status;
+  } else {
+    result = Smart::SMART_ERROR;
+  }
+
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::getServerInfo(SmartTimeValue& t,bool& r) throw()
+{
+  Smart::StatusCode result;
+  //int s;
+
+  mutexConnection.acquire();
+
+  result = Smart::SMART_OK;
+  if (statusConnected == 0) 
+  {
+    result = Smart::SMART_DISCONNECTED;
+  } else {
+   //<alexej date="2009-04-29">
+
+   //
+   //
+   //
+     monitorServerInfo.acquire();
+
+     monitorServerInfo.prepare(0);
+
+     // "get server info" is divided into two messages.
+     // The first message sends the "get server info" request.
+     // Then this function blocks and waits for "server info" reply.
+     // Following statement is the call for the first message.
+     result = serverProxy->getServerInformation();
+
+     if(result == Smart::SMART_OK)
+     {
+        //acknowledge disconnect can only be expected, if disconnect message is sent correctly
+        result = monitorServerInfo.wait();
+     }
+
+     //
+     // now wait for "server info" reply message
+     //
+     if(result == Smart::SMART_OK)
+     {
+        t = this->minCycleTime;
+
+        if (monitorServerInfo.getStatusA0() == 1) {
+           r = true;
+        } else {
+           r = false;
+        }
+     }
+
+     monitorServerInfo.release();
+     //</alexej>
+  }
+
+  mutexConnection.release();
+
+  return result;
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////
+//
+// server part of push timed template
+//
+/////////////////////////////////////////////////////////////////////////
+
+//
+// static handle method called by ACE object
+//
+//<alexej date="2010-03-18">
+template<class T> void SmartACE::PushServer<T>::hndConnect(void *ptr, const PushServerServiceHandler* client, int cid, const ACE_Utils::UUID &serviceID)
+//</alexej>
+{
+   PushServer<T>* lthis = (PushServer<T> *)ptr;
+   PushClientList* cptr;
+   PushServerServiceHandler *client_ptr;
+
+   lthis->mutexClientList.acquire();
+
+   client_ptr = const_cast<PushServerServiceHandler*>(client);
+
+   if (lthis->serverReady == 0) {
+      //
+      // don't accept any new clients since server is in process of destruction or not yet ready
+      //
+      client_ptr->acknowledgmentConnect(cid, Smart::SMART_SERVICEUNAVAILABLE);
+   } else {
+
+      if( serviceID != *(lthis->service_identifier) ) {
+         // reject connection due to wrong service-identifier
+         // this is the case if naming-service entries are out-dated
+         client_ptr->acknowledgmentConnect(cid, Smart::SMART_SERVICEUNAVAILABLE);
+      } else if( client_ptr->acknowledgmentConnect(cid, Smart::SMART_OK) == Smart::SMART_OK ) {
+         // Acknowledgement successfully transmitted, now add client to the list
+
+         //
+         // make new client list entry
+         //
+         cptr           = new PushClientList;
+
+         //<alexej date="13.11.2008">
+         //cptr->client   = SmartSendClientPattern::_duplicate(client); //old
+
+         //better: cptr->clientProxy has to be const itself (not cast to not const)
+         cptr->clientProxy = client_ptr;
+         cptr->connection_id = cid;
+         //</alexej>
+
+         cptr->subscribed     = 0;
+         cptr->ctrReset       = 0;
+         cptr->ctrCurrent     = 0;
+         cptr->next           = lthis->subscriptions;
+         lthis->subscriptions = cptr;
+      }
+   }
+
+   lthis->mutexClientList.release();
+}
+
+
+//
+// static handle method called by ACE object
+//
+template<class T> void SmartACE::PushServer<T>::hndDiscard(void* ptr, const PushServerServiceHandler *client)
+{
+   PushServer<T>* lthis  = (PushServer<T> *)ptr;
+   PushClientList* cptr  = 0;
+   PushClientList* hcptr = 0;
+
+   lthis->mutexClientList.acquire();
+
+   //
+   // first remove entries from head as long as they match the client object
+   //
+   while ( (lthis->subscriptions != 0) && (client == lthis->subscriptions->clientProxy) )
+   {
+      // iterate to the next element in the list
+      cptr = lthis->subscriptions;
+      lthis->subscriptions = lthis->subscriptions->next;
+
+      // clean up current node
+      //cptr->clientProxy->close(1);
+      delete cptr;
+   }
+
+   //
+   // now search through the rest of the list which might be empty already. If the
+   // length is greater than zero, than the first element never matches and never
+   // gets deleted
+   //
+   cptr = lthis->subscriptions;
+   if (cptr == 0) {
+      // list contains no element anymore => ready
+   } else {
+      // list can now contain one or more elements with the first element matching never
+      while (cptr->next != 0) {
+         if ( client == cptr->next->clientProxy ) {
+            hcptr      = cptr->next;
+            cptr->next = cptr->next->next;
+            // clean up current node
+            //hcptr->clientProxy->close(1);
+            delete hcptr;
+         } else {
+            cptr = cptr->next;
+         }
+      }
+   }
+
+   if (lthis->serverReady == 0) {
+      // If the server is not ready yet the monitor-signal has no effect.
+      // If server is in process of destruction then the monitor is signalled
+      // to release the destructor of the server.
+      if(lthis->subscriptions == 0) {
+         lthis->monitorServerInitiatedDisconnect.broadcast();
+      }
+   }
+
+   lthis->mutexClientList.release();
+}
+
+
+//
+// static handle method called by ACE object
+//
+template<class T> void SmartACE::PushServer<T>::hndDisconnect(void* ptr, const PushServerServiceHandler *client)
+{
+   PushServer<T>* lthis  = (PushServer<T> *)ptr;
+   PushClientList* cptr  = 0;
+   PushClientList* hcptr = 0;
+
+   lthis->mutexClientList.acquire();
+
+   //
+   // remove client from list of clients
+   //
+
+   //
+   // first remove entries from head as long as they match the client object
+   //
+   while ( (lthis->subscriptions != 0) && (client == lthis->subscriptions->clientProxy) )
+   {
+      cptr = lthis->subscriptions;
+      lthis->subscriptions = lthis->subscriptions->next;
+      // acknowledge disconnect
+      if( cptr->clientProxy->acknowledgmentDisconnect() == Smart::SMART_OK ) {
+         // clean up current node
+         cptr->clientProxy->trigger_shutdown();
+         delete cptr;
+      }
+   }
+
+   //
+   // now search through the rest of the list which might be empty already. If the
+   // length is greater than zero, than the first element never matches and never
+   // gets deleted
+   //
+   cptr = lthis->subscriptions;
+   if (cptr == 0) {
+      // list contains no element anymore => ready
+   } else {
+      // list can now contain one or more elements with the first element matching never
+      while (cptr->next != 0) {
+         if ( client == cptr->next->clientProxy ) {
+            hcptr      = cptr->next;
+            cptr->next = cptr->next->next;
+            // acknowledge disconnect
+            if( hcptr->clientProxy->acknowledgmentDisconnect() == Smart::SMART_OK ) {
+               // clean up current node
+               hcptr->clientProxy->trigger_shutdown();
+               delete hcptr;
+            }
+         } else {
+            cptr = cptr->next;
+         }
+      }
+   }
+
+   if (lthis->serverReady == 0) {
+      // If the server is not ready yet the monitor-signal has no effect.
+      // If server is in process of destruction then the monitor is signalled
+      // to release the destructor of the server.
+      if(lthis->subscriptions == 0) {
+         lthis->monitorServerInitiatedDisconnect.broadcast();
+      }
+   }
+
+   lthis->mutexClientList.release();
+}
+
+
+//
+// static handle method called by ACE object
+//
+template<class T> void SmartACE::PushServer<T>::hndSubscribe(void *ptr, const PushServerServiceHandler *client, const int &n, const int& sid)
+{
+   PushServer<T>* lthis = (PushServer<T> *)ptr;
+   PushClientList* cptr;
+   PushServerServiceHandler *client_ptr;
+
+   lthis->mutexClientList.acquire();
+
+   client_ptr = const_cast<PushServerServiceHandler*>(client);
+
+   cptr = lthis->subscriptions;
+   while (cptr != 0) {
+      //<alexej date="2009-04-29">
+      //if (client->_is_equivalent(cptr->client)) {
+      if (client == cptr->clientProxy) {
+         //</alexej>
+         // Important hint:
+         //
+         // The ctr is initialized to 1 because this provides new data to the newly
+         // subscribed client with the next update which is as soon as possible !
+         cptr->subscribed = 1;
+         cptr->ctrReset   = n;
+         cptr->ctrCurrent = 1;
+         cptr->subscription_id = sid;  // <alexej date="2009-09-09" descr="added sid"/>
+      }
+      cptr = cptr->next;
+   }
+
+   // acknowledge subscribe with appropriate state
+   client_ptr->acknowledgmentSubscribe(lthis->serverReady);
+
+   lthis->mutexClientList.release();
+}
+
+//
+// static handle method called by ACE object
+//
+template<class T> void SmartACE::PushServer<T>::hndUnsubscribe(void *ptr, const PushServerServiceHandler *client)
+{
+  PushServer<T>* lthis = (PushServer<T> *)ptr;
+  PushClientList *cptr;
+
+  lthis->mutexClientList.acquire();
+
+  cptr = lthis->subscriptions;
+  while (cptr != 0) {
+	//<alexej date="2009-04-29">
+    //if (client->_is_equivalent(cptr->client)) {
+	if (client == cptr->clientProxy) {
+	//</alexej>
+      cptr->subscribed = 0;
+      cptr->ctrReset   = 0;
+      cptr->ctrCurrent = 0;
+    }
+    cptr = cptr->next;
+  }
+
+  lthis->mutexClientList.release();
+}
+
+//
+// static handle method called by ACE object
+//
+template<class T> void SmartACE::PushServer<T>::hndServerInfo(void *ptr, const PushServerServiceHandler *client)
+{
+  PushServer<T>* lthis = (PushServer<T> *)ptr;
+  PushServerServiceHandler *client_ptr;
+
+  lthis->mutexClientList.acquire();
+
+  client_ptr = const_cast<PushServerServiceHandler*>(client);
+
+  client_ptr->serverInformation(lthis->minCycleTime.msec(), lthis->serverReady);
+
+  lthis->mutexClientList.release();
+}
+
+//
+// default constructor
+//
+template<class T> inline SmartACE::PushServer<T>::PushServer(void) throw(SmartACE::SmartError)
+{
+  std::cerr << "CommPattern (Push): ERROR: Entered default constructor PushServer" << std::endl;
+  timer = 0;
+  serverReady = 0;
+  component = 0;
+  subscriptions = 0;
+  acceptor = 0;
+  service_identifier = 0;
+  throw(SmartACE::SmartError(Smart::SMART_ERROR,"CommPattern (Push): ERROR: Entered default constructor PushServer"));
+}
+
+//
+// standard constructor
+//
+template<class T> inline SmartACE::PushServer<T>::PushServer(SmartComponent* m,
+            const std::string& svc, const SmartTimeValue &minCycleTime) throw(SmartACE::SmartError)
+  : Smart::IPushServerPattern<T>(m,svc),
+	uuid_genrator(),
+    service_identifier(0),
+    component(m),
+    service(svc),
+    serverReady(0),
+	minCycleTime(minCycleTime),
+	lastPushTime(SmartTimeValue::zero),
+	timer(0)
+{
+   mutexClientList.acquire();
+
+   // reset list, counter and other stuff
+   subscriptions = 0;
+
+   component->addSmartMonitor(&monitorServerInitiatedDisconnect);
+
+   //<alexej date="2010-03-18">
+   acceptor = new PushServerAcceptor
+      (
+         (void *)this,
+         &PushServer<T>::hndConnect,
+         &PushServer<T>::hndDiscard,
+         &PushServer<T>::hndDisconnect,
+         &PushServer<T>::hndSubscribe,
+         &PushServer<T>::hndUnsubscribe,
+         &PushServer<T>::hndServerInfo,
+         component->getReactorTask()->getImpl()
+      );
+
+
+   // local variables
+   bool use_ns = true;
+   Smart::StatusCode result = Smart::SMART_OK;
+
+   SmartACE::NSKeyType key;
+   key.names[SmartACE::NSKeyType::COMP_NAME] = component->getName().c_str();
+   key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Push");
+   key.names[SmartACE::NSKeyType::SERVICE_NAME] = service.c_str();
+   key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = T::identifier().c_str();
+   ACE_TString name = key; // get string representation of the key
+
+   SmartACE::NSValueType value;
+
+   if(component->getName().compare(SMART_NONS) == 0)
+   {
+      ACE_INET_Addr addr_to_listen;
+      if(addr_to_listen.string_to_addr(svc.c_str()) == 0) {
+         use_ns = false;
+         value.setInetAddr(addr_to_listen);
+      } else {
+         result = Smart::SMART_ERROR;
+      }
+   }
+
+   if(result == Smart::SMART_OK)
+   {
+      // try to open acceptor
+      if( acceptor->open (value.getInetAddr(), component->getReactorTask()->getImpl()) == 0 ) {
+         // acceptor successfull opened
+         // get the real inet adress
+         ACE_INET_Addr addr_to_listen;
+         if( acceptor->acceptor().get_local_addr(addr_to_listen) == 0 ) {
+            if(use_ns) {
+               // temporary dummy variable
+            	SmartACE::NSValueType dummy;
+
+               // check if port is already used
+               if( SmartACE::NAMING::instance()->resolve(key, dummy) == 0 ) {
+                  SMARTSOFT_PRINT(ACE_TEXT("- %s is already in use - will be rebound silently.\n"), name.c_str() );
+                  result = Smart::SMART_PORTALREADYUSED;
+               }
+
+               //<alexej date="2010-03-18">
+               uuid_genrator.init();
+               service_identifier = uuid_genrator.generate_UUID();
+               //</alexej>
+               value.set(addr_to_listen, *service_identifier);
+
+               if( SmartACE::NAMING::instance()->rebind(key, value) == 0 ) {
+                  serverReady = 1;
+                  SMARTSOFT_PRINT( ACE_TEXT("- %s is ready and running on address: <%s:%d>\n"), name.c_str(), addr_to_listen.get_host_addr(), addr_to_listen.get_port_number() );
+               }else{
+                  SMARTSOFT_PRINT( ACE_TEXT("- %s rebinding error!"), name.c_str() );
+               }
+            }else{
+               serverReady = 1;
+               SMARTSOFT_PRINT( ACE_TEXT("- %s is ready and running on address: <%s:%d>\n"), name.c_str(), addr_to_listen.get_host_addr(), addr_to_listen.get_port_number() );
+            }
+         } // end if(use_ns)
+      } // end if(acceptor->get_local_addr() == 0)
+   } // end if(result == Smart::SMART_OK)
+   //</alexej>
+
+  mutexClientList.release();
+}
+
+//
+// default destructor
+//
+template<class T> inline SmartACE::PushServer<T>::~PushServer(void) throw()
+{
+	this->serverInitiatedDisconnect();
+
+   //<alexej date="2010-03-18">
+   if(component->getName().compare(SMART_NONS) != 0)
+   {
+	   SmartACE::NSKeyType key;
+      key.names[SmartACE::NSKeyType::COMP_NAME] = component->getName().c_str();
+      key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Push");
+      key.names[SmartACE::NSKeyType::SERVICE_NAME] = service.c_str();
+      key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = T::identifier().c_str();
+
+      SmartACE::NAMING::instance()->unbind(key);
+   }
+
+   if(service_identifier != 0)
+      delete service_identifier;
+  //</alexej>
+
+  //
+  // - pending disconnects from clients can now get the mutexClientList and can
+  //   therefore execute their disconnect
+  // - since serverReady == 0, from now on all modifications on the list of clients
+  //   are rejected inside the disconnect handler
+  // - therefore one can step through the list of clients without requiring to hold
+  //   the mutexClientList and can call disconnect at the client side
+  // - the server has to call the client's disconnect outside the mutexClientList since
+  //   the client calls back the server within the disconnect member function and the
+  //   server handler requires the mutexClientList
+  // - Concurrent calls to the client's disconnect member function from this server
+  //   and from the client are not critical since disconnects are executed sequentially
+  //   in the client due to the client's mutexConnection
+  //
+}
+
+template<class T> inline void SmartACE::PushServer<T>::serverInitiatedDisconnect()
+{
+	   PushClientList *cptr = 0;
+	   PushClientList *prevcptr = 0;
+
+	   mutexClientList.acquire();
+	   //
+	   // since we now have the mutex, connects and disconnects from clients can not be
+	   // executed while modifying the server state to serverReady = 0. From now on any
+	   // tries to connect to this server are rejected
+	   //
+	   serverReady = 0;
+
+	   monitorServerInitiatedDisconnect.reset();
+
+	   acceptor->close_handler();
+
+	   cptr = subscriptions;
+	   while (cptr != 0) {
+	    if( cptr->clientProxy->serverInitiatedDisconnect( cptr->connection_id ) != Smart::SMART_OK )
+	    {
+	      // clientProxy could not communicate SID message.
+	      // The reason can be that the connection is broken or a communication error occured.
+	      // Since we are now in the destructor, it is safe to just remove this reference.
+	      if(subscriptions == cptr) {
+	        // the current cptr is the first element
+	        // we will remove the first element, so set the subscriptions pointer to the next lement
+	        subscriptions = subscriptions->next;
+	        // clean up
+	        cptr->clientProxy->trigger_shutdown();
+	        delete cptr;
+	        // set the current pointer to the beginning of the list
+	        cptr = subscriptions;
+	      } else {
+	        // cptr points NOT to the first element in the list
+	        prevcptr->next = cptr->next;
+	        cptr->clientProxy->trigger_shutdown();
+	        delete cptr;
+	        cptr = prevcptr->next;
+	      }
+	    } else {
+	      prevcptr = cptr;
+	      cptr = cptr->next;
+	    }
+	   }
+
+	   if(subscriptions == 0) {
+	      monitorServerInitiatedDisconnect.broadcast();
+	   }
+	   mutexClientList.release();
+
+	   //<alexej date="2009-04-29">
+	   monitorServerInitiatedDisconnect.wait();
+	   component->removeSmartMonitor(&monitorServerInitiatedDisconnect);
+
+	   acceptor->close();
+	   delete acceptor;
+	   //</alexej>
+}
+
+
+//
+//
+//
+//template<class T> Smart::StatusCode SmartACE::PushServer<T>::start() throw()
+//{
+//  Smart::StatusCode result = Smart::SMART_OK;
+//  PushClientList* lptr;
+//  ACE_Time_Value timeValue;
+//
+//  mutexClientList.acquire();
+//
+//  // checked whether already started
+//  if (running == 0) {
+//    // not yet started => reset every counter to make sure that every
+//    // client gets its first update as soon as possible
+//    lptr = subscriptions;
+//    while (lptr != 0) {
+//      lptr->ctrCurrent = 1;
+//      lptr = lptr->next;
+//    }
+//
+//    // set appropriate cycle time
+//    timeValue.set(cycleTime);
+//
+//    // register push service at the timer
+//    timer = component->getTimerThread().scheduleTimer(*pushHandler, (void*)0, ACE_Time_Value(0,0), timeValue);
+//
+//    // set flag appropriately
+//    running = 1;
+//
+//    // inform all subscribed clients about the server state change
+//    lptr = subscriptions;
+//    while (lptr != 0) {
+//      if (lptr->subscribed == 1) {
+//    	//<alexej date="2009-04-29">
+//    	result = lptr->clientProxy->activationState(running);
+//    	//</alexej>
+//      }
+//      lptr = lptr->next;
+//    }
+//  } else {
+//    // already started, do nothing
+//  }
+//
+//  mutexClientList.release();
+//
+//  return result;
+//}
+
+//
+//
+//
+//template<class T> Smart::StatusCode SmartACE::PushServer<T>::stop() throw()
+//{
+//  PushClientList *lptr;
+//  Smart::StatusCode result = Smart::SMART_OK;
+//
+//  mutexClientList.acquire();
+//
+//  // check whether already stopped
+//  if (running == 1) {
+//
+//    // remove push service from the timer
+//    component->getTimerThread().cancelTimer(timer);
+//
+//    // set flag appropriately
+//    running = 0;
+//
+//    // inform all subscribed clients about the server state change
+//    lptr = subscriptions;
+//    while (lptr != 0) {
+//      if (lptr->subscribed == 1) {
+//    	//<alexej date="2009-04-29">
+//    	result = lptr->clientProxy->activationState(running);
+//    	//</alexej>
+//      }
+//      lptr = lptr->next;
+//    }
+//  } else {
+//    // already stopped, do nothing
+//  }
+//
+//  mutexClientList.release();
+//
+//  return result;
+//}
+
+//
+//
+//
+template<class T> Smart::StatusCode SmartACE::PushServer<T>::put(const T& d) throw()
+{
+   PushClientList *lptr;
+   Smart::StatusCode result = Smart::SMART_OK;
+
+   mutexClientList.acquire();
+
+   if(minCycleTime != SmartTimeValue::zero)
+   {
+	   if(lastPushTime == SmartTimeValue::zero) {
+		   lastPushTime = ACE_OS::gettimeofday();
+	   } else {
+		   SmartTimeValue currTimeInterval = ACE_OS::gettimeofday() - lastPushTime;
+		   if(currTimeInterval < minCycleTime) {
+			   mutexClientList.release();
+			   return result;
+		   } else {
+		      lastPushTime = ACE_OS::gettimeofday();
+		   }
+	   }
+   }
+
+   if (serverReady == 0) {
+      result = Smart::SMART_NOTACTIVATED;
+   } else {
+      lptr = subscriptions;
+      while (lptr != 0) {
+         if (lptr->subscribed == 1) {
+            //
+            //
+            //
+            lptr->ctrCurrent--;
+            if (lptr->ctrCurrent < 1) {
+               //
+               // this client now has to be updated
+               //
+               lptr->ctrCurrent = lptr->ctrReset;
+
+               //<alexej date="2009-04-29">
+               //
+               // Message data buffer (for holding serialized CommObj data)
+               //
+               SmartMessageBlock *any = 0;
+
+               //
+               // Get(serialize) CommObj data and store it in MessageBlock
+               //
+               d.get(any);
+
+               //
+               // send Message to client
+               //
+               result = lptr->clientProxy->update(any, lptr->subscription_id);
+               //ACE_DEBUG((LM_DEBUG, ACE_TEXT("put()\n") ));
+
+
+               //
+               // Release(free) message memory, otherwise memory leaks will ocur.
+               //
+               any->release();
+               //</alexej>
+            }
+         } // end if(lptr->subscribed == 1)
+         lptr = lptr->next;
+      } // end while(lptr != 0)
+   } // end if(serverReady == 1)
+
+   mutexClientList.release();
+
+   return result;
+}
+

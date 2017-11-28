@@ -179,7 +179,7 @@ Smart::StatusCode SmartACE::SmartComponent::run( void )
    Smart::StatusCode result = Smart::SMART_OK;
 
    // open thread for managing all server-initiated-disconnects in this component
-   srvInitDiscHandler.open();
+   srvInitDiscHandler.start();
 
    // if meanwile strg+c was called -> return immediatelly, without waiting on substate or reactor
    if(!first_call_of_handle_signal) return Smart::SMART_ERROR;
@@ -203,8 +203,7 @@ Smart::StatusCode SmartACE::SmartComponent::run( void )
 //      getStateSlave()->release("shutdown");
    } else {
      // block this thread until component is commaned to shut down...
-     SmartGuard guard(mutex);
-     runtimeCondVar.wait();
+     this->waitOnRuntimeCondVar();
    }
    ///////////////////////////////////////////////////////////
    //                                                       //
@@ -270,6 +269,7 @@ void SmartACE::SmartComponent::cleanUpInternalResources()
 
       // 2) stop component's internal SID management thread
       srvInitDiscHandler.stop_mqueue();
+      srvInitDiscHandler.stop();
 
       // 3) finally stop the reactor's event-loop 
       // (no event-handling is possible from now on)

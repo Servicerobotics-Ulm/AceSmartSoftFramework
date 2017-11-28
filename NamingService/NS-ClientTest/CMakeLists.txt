@@ -1,0 +1,5 @@
+
+ADD_EXECUTABLE(${PROJECT_NAME}ClientTest main.cpp)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}ClientTest AceSmartSoftKernel)
+
+INSTALL(TARGETS ${PROJECT_NAME}ClientTest DESTINATION bin/NamingService)

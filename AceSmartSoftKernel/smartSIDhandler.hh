@@ -80,10 +80,9 @@ namespace SmartACE {
             * Main work routine. It reacts on an internal active message queue.
             * Gets all SID requests from this queue and performs them.
             */
-           int svc();
+           virtual int task_execution();
 
-           // close hook
-           int close(u_long=0);
+           virtual void on_shutdown();
 
            // @internal mutex
            SmartMutex sid_mutex;

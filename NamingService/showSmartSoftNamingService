@@ -1,0 +1,13 @@
+#!/bin/bash
+
+  if test -e $SMART_ROOT_ACE/bin/NamingService/SmartSoftNamingServiceList
+  then
+    $SMART_ROOT_ACE/bin/NamingService/SmartSoftNamingServiceList
+  else
+    if test -e /usr/bin/SmartSoftNamingServiceList
+    then
+      /usr/bin/SmartSoftNamingServiceList
+    else
+      echo "ERROR: could not find /usr/bin/SmartSoftNamingServiceList!"
+    fi
+  fi  

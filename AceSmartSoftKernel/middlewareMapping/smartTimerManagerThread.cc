@@ -32,6 +32,8 @@
 
 #include "smartTimerManagerThread.hh"
 
+#include "smartOSMapping.hh"
+
 using namespace SmartACE;
 
 //=============================================================================
@@ -204,7 +206,7 @@ TimerManagerThread::scheduleTimer(
 		const std::chrono::steady_clock::duration &interval)
 {
   // absolute time.
-  ACE_Time_Value absolute_time(std::chrono::system_clock::now()+first_time);
+  ACE_Time_Value absolute_time = timer_queue.gettimeofday () + convertToAceTimeFrom(first_time);
 
   // Only one guy goes in here at a time
   ACE_Guard<ACE_SYNCH_RECURSIVE_MUTEX> guard(timer_queue.mutex());
@@ -230,7 +232,7 @@ TimerManagerThread::scheduleTimer(
       }
   }
   if(result != -1) {
-	  handlers.set(handler);
+	  handlers.insert(handler);
   }
   return result;
 }

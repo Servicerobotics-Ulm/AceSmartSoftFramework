@@ -42,12 +42,6 @@ namespace SmartACE {
   class Task : virtual public Smart::ITask, public ACE_Task<ACE_MT_SYNCH>
     // = TITLE
   {
-  private:
-		/// @internal variable to consider only the first call of start() function
-		bool thread_started;
-
-		/// @internal Mutex
-		SmartRecursiveMutex mutex;
   public:
     // = Initialization
 
@@ -78,8 +72,28 @@ namespace SmartACE {
      */
     virtual bool test_canceled();
 
+    /** Blocks execution of the calling thread during the span of time specified by rel_time.
+     *
+     *  Thread-sleeping is sometimes platform-specific. This method encapsulates the
+     *  blocking sleep. Calling this method blocks the execution of the calling thread
+     *  for a time specified by rel_time.
+     *
+     *  @param rel_time relative time duration for the thread to sleep
+     */
+    virtual void sleep_for(const std::chrono::steady_clock::duration &rel_time);
+
+    /// implements ACE_Task<ACE_MT_SYNCH>
+    virtual int svc (void);
+
     int setCpuAffinity(const int &cpuCore);
     int setSchedParams(const ACE_Sched_Params &sched_params);
+
+  private:
+		/// @internal variable to consider only the first call of start() function
+		bool thread_started;
+
+		/// @internal Mutex
+		SmartRecursiveMutex mutex;
   };
   
 }

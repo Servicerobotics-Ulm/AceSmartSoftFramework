@@ -32,13 +32,28 @@
 
 #include "smartTask.hh"
 
+#include "smartOSMapping.hh"
+
+// using ACE_OS::sleep(...)
+#include <ace/OS_NS_unistd.h>
+
+
 SmartACE::Task::Task(Smart::IComponent *component)
 :	thread_started(false)
 ,	Smart::ITask(component)
-{  }
+{
+	// check if a proper pointer has been used, otherwise use the task without a component
+	if(component != 0) {
+		this->attach_self_to(component);
+	}
+}
 
 SmartACE::Task::~Task()
 {  }
+
+int SmartACE::Task::svc(void) {
+	return this->task_execution();
+}
 
 int SmartACE::Task::start() {
 	ACE_GUARD_RETURN(SmartRecursiveMutex, guard, mutex, -1);
@@ -83,17 +98,25 @@ int SmartACE::Task::start(const ACE_Sched_Params &sched_params, const int &cpuAf
 int SmartACE::Task::stop(const bool wait_till_stopped)
 {
 	ACE_GUARD_RETURN(SmartRecursiveMutex, guard, mutex, -1);
-	int retval = ACE_Thread_Manager::instance()->cancel_task(this);
-	if(wait_till_stopped == true) {
-		retval = ACE_Thread_Manager::instance()->wait_task(this);
+	int retval = 0;
+	if(thread_started == true) {
+		retval = ACE_Thread_Manager::instance()->cancel_task(this);
+		if(wait_till_stopped == true) {
+			retval = ACE_Thread_Manager::instance()->wait_task(this);
+		}
+		thread_started = false;
 	}
-	thread_started = false;
 	return retval;
 }
 
 bool SmartACE::Task::test_canceled()
 {
 	return ACE_Thread_Manager::instance()->testcancel(ACE_Thread::self());
+}
+
+void SmartACE::Task::sleep_for(const std::chrono::steady_clock::duration &rel_time)
+{
+	ACE_OS::sleep(convertToAceTimeFrom(rel_time));
 }
 
 int SmartACE::Task::setSchedParams(const ACE_Sched_Params &sched_params)

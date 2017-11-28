@@ -45,12 +45,13 @@ CONFIGURE_FILE(
 )
 
 
-#FIXME
-SET(SmartSoftAPI_INCLUDES "$ENV{HOME}/SOFTWARE/SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API")
+INCLUDE(${PROJECT_SOURCE_DIR}/LoadSmartSoftApi.cmake)
+LoadSmartSoftApi(${PROJECT_BINARY_DIR}/SmartSoftAPI)
+#SET(SmartSoftAPI_INCLUDES "$ENV{HOME}/SOFTWARE/SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API")
 
 
 # OS mapping sources
-FILE(GLOB OSMappingSrc *.cc)
+FILE(GLOB OSMappingSrc middlewareMapping/*.cc)
 
 # Kernel implementation sources
 FILE(GLOB kernelSrc *.cc)
@@ -76,6 +77,8 @@ TARGET_COMPILE_FEATURES(${PROJECT_NAME} PUBLIC cxx_auto_type)
 
 # link SmartSoftKernel with the ACE library
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ACE)
+
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} SmartSoft_CD_API)
 
 # define include paths for the SmartSoftKernel target
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC

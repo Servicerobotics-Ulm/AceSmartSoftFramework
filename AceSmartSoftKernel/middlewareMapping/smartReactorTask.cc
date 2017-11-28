@@ -106,7 +106,7 @@ void ReactorTask::deactivateCustomEventsMode()
    }
 }
 
-int ReactorTask::svc(void)
+int ReactorTask::task_execution()
 {
    ACE_TRACE("ReactorTask::svc");
    bool useCustomEvents = false;
@@ -197,11 +197,12 @@ int ReactorTask::stopReactor(const bool &waitForCompletion)
    // end reactor's event loop (should cause the thread to close its internal loop)
    reactor.end_reactor_event_loop();
 
-   if (waitForCompletion) {
-      // wait on internal thread to close
-      ACE_Thread_Manager::instance()->wait_task(this);
-   }
-   return 0;
+   return this->stop(waitForCompletion);
+}
+
+void ReactorTask::on_shutdown() {
+	ACE_TRACE("ReactorTask::on_shutdown");
+	// do nothing, reactor task will be shut down manually by the component
 }
 
 ACE_thread_t ReactorTask::getReactorOwnerThread() const

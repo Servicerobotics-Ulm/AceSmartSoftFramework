@@ -1,0 +1,1623 @@
+// --------------------------------------------------------------------------
+//
+//  Copyright (C) 2002/2004/2008 Christian Schlegel
+//                2009 Alex Lotz
+//
+//        lotz@hs-ulm.de
+//        schlegel@hs-ulm.de
+//
+//        Prof. Dr. Christian Schlegel
+//        University of Applied Sciences
+//        Prittwitzstr. 10
+//        D-89075 Ulm
+//        Germany
+//
+//
+//  This file is part of ACE/SmartSoft.
+//
+//  ACE/SmartSoft is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  ACE/SmartSoft is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with ACE/SmartSoft.  If not, see <http://www.gnu.org/licenses/>.
+//
+// --------------------------------------------------------------------------
+
+#include <sstream>
+
+
+/////////////////////////////////////////////////////////////////////////
+//
+// client part of query template
+//
+/////////////////////////////////////////////////////////////////////////
+
+template<class R, class A> void SmartACE::QueryClient<R,A>::hndAnsw(void* ptr, const SmartACE::SmartMessageBlock *user, int cltId)
+{
+  QueryClient<R,A> *lthis = (QueryClient<R,A> *)ptr;
+  QueryClientList  *lptr = 0;
+
+  //
+  // hint: mutexConnection need not be acquired here since client can not get
+  //       disconnected or destroyed while this handler is being executed. The
+  //       server posseses the mutexClientList all the time this handler is being
+  //       executed. Since this mutex is also needed to finish a disconnect, this
+  //       handler is first finished for sure before a disconnect is executed.
+  //
+  //       Acquiring mutexConnection in handlers can even result in deadlocks.
+  //       Calling queryRequest holds the mutexConnection and a concurrent call
+  //       to the answer member function at the server holds the counterpart
+  //       mutexClientList. Neither call can be finished if the handlers now
+  //       also try to get the mutexConnection or the mutexClientList.
+  //
+  lthis->mutexQueryList.acquire();
+
+  for( lptr = lthis->queries; lptr != 0; lptr = lptr->next )
+    if( lptr->id == cltId )
+      break;
+
+  if( lptr != 0 ) {
+    if (lptr->querystatus == Smart::QUERY_PENDING) {
+      //
+      // everything is ok, answer is expected
+      //
+      lptr->a.set(user);
+      lptr->querystatus = Smart::QUERY_VALIDANSWER;
+      lptr->cond.signal();
+    } else if (lptr->querystatus == Smart::QUERY_DISCONNECTED) {
+      //
+      // the client is not interested anymore in this answer since answer
+      // has been received after a disconnect and this pending query is
+      // marked as being obsolete. The query id is however still available
+      // since the user has not yet asked for the result. As soon as the
+      // user tries to fetch the result he gets a SMART_DISCONNECTED and
+      // this entry is removed from the list of pending queries.
+      // Discard answer.
+      //
+    } else if (lptr->querystatus == Smart::QUERY_VALIDANSWER) {
+      //
+      // should not happen since this would mean that we have two
+      // answers for one query, therefore discard received answer
+      //
+    } else {
+      //
+      // something is completely wrong with the status of the pending query
+      // do nothing and discard received answer
+      //
+    }
+  } else {
+    //
+    // do nothing since answer has been received after query has been discarded
+    // by the user and therefore corresponding entry does not exist any longer.
+    // Doesn't matter since in this case no thread is waiting for the answer since
+    // removing an entry from the list of pending queries is ony possible without
+    // having an active blocking wait.
+    //
+  }
+
+  lthis->mutexQueryList.release();
+}
+//</alexej>
+
+//
+// static handle method called by ACE
+//
+//<alexej date="2010-03-18">
+template<class R, class A> void SmartACE::QueryClient<R,A>::hndAckConn(void *ptr, int cid, int status)
+//</alexej>
+{  
+   QueryClient<R,A> *lthis = (QueryClient<R,A> *)ptr;
+
+   lthis->monitorConnect.signal(cid, status);
+}
+
+//
+// static handle method called by ACE object
+//
+template<class R, class A> void SmartACE::QueryClient<R,A>::hndServDisc(void* ptr, int cid)
+{
+  QueryClient<R,A> *lthis = (QueryClient<R,A> *)ptr;
+
+  lthis->component->enqueue(ptr,
+      &QueryClient<R,A>::internalServerInitiatedDisconnect,
+      cid);
+}
+
+
+template<class R, class A> void SmartACE::QueryClient<R,A>::hndAckDisc(void *ptr)
+{
+	QueryClient<R,A> *lthis = (QueryClient<R,A> *)ptr;
+
+   lthis->monitorDisconnect.signal();
+}
+
+//
+// static internal interface methods used by wiring service
+//
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::internalConnect(void *ptr,const std::string & srv, const std::string & svc)
+{
+  QueryClient<R,A>* lthis = (QueryClient<R,A> *)ptr;
+
+  return lthis->connect(srv,svc);
+}
+
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::internalDisconnect(void *ptr)
+{
+  QueryClient<R,A> *lthis = (QueryClient<R,A> *)ptr;
+
+  return lthis->disconnect();
+}
+
+//<alexej date="2010-03-18">
+template<class R, class A>
+void SmartACE::QueryClient<R,A>::internalServerInitiatedDisconnect(void *ptr, int cid)
+//</alexej>
+{
+   QueryClient<R,A> *lthis = (QueryClient<R,A> *)ptr;
+
+   lthis->mutexConnection.acquire();
+      if(cid == lthis->connectionID)
+      {
+         lthis->disconnect();
+      }
+   lthis->mutexConnection.release();
+}
+
+//
+// default constructor
+//
+template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(void) throw(SmartACE::SmartError)
+{
+  std::cerr << "CommPattern (queryClient): ERROR: Entered default constructor QueryClient" << std::endl;
+  serverProxy        = 0;
+  component = 0;
+  connectionID = 0;
+  queries = 0;
+  wiringslave = 0;
+  connector = 0;
+  statusUserBlocking = false;
+  queryCnt = 0;
+  statusConnected = 0;
+  statusManagedPort = 0;
+  throw(SmartACE::SmartError(Smart::SMART_ERROR,"CommPattern (queryClient): ERROR: Entered default constructor QueryClient"));
+}
+
+//
+// standard constructor port
+//
+template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m,const std::string& port, SmartACE::WiringSlave* slave) throw(SmartACE::SmartError)
+:	Smart::IQueryClientPattern<R,A,QueryId>(m)
+{
+  Smart::StatusCode status;
+
+  // set the configuration flags appropriately
+  statusConnected    = 0;
+  statusManagedPort  = 0;
+  portname           = port;
+  statusUserBlocking = true;
+  queryCnt           = 0;
+  queries            = 0;
+  component          = m;
+  wiringslave        = slave;
+  serverProxy        = 0;
+
+  // set monitors to be controlled by the component
+  component->addSmartMonitor(&monitorConnect);
+  component->addSmartMonitor(&monitorDisconnect);
+
+  // set a default timeout value of one second for every connection procedure
+  monitorConnect.enableTimedMode(ACE_Time_Value(1));
+
+  //<alexej date="02.10.2008">
+   // initialize ServerInitiated Monitoring
+   connectionID = 0;
+   component->sign_on((void*)this);
+
+   // initialize new Connector instance
+   connector = new QueryClientConnector(component->getReactorTask()->getImpl());
+   //serverProxy will be initialized later - on connect
+  //</alexej>
+
+
+
+  status = this->add(slave, port);
+
+  if (status == Smart::SMART_PORTALREADYUSED) {
+    //
+    // port name already in use therefore throw exception
+    //
+    throw(SmartACE::SmartError(Smart::SMART_PORTALREADYUSED,"CommPattern (queryClient): ERROR: port name already in use"));
+  } else if (status != Smart::SMART_OK) {
+    //
+    // throw exception since something went wrong
+    //
+    throw(SmartACE::SmartError(Smart::SMART_ERROR,"CommPattern (queryClient): ERROR: something went wrong"));
+  }
+}
+
+//
+// standard constructor
+//
+template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m) throw(SmartACE::SmartError)
+:	Smart::IQueryClientPattern<R,A,QueryId>(m)
+{
+  // set the configuration flags approriately
+  statusConnected    = 0;
+  statusManagedPort  = 0;
+  portname           = "";
+  statusUserBlocking = true;
+  queryCnt           = 0;
+  queries            = 0;
+  component          = m;
+  wiringslave        = 0;
+  serverProxy        = 0;
+
+  // set monitors to be controlled by the component
+  component->addSmartMonitor(&monitorConnect);
+  component->addSmartMonitor(&monitorDisconnect);
+
+  // set a default timeout value of one second for every connection procedure
+  monitorConnect.enableTimedMode(ACE_Time_Value(1));
+
+  //<alexej date="02.10.2008">
+   // initialize ServerInitiated Monitoring
+   connectionID = 0;
+   component->sign_on((void*)this);
+
+   // initialize new Connector instance
+   connector = new QueryClientConnector(component->getReactorTask()->getImpl());
+   //serverProxy will be initialized later - on connect
+  //</alexej>
+}
+
+//
+// standard constructor already wired
+//
+template<class R,class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m,const std::string& srv,const std::string& svc) throw(SmartACE::SmartError)
+:	Smart::IQueryClientPattern<R,A,QueryId>(m, srv, svc)
+{
+  Smart::StatusCode status;
+  int flag;
+
+  // set the configuration flags appropriately
+  statusConnected    = 0;
+  statusManagedPort  = 0;
+  portname           = "";
+  statusUserBlocking = true;
+  queryCnt           = 0;
+  queries            = 0;
+  component          = m;
+  wiringslave        = 0;
+  serverProxy        = 0;
+
+  // set monitors to be controlled by the component
+  component->addSmartMonitor(&monitorConnect);
+  component->addSmartMonitor(&monitorDisconnect);
+
+  // set a default timeout value of one second for every connection procedure
+  monitorConnect.enableTimedMode(ACE_Time_Value(1));
+
+  //<alexej date="02.10.2008">
+   // initialize ServerInitiated Monitoring
+   connectionID = 0;
+   component->sign_on((void*)this);
+
+   // initialize new Connector instance
+   connector = new QueryClientConnector(component->getReactorTask()->getImpl());
+   //serverProxy will be initialized later - on connect
+  //</alexej>
+
+  // Now connect to the server side of the query pattern
+  //std::cout << "Try to connect to (" << srv << ":query<" << R::identifier() << "," << A::identifier() << ">:" << svc << ") ..." << std::endl;
+  SMARTSOFT_PRINT(ACE_TEXT("Try to connect to (%s:QueryServer<%s,%s>:%s) ...\n"), srv.c_str(), R::identifier().c_str(), A::identifier().c_str(), svc.c_str() );
+
+  do {
+    status = this->connect(srv,svc);
+
+    if (status == Smart::SMART_OK) {
+      flag = 1;
+      SMARTSOFT_PRINT(ACE_TEXT("... connected to (%s:QueryServer<%s,%s>:%s)\n"), srv.c_str(), R::identifier().c_str(), A::identifier().c_str(), svc.c_str() );
+      //std::cout << "... connected to (" << srv << ":query<" << R::identifier() << "," << A::identifier() << ">:" << svc << ")" << std::endl;
+    } else if (status == Smart::SMART_SERVICEUNAVAILABLE) {
+      //std::cout << "CommPattern (queryClient): INFO: not yet found in naming service ..." << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("CommPattern (QueryClient): INFO: not yet found in naming service ...\n") );
+      ACE_OS::sleep(1);
+      flag = 0;
+    } else if (status == Smart::SMART_INCOMPATIBLESERVICE) {
+      //std::cout << "CommPattern (queryClient): ERROR: incompatible service ..." << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("CommPattern (QueryClient): ERROR: incompatible service ...\n") );
+      flag = 1;
+      throw(SmartACE::SmartError(status,"CommPattern (QueryClient): ERROR: incompatible service"));
+    } else if (status == Smart::SMART_ERROR_COMMUNICATION) {
+      //std::cout << "CommPattern (queryClient): ERROR: communication error ..." << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("CommPattern (QueryClient): ERROR: communication problem ...\n") );
+      flag = 1;
+      throw(SmartACE::SmartError(status,"CommPattern (QueryClient): ERROR: communication problem"));
+    } else {
+      //<alexej date="2009-10-14">
+      //std::cout << "CommPattern (queryClient): ERROR: something went wrong ..." << std::endl;
+      SMARTSOFT_PRINT(ACE_TEXT("CommPattern (QueryClient): ERROR: something went wrong ...\n") );
+      flag = 1;
+      throw(SmartACE::SmartError(status,"CommPattern (QueryClient): ERROR: something went wrong"));
+      //</alexej>
+    };
+  } while (flag == 0);
+}
+
+//
+// destructor
+//
+template<class R, class A> inline SmartACE::QueryClient<R,A>::~QueryClient(void) throw()
+{
+  QueryClientList *lptr = 0;
+
+  //
+  // remove port from managed set of ports and disconnect from server even if not
+  // exposed as port or connected to a server since this is handled correctly inside
+  // remove() and disconnect()
+  //
+  this->remove();
+  this->disconnect();
+
+  //<alexej date="2009-11-16">
+  mutexConnection.acquire();
+    // sign off ServerInitiated disconnect monitoring
+    component->sign_off((void*)this);
+
+    // shut down connector
+    connector->close();
+    delete connector;
+  mutexConnection.release();
+
+  component->removeSmartMonitor(&monitorConnect);
+  component->removeSmartMonitor(&monitorDisconnect);
+  //</alexej>
+
+  // free memory
+  mutexQueryList.acquire();
+  while ( queries != 0 ) {
+    lptr = queries;
+    queries = queries->next;
+    delete lptr;
+  }
+  mutexQueryList.release();
+
+  // client does not bind object at naming service,
+  // therefore no unbind of objects needed here
+}
+
+//
+//
+//
+template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::add(SmartACE::WiringSlave* slave, const std::string& port) throw()
+{
+  Smart::StatusCode status;
+
+  mutexConnection.acquire();
+
+  // first remove eventually valid registration
+  this->remove();
+
+  // now add client
+  portname          = port;
+  statusManagedPort = 1;
+
+  wiringslave = slave;
+  status      = this->wiringslave->add(port, (void*)this, &QueryClient<R,A>::internalConnect, &QueryClient<R,A>::internalDisconnect);
+
+  mutexConnection.release();
+
+  return status;
+}
+
+//
+//
+//
+template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::remove() throw()
+{
+  Smart::StatusCode status;
+
+  mutexConnection.acquire();
+
+  if (statusManagedPort == 1) {
+    status = this->wiringslave->remove(portname);
+
+    portname          = "";
+    statusManagedPort = 0;
+
+  } else {
+    status = Smart::SMART_OK;
+  }
+
+  mutexConnection.release();
+
+  return status;
+}
+
+//
+//
+//
+template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::connect(const std::string& srv, const std::string& svc) throw()
+{
+   Smart::StatusCode result;
+
+   result = Smart::SMART_ERROR;
+
+   mutexConnection.acquire();
+
+   // first disconnect eventually valid connection
+   this->disconnect();
+
+   /** Possible Return values:
+   * OK -> SMART_OK:	connection established
+   * service unavailable: SMART_SERVICEUNAVAILABLE
+   * uncknown component: naming service
+   * communication error: SMART_ERROR_COMMUNICATION
+   * unknown error: SMART_ERROR
+   * */
+
+   SmartACE::NSValueType value;
+
+   if(component->getName().compare(SMART_NONS) == 0)
+   {
+      ACE_INET_Addr conn_addr;
+      if( conn_addr.string_to_addr(svc.c_str()) == 0) {
+         if(srv.compare(SMART_NONS) != 0) {
+            SMARTSOFT_PRINT( ACE_TEXT("- <QueryClient> Warning: no naming service used so SERVER parameter of connect will be ignored!\n") );
+         }
+         value.setInetAddr(conn_addr);
+         result = Smart::SMART_OK;
+      }
+   }
+   else
+   {
+	   SmartACE::NSKeyType key;
+	   key.names[SmartACE::NSKeyType::COMP_NAME] = srv.c_str();
+	   key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Query");
+	   key.names[SmartACE::NSKeyType::SERVICE_NAME] = svc.c_str();
+	   key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = R::identifier().c_str();
+	   key.names[SmartACE::NSKeyType::COMMOBJ2_NAME] = A::identifier().c_str();
+
+      if( SmartACE::NAMING::instance()->resolve(key, value) == 0 )
+      {
+         result = Smart::SMART_OK;
+      } else {
+         // name is NOT available in naming service -> check whether similar name is available (with a different communication object)
+         SmartACE::NSKeyType searchPattern;
+         searchPattern.names[SmartACE::NSKeyType::COMP_NAME] = srv.c_str();
+         searchPattern.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Query");
+         searchPattern.names[SmartACE::NSKeyType::SERVICE_NAME] = svc.c_str();
+
+         ACE_Unbounded_Queue<SmartACE::NSKeyType> similar_names = SmartACE::NAMING::instance()->getEntriesForMatchingPattern(searchPattern);
+         if( similar_names.size() > 0 )
+         {
+            // a similar service is available, but is incompatible
+            result = Smart::SMART_INCOMPATIBLESERVICE;
+         } else {
+            // neither exact service available nor similar service found -> service is completely missing
+            result = Smart::SMART_SERVICEUNAVAILABLE;
+         }
+      }
+   }
+
+   if( result == Smart::SMART_OK )
+   {
+      ACE_Time_Value timeout(1);
+      ACE_Synch_Options options(ACE_Synch_Options::USE_TIMEOUT, timeout);
+
+      ACE_NEW_RETURN(serverProxy, QueryClientServiceHandler(component->getReactorTask()->getImpl()), Smart::SMART_ERROR_COMMUNICATION);
+
+      serverProxy->setCallbackFkts((void *)this,
+         &QueryClient<R,A>::hndAnsw,
+         &QueryClient<R,A>::hndAckConn,
+         &QueryClient<R,A>::hndServDisc,
+         &QueryClient<R,A>::hndAckDisc);
+
+      if (connector->connect (serverProxy, value.getInetAddr(), options) == -1) {
+         if(errno == ECONNREFUSED || errno == ETIME || errno == EWOULDBLOCK) {
+            // remote acceptor is not available or ping times are too large
+            result = Smart::SMART_ERROR_COMMUNICATION;
+         }else{
+            result = Smart::SMART_ERROR;
+         }
+         SMARTSOFT_PRINT( ACE_TEXT("- <QueryClient> ERROR: Remote endpoint at address <%s:%d> is NOT responding!\n"), value.getInetAddr().get_host_addr(), value.getInetAddr().get_port_number() );
+         serverProxy->trigger_shutdown();
+      }
+      else
+      {
+         // acquire monitor recursive-mutex
+         monitorConnect.acquire();
+
+         // increment current connection-id;
+         connectionID++;
+
+         // reset connection monitor
+         monitorConnect.prepare(connectionID);
+
+         // send connection id to server
+         result = serverProxy->connect( connectionID, value.getUUID() );
+
+         // if connection is performed out of main function (main thread)
+         // it can happen, that reactor is not running till now and
+         // thus no CONN_ACK can be received so special treatment is necessary
+         if(result == Smart::SMART_OK)
+         {
+            // wait on incomming connection for a period of time
+            result = monitorConnect.wait();            
+         }
+
+
+         if(result == Smart::SMART_OK) {
+            if( static_cast<Smart::StatusCode>(monitorConnect.getStatusA0()) == Smart::SMART_OK)
+            {
+               // connection successfull
+               statusConnected = 1;
+
+               SmartACE::NSKeyType key;
+               key.names[SmartACE::NSKeyType::COMP_NAME] = component->getName().c_str();
+               key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Query");
+               key.names[SmartACE::NSKeyType::SERVICE_NAME] = ACE_TEXT("Client");
+               key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = R::identifier().c_str();
+               key.names[SmartACE::NSKeyType::COMMOBJ2_NAME] = A::identifier().c_str();
+               ACE_TString name = key;
+
+               SMARTSOFT_PRINT( ACE_TEXT("- %s connected to <%s:%d>\n"), name.c_str(), value.getInetAddr().get_host_addr(), value.getInetAddr().get_port_number() );
+               result = Smart::SMART_OK;
+            }else{
+               // connection rejected by the server due to server not ready or wrong "session-identifier"
+               result = Smart::SMART_SERVICEUNAVAILABLE;
+            }
+         } else if(result == Smart::SMART_TIMEOUT || result == Smart::SMART_ERROR) {
+            // on timeout discard the connection
+            serverProxy->discard();
+
+            serverProxy->trigger_shutdown();
+            result = Smart::SMART_SERVICEUNAVAILABLE;
+         } else {
+            result = Smart::SMART_ERROR_UNKNOWN;
+         }
+
+         monitorConnect.release();
+      } // end if(connect == 0)
+   }
+   //</alexej>
+
+   mutexConnection.release();
+
+   return result;
+}
+
+//
+//
+//
+template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::disconnect() throw()
+{
+  // disconnecting a query requires to consider several cases since a
+  // query client can get disconnected while the server calculates the
+  // query answer.
+  //
+  // server: queryRequest / disconnect / client destroyed / server sends answer
+  //    - server must not call a non-existent client corba object
+  //    - would result in error at server side
+  //    => therefore mark pending queries at server side as QUERY_DISCONNECTED
+  //    => discard any answer of pending queries at the server side which are
+  //       marked as QUERY_DISCONNECTED and return SMART_DISCONNECTED as
+  //       status code
+  // client: queryRequest / disconnect / answer received / queryReceive
+  //    - answer not yet received before disconnect
+  //    - status of query / queryReceive / queryReceiveWait: SMART_DISCONNECTED
+  // client: queryRequest / answer received / disconnect / queryReceive
+  //    - answer already received but not yet picked up
+  //    - return correct answer with status SMART_OK
+  //
+  // Performing disconnect
+  //   - go through the list of pending queries
+  //     - QUERY_PENDING
+  //       - mark it as QUERY_DISCONNECTED
+  //       - trigger CV
+  //     - QUERY_DISCONNECTED
+  //       - do nothing since already disconnected
+  //     - QUERY_VALIDANSWER
+  //       - do nothing since valid answer available but not yet
+  //         picked up.
+  //   - now call the server and mark there any not yet answered request
+  //     from this client as QUERY_DISCONNECTED to indicate that an
+  //     calculated answer is not needed anymore.
+  //
+  // Changing valid flag in handler method for receiving answer
+  //   - QUERY_PENDING
+  //     - everything ok and answer is expected
+  //     - therefore change flag to QUERY_VALIDANSWER and signal CV
+  //   - QUERY_DISCONNECTED
+  //     - pending query marked as being obsolete
+  //     - client not interested anymore in this answer
+  //     - user however has not yet asked for the result
+  //     - discard received answer
+  //   - QUERY_VALIDANSWER
+  //     - should not happen since this would mean that we have two
+  //       answers for one query ! Discard received answer.
+  //
+  // Evaluation of the "valid" flag inside the user blocking methods
+  //   - QUERY_PENDING
+  //     - can never be seen here since we either block on the CV or
+  //       CV has been triggered and then flag is QUERY_DISCONNECTED
+  //       or QUERY_VALIDANSWER
+  //   - QUERY_DISCONNECTED
+  //     - the pending query has been removed due to a disconnect and
+  //       no valid answer is available, return SMART_DISCONNECTED
+  //   - QUERY_VALIDANSWER
+  //     - valid answer available, return it with status SMART_OK
+
+  QueryClientList *lptr = 0;
+  Smart::StatusCode result;
+
+  //
+  //
+  //
+  mutexConnection.acquire();
+
+  if (statusConnected == 0) {
+    result = Smart::SMART_OK;
+  } else {
+
+    statusConnected = 0;
+    //
+    // from now on, no new queries can be initiated from this
+    // client since we hold the mutexConnection and it is released
+    // only after the status is already set to disconnected.
+    //
+
+    //
+    // first mark pending queries to be disconnected ...
+    //
+    mutexQueryList.acquire();
+
+    for( lptr = queries; lptr != 0; lptr = lptr->next ) {
+      if( lptr->querystatus == Smart::QUERY_PENDING ) {
+        lptr->querystatus = Smart::QUERY_DISCONNECTED;
+        lptr->disconnect  = 1;
+      } else if (lptr->querystatus == Smart::QUERY_VALIDANSWER) {
+        // do nothing since answer already available
+        lptr->disconnect  = 0;
+      } else if (lptr->querystatus == Smart::QUERY_DISCONNECTED) {
+        // do nothing since already disconnected
+        lptr->disconnect  = 0;
+      } else {
+        // wrong status => do nothing
+        lptr->disconnect  = 0;
+      }
+    }
+
+    mutexQueryList.release();
+
+    //
+    // We now perform cleanup operations at the server
+    //
+
+    //
+    //
+    //
+    monitorDisconnect.acquire();
+       //
+       // reset condition variable with pseudo cid (not really needen in disconnect)
+       //
+       monitorDisconnect.prepare();
+
+       //
+       // send disconnect message to server
+       //
+       result = serverProxy->disconnect();
+
+       //
+       // now wait for acknowledge-disconnect message
+       //
+       if(result == Smart::SMART_OK) 
+       {
+          //acknowledge disconnect can only be expected, if disconnect message is sent correctly
+          result = monitorDisconnect.wait();
+       } else {
+          result = Smart::SMART_ERROR_COMMUNICATION;
+       }
+
+       //
+       // free the memory
+       //
+       serverProxy->trigger_shutdown();
+
+    //
+    //
+    //
+    monitorDisconnect.release();
+  }
+
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::blocking(const bool b) throw()
+{
+  Smart::StatusCode result = Smart::SMART_OK;
+  QueryClientList *lptr = 0;
+
+  mutexConnection.acquire();
+
+  statusUserBlocking = b;
+
+  mutexQueryList.acquire();
+
+  for( lptr = queries; lptr != 0; lptr = lptr->next ) {
+    lptr->cond.blockingUser(statusUserBlocking);
+  }
+
+  mutexQueryList.release();
+
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::query(const R& r, A& a) throw()
+{
+  Smart::StatusCode result;
+  SmartACE::QueryId    id;
+
+  result = this->queryRequest(r,id);
+  if (result != Smart::SMART_OK) return result;
+
+  result = this->queryReceiveWait(id, a);
+  if (result == Smart::SMART_CANCELLED) {
+    this->queryDiscard(id);
+  }
+
+  return result;
+}
+
+//
+//
+//
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRequest(const R& r, QueryId& id) throw()
+{
+  QueryClientList *lptr = 0;
+  Smart::StatusCode result;
+
+  mutexConnection.acquire();
+
+  if (statusConnected == 0) {
+    //
+    // no connection available
+    //
+    id     = 0;
+    result = Smart::SMART_DISCONNECTED;
+
+    mutexConnection.release();
+
+    return result;
+  }
+
+  mutexQueryList.acquire();
+
+  queryCnt++;
+  lptr              = new QueryClientList;
+  lptr->id          = queryCnt;
+  lptr->querystatus = Smart::QUERY_PENDING;
+  lptr->disconnect  = 0;
+  lptr->next        = queries;
+  queries           = lptr;
+
+  lptr->cond.blockingUser(statusUserBlocking);
+  component->addCV(&(lptr->cond));
+
+  id = lptr->id;
+
+  mutexQueryList.release();
+
+  result = Smart::SMART_OK;
+
+  //<alexej date="02.10.2008">
+
+  //
+  // Message data buffer (for holding serialized CommObj data)
+  //
+  SmartMessageBlock *any = 0;
+
+  //
+  // get SmartMessageBlock from communicationObject
+  //
+  r.get(any);
+
+  //
+  // send message content to server
+  //
+  result = serverProxy->request(any,id);
+
+  //
+  // Release(free) message memory, otherwise memory leaks will ocur.
+  //
+  any->release();
+  //</alexej>
+
+
+  if (result != Smart::SMART_OK) {
+    //
+    // remove list entry
+    //
+    this->queryDiscard(id);
+  }
+
+  mutexConnection.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryReceive(const QueryId& id,A& a) throw()
+{
+  QueryClientList *lptr  = 0;
+  QueryClientList *hlptr = 0;
+  Smart::StatusCode  result;
+  int status;
+
+  result = Smart::SMART_ERROR;
+
+  mutexQueryList.acquire();
+
+  for( lptr = queries; lptr != 0; lptr = lptr->next )
+    if( lptr->id == id )
+      break;
+
+  if( lptr == 0 ) {
+    result = Smart::SMART_WRONGID;
+  }
+
+  if (lptr->querystatus == Smart::QUERY_PENDING) {
+    result = Smart::SMART_NODATA;
+  } else if (lptr->querystatus == Smart::QUERY_VALIDANSWER) {
+    a      = lptr->a;
+    result = Smart::SMART_OK;
+  } else if (lptr->querystatus == Smart::QUERY_DISCONNECTED) {
+    result = Smart::SMART_DISCONNECTED;
+  }
+
+  if ((result == Smart::SMART_OK) || (result == Smart::SMART_DISCONNECTED) || (result == Smart::SMART_ERROR)) {
+    //
+    // now delete list entry
+    //
+    this->queryDiscard(id);
+  }
+
+  mutexQueryList.release();
+
+  return result;
+}
+
+//
+//
+//
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryReceiveWait(const QueryId& id,A& a, const std::chrono::steady_clock::duration &timeout) throw()
+{
+  QueryClientList *lptr  = 0;
+  Smart::StatusCode result;
+
+  mutexQueryList.acquire();
+
+  for( lptr = queries; lptr != 0; lptr = lptr->next )
+    if( lptr->id == id )
+      break;
+
+  mutexQueryList.release();
+
+  //
+  // since lptr is local to the method it can be used safely outside
+  // the mutex locked block. It gets only invalid if that query entry
+  // is removed from the list and that is only the case within this
+  // method or within queryReceive() or within queryDiscard() which
+  // are not called in parallel with the same id.
+  //
+  // BE CAREFUL: This assumption holds only if one does not concurrently call queryReceive()
+  //             or queryReceiveWait() with the same id, since then the memory pointed to by
+  //             lptr might have been deleted between the locks. Keeping the lock is no solution
+  //             since then every activity gets blocked due to the locked data structures. It
+  //             simply makes no sense to call queryReceive from several threads with the same
+  //             id since this causes a racing condition.
+  if( lptr == 0 ) {
+    return Smart::SMART_WRONGID;
+  }
+
+  result = lptr->cond.wait(convertToAceTimeFrom(timeout));
+
+  mutexQueryList.acquire();
+  if( result != Smart::SMART_OK ) {
+    //
+    // query has been cancelled
+    //
+    result = Smart::SMART_CANCELLED;
+  } else {
+    //
+    // after CV, have to check whether we really got an answer
+    //
+
+    if (lptr->querystatus == Smart::QUERY_VALIDANSWER) {
+      // got answer from server
+      a = lptr->a;
+      result = Smart::SMART_OK;
+    } else if (lptr->querystatus == Smart::QUERY_DISCONNECTED) {
+      result = Smart::SMART_DISCONNECTED;
+    } else {
+      result = Smart::SMART_ERROR;
+    }
+  }
+
+  if ((result == Smart::SMART_OK) || (result == Smart::SMART_DISCONNECTED) || (result == Smart::SMART_ERROR)) {
+    //
+    // now delete list entry
+    //
+    this->queryDiscard(id);
+  }
+
+  mutexQueryList.release();
+
+  return result;
+}
+
+
+//
+//
+//
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryDiscard(const QueryId& id) throw()
+{
+
+  QueryClientList *lptr  = 0;
+  QueryClientList *hlptr = 0;
+  Smart::StatusCode  result;
+
+  result = Smart::SMART_ERROR;
+
+  mutexQueryList.acquire();
+
+  for( lptr = queries; lptr != 0; lptr = lptr->next )
+    if( lptr->id == id )
+      break;
+
+  if( lptr == 0 ) {
+    result = Smart::SMART_WRONGID;
+  } else {
+    //
+    // now delete list entry
+    //
+    // since we have already found an entry with the correct id, we know
+    // that the entry is still in the list ... each id also occurs only
+    // once in the list
+    //
+    if ( id == queries->id ) {
+      //
+      // first entry in list therefore remove head of list ...
+      //
+      component->removeCV(&(lptr->cond));
+
+      lptr    = queries;
+      queries = lptr->next;
+      delete lptr;
+    } else {
+      //
+      // not first entry in list, must therefore be second or later one ...
+      //
+      lptr = queries;
+      while (lptr->next != 0) {
+        if (lptr->next->id == id) {
+          hlptr      = lptr->next;
+          lptr->next = lptr->next->next;
+          component->removeCV(&(hlptr->cond));
+          delete hlptr;
+        } else {
+          lptr = lptr->next;
+        }
+      }
+    }
+  }
+
+  mutexQueryList.release();
+
+  return result;
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////
+//
+// server part of query template
+//
+/////////////////////////////////////////////////////////////////////////
+
+//
+// static handle method called by SmartServiceHandler object
+//
+template<class R,class A> void SmartACE::QueryServer<R,A>::hndRqst(void* ptr, const SmartMessageBlock *user, const QueryServerServiceHandler *client, int cltId)
+{
+  QueryServer<R,A>* lthis = (QueryServer<R,A> *)ptr;
+  QueryServerList* lptr = 0;
+
+  lthis->mutexQueryList.acquire();
+
+  lthis->queryCnt++;
+  lptr              = new QueryServerList;
+  lptr->r.set(user);
+  lptr->id          = lthis->queryCnt;
+  lptr->cltId       = cltId;
+  lptr->clientProxy = (QueryServerServiceHandler*)client;
+  lptr->querystatus = Smart::QUERY_PENDING;
+  lptr->next        = lthis->queries;
+  lthis->queries    = lptr;
+
+  lthis->mutexQueryList.release();
+
+  //
+  // now call user provided handle method, the lptr is local to the method
+  // and points directly to the new list entry and is therefore usable
+  // outside the mutex. That entry in the list of pending queries gets
+  // invalid only by answering the query with "answer(...)", therefore
+  // lptr can't be used anymore here AFTER calling handleQuery, since
+  // a passive handler returns the answer before it leaves "handleQuery(...)"
+  //
+
+	// create request communication object
+	Smart::QueryServerInputType<R,QueryId> input;
+	// fill request object with the payload content
+	input.request = lptr->r;
+	input.query_id = lptr->id;
+
+
+		// call the user-provided query-handler (assuming that it is either implemented without
+		// blocking calls or that it uses an own thread of execution that is defined by the user)
+		if(lthis->notify_input(input) == false) {
+			//FIXME: reject request because there are no handlers registered
+
+		}
+//  lthis->handler.handleQuery(lptr->id,lptr->r);
+}
+
+
+//
+// static handle method called by SmartServiceHandler object
+//
+//<alexej date="2010-03-18">
+template<class R,class A> void SmartACE::QueryServer<R,A>::hndConnect(void* ptr, const QueryServerServiceHandler *client, int cid, const ACE_Utils::UUID &serviceID)
+//</alexej>
+{
+   QueryServer<R,A>* lthis = (QueryServer<R,A> *)ptr;
+   QueryClientList* cptr;
+   QueryServerServiceHandler *client_ptr;
+
+   lthis->mutexClientList.acquire();
+
+   client_ptr = const_cast<QueryServerServiceHandler*>(client);
+
+   if (lthis->serverReady == 0) {
+      //
+      // don't accept any new clients since server is in process of destruction or not yet ready
+      //
+      client_ptr->acknowledgmentConnect(cid, Smart::SMART_SERVICEUNAVAILABLE);
+   } else {
+
+      if( serviceID != *(lthis->service_identifier) ) {
+         // reject connection due to wrong service-identifier
+         // this is the case if naming-service entries are out-dated
+         client_ptr->acknowledgmentConnect(cid, Smart::SMART_SERVICEUNAVAILABLE);
+      } else if( client_ptr->acknowledgmentConnect(cid, Smart::SMART_OK) == Smart::SMART_OK ) {
+         // Acknowledgement successfully transmitted, now add client to the list
+
+         //
+         // make new client list entry
+         //
+         cptr           = new QueryClientList;
+
+         //<alexej date="13.11.2008">
+         //cptr->client   = SmartSendClientPattern::_duplicate(client); //old
+
+         //better: cptr->clientProxy has to be const itself (not cast to not const)
+         cptr->clientProxy = client_ptr;
+         cptr->connection_id = cid;
+         //</alexej>
+
+         cptr->next     = lthis->clients;
+         lthis->clients = cptr;
+      }
+   }
+
+   lthis->mutexClientList.release();
+}
+
+
+
+//
+// static handle method called by ACE object
+//
+template<class R,class A> void SmartACE::QueryServer<R,A>::hndDiscard(void* ptr, const QueryServerServiceHandler *client)
+{
+   QueryServer<R,A>* lthis = (QueryServer<R,A> *)ptr;
+   QueryServerList* lptr   = 0;
+   QueryClientList* cptr   = 0;
+   QueryClientList* hcptr  = 0;
+
+   lthis->mutexClientList.acquire();
+
+   lthis->mutexQueryList.acquire();
+
+   //<alexej date="26.11.2008">
+   // mark all pending queries of this client as disconnected
+   for( lptr = lthis->queries; lptr != 0; lptr = lptr->next ) {
+      if ( client == lptr->clientProxy ) {
+         lptr->querystatus = Smart::QUERY_DISCONNECTED;
+      }
+   }
+   //</alexej>
+
+   lthis->mutexQueryList.release();
+
+   //
+   // first remove entries from head as long as they match the client object
+   //
+   while ( (lthis->clients != 0) && (client == lthis->clients->clientProxy) )
+   {
+      // iterate to the next element in the list
+      cptr = lthis->clients;
+      lthis->clients = lthis->clients->next;
+
+      // clean up current node
+      //cptr->clientProxy->close(1);
+      delete cptr;
+   }
+
+   //
+   // now search through the rest of the list which might be empty already. If the
+   // length is greater than zero, than the first element never matches and never
+   // gets deleted
+   //
+   cptr = lthis->clients;
+   if (cptr == 0) {
+      // list contains no element anymore => ready
+   } else {
+      // list can now contain one or more elements with the first element matching never
+      while (cptr->next != 0) {
+         if ( client == cptr->next->clientProxy ) {
+            hcptr      = cptr->next;
+            cptr->next = cptr->next->next;
+            // clean up current node
+            //hcptr->clientProxy->close(1);
+            delete hcptr;
+         } else {
+            cptr = cptr->next;
+         }
+      }
+   }
+
+   if (lthis->serverReady == 0) {
+      // If the server is not ready yet the monitor-signal has no effect.
+      // If server is in process of destruction then the monitor is signalled
+      // to release the destructor of the server.
+      if(lthis->clients == 0) {
+         lthis->monitorServerInitiatedDisconnect.broadcast();
+      }
+   }
+
+   lthis->mutexClientList.release();
+}
+
+
+//
+// static handle method called by ACE object
+//
+template<class R,class A> void SmartACE::QueryServer<R,A>::hndDisconnect(void* ptr, const QueryServerServiceHandler *client)
+{
+   QueryServer<R,A>* lthis = (QueryServer<R,A> *)ptr;
+   QueryServerList* lptr   = 0;
+   QueryClientList* cptr   = 0;
+   QueryClientList* hcptr  = 0;
+
+   lthis->mutexClientList.acquire();
+
+   lthis->mutexQueryList.acquire();
+
+   //<alexej date="26.11.2008">
+   // mark all pending queries of this client as disconnected
+   for( lptr = lthis->queries; lptr != 0; lptr = lptr->next ) {
+      if ( client == lptr->clientProxy ) {
+         lptr->querystatus = Smart::QUERY_DISCONNECTED;
+      }
+   }
+   //</alexej>
+
+   lthis->mutexQueryList.release();
+
+   //
+   // remove client from list of clients
+   //
+
+   //
+   // first remove entries from head as long as they match the client object
+   //
+   while ( (lthis->clients != 0) && (client == lthis->clients->clientProxy) )
+   {
+      cptr = lthis->clients;
+      lthis->clients = lthis->clients->next;
+      // acknowledge disconnect
+      if( cptr->clientProxy->acknowledgmentDisconnect() == Smart::SMART_OK ) {
+         // clean up current node
+         cptr->clientProxy->trigger_shutdown();
+         delete cptr;
+      }
+   }
+
+   //
+   // now search through the rest of the list which might be empty already. If the
+   // length is greater than zero, than the first element never matches and never
+   // gets deleted
+   //
+   cptr = lthis->clients;
+   if (cptr == 0) {
+      // list contains no element anymore => ready
+   } else {
+      // list can now contain one or more elements with the first element matching never
+      while (cptr->next != 0) {
+         if ( client == cptr->next->clientProxy ) {
+            hcptr      = cptr->next;
+            cptr->next = cptr->next->next;
+            // acknowledge disconnect
+            if( hcptr->clientProxy->acknowledgmentDisconnect() == Smart::SMART_OK ) {
+               // clean up current node
+               hcptr->clientProxy->trigger_shutdown();
+               delete hcptr;
+            }
+         } else {
+            cptr = cptr->next;
+         }
+      }
+   }
+
+   if (lthis->serverReady == 0) {
+      // If the server is not ready yet the monitor-signal has no effect.
+      // If server is in process of destruction then the monitor is signalled
+      // to release the destructor of the server.
+      if(lthis->clients == 0) {
+         lthis->monitorServerInitiatedDisconnect.broadcast();
+      }
+   }
+
+   lthis->mutexClientList.release();
+}
+//</alexej>
+
+
+
+//
+// default constructor
+//
+template<class R, class A> inline SmartACE::QueryServer<R,A>::QueryServer(void) throw(SmartACE::SmartError)
+{
+  std::cerr << "CommPattern (query): ERROR: Entered default constructor QueryServer" << std::endl;
+  clients = 0;
+  serverReady = 0;
+  component = 0;
+  acceptor = 0;
+  queryCnt = 0;
+  service_identifier = 0;
+  queries = 0;
+  throw(SmartACE::SmartError(Smart::SMART_ERROR,"CommPattern (query): ERROR: Entered default constructor QueryServer"));
+}
+
+//
+// standard constructor
+//
+template<class R, class A>
+inline SmartACE::QueryServer<R,A>::QueryServer(SmartComponent* m,
+					  const std::string & svc) throw(SmartACE::SmartError)
+  : Smart::IQueryServerPattern<R,A,QueryId>(m,svc),
+	uuid_genrator(),
+    service_identifier(0),
+    component(m),
+    service(svc),
+    serverReady(0)
+{
+  mutexClientList.acquire();
+
+  // reset list, counter and other stuff
+  clients = 0;
+
+  component->addSmartMonitor(&monitorServerInitiatedDisconnect);
+
+  mutexQueryList.acquire();
+  queryCnt = 0;
+  queries  = 0;
+  mutexQueryList.release();
+
+  //<alexej date="23.01.2009">
+  acceptor = new QueryServerAcceptor
+     (
+         (void *)this,
+		  	&QueryServer<R,A>::hndRqst,
+         &QueryServer<R,A>::hndConnect,
+         &QueryServer<R,A>::hndDiscard,
+         &QueryServer<R,A>::hndDisconnect,
+         component->getReactorTask()->getImpl()
+      );
+
+
+  // local variables
+  bool use_ns = true;
+  Smart::StatusCode result = Smart::SMART_OK;
+
+  SmartACE::NSKeyType key;
+  key.names[SmartACE::NSKeyType::COMP_NAME] = component->getName().c_str();
+  key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Query");
+  key.names[SmartACE::NSKeyType::SERVICE_NAME] = svc.c_str();
+  key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = R::identifier().c_str();
+  key.names[SmartACE::NSKeyType::COMMOBJ2_NAME] = A::identifier().c_str();
+  ACE_TString name = key; // get string representation of the key
+
+  SmartACE::NSValueType value;
+
+  if(component->getName().compare(SMART_NONS) == 0)
+  {
+     ACE_INET_Addr addr_to_listen;
+     if(addr_to_listen.string_to_addr(svc.c_str()) == 0) {
+        use_ns = false;
+        value.setInetAddr(addr_to_listen);
+     } else {
+        result = Smart::SMART_ERROR;
+     }
+  }
+
+  if(result == Smart::SMART_OK)
+  {
+	  if( acceptor->open (value.getInetAddr(), component->getReactorTask()->getImpl()) == 0 ) {
+		// acceptor successfull opened
+		// get the real inet adress
+	   ACE_INET_Addr addr_to_listen;
+		if( acceptor->acceptor().get_local_addr(addr_to_listen) == 0 ) {
+        if(use_ns) {
+             // temporary dummy variable
+             SmartACE::NSValueType dummy;
+
+             // check if port is already used
+             if( SmartACE::NAMING::instance()->resolve(key, dummy) == 0 ) {
+                SMARTSOFT_PRINT(ACE_TEXT("- %s is already in use - will be rebound silently.\n"), name.c_str() );
+                result = Smart::SMART_PORTALREADYUSED;
+             }
+
+             //<alexej date="2010-03-18">
+             uuid_genrator.init();
+             service_identifier = uuid_genrator.generate_UUID();
+             //</alexej>
+             value.set(addr_to_listen, *service_identifier);
+
+             if( SmartACE::NAMING::instance()->rebind(key, value) == 0 ) {
+                serverReady = 1;
+                SMARTSOFT_PRINT( ACE_TEXT("- %s is ready and running on address: <%s:%d>\n"), name.c_str(), addr_to_listen.get_host_addr(), addr_to_listen.get_port_number() );
+             }else{
+                SMARTSOFT_PRINT( ACE_TEXT("- %s rebinding error!"), name.c_str() );
+             }
+
+          }else{
+             serverReady = 1;
+             SMARTSOFT_PRINT( ACE_TEXT("- %s is ready and running on address: <%s:%d>\n"), name.c_str(), addr_to_listen.get_host_addr(), addr_to_listen.get_port_number() );
+          }
+        } // end if(use_ns)
+      } // end if(acceptor->get_local_addr() == 0)
+   } // end if(result == Smart::SMART_OK)
+  //</alexej>
+
+
+  mutexClientList.release();
+}
+
+//
+// default destructor
+//
+template<class R, class A> inline SmartACE::QueryServer<R,A>::~QueryServer(void) throw()
+{
+  this->serverInitiatedDisconnect();
+
+   //<alexej date="2010-03-18">
+   if(component->getName().compare(SMART_NONS) != 0)
+   {
+      SmartACE::NSKeyType key;
+      key.names[SmartACE::NSKeyType::COMP_NAME] = component->getName().c_str();
+      key.names[SmartACE::NSKeyType::PATTERN_NAME] = ACE_TEXT("Query");
+      key.names[SmartACE::NSKeyType::SERVICE_NAME] = service.c_str();
+      key.names[SmartACE::NSKeyType::COMMOBJ1_NAME] = R::identifier().c_str();
+      key.names[SmartACE::NSKeyType::COMMOBJ2_NAME] = A::identifier().c_str();
+
+      SmartACE::NAMING::instance()->unbind(key);
+   }
+
+   if(service_identifier != 0)
+      delete service_identifier;
+  //</alexej>
+}
+
+template<class R, class A> void SmartACE::QueryServer<R,A>::serverInitiatedDisconnect()
+{
+	  QueryClientList *cptr = 0;
+	  QueryClientList* prevcptr = 0;
+
+	  mutexClientList.acquire();
+	  //
+	  // since we now have the mutex, connects and disconnects from clients can not be
+	  // executed while modifying the server state to serverReady = 0. From now on any
+	  // tries to connect to this server are rejected
+	  //
+	  serverReady = 0;
+
+	  monitorServerInitiatedDisconnect.reset();
+
+	  acceptor->close_handler();
+
+	  cptr = clients;
+	  while (cptr != 0) {
+	    if( cptr->clientProxy->serverInitiatedDisconnect( cptr->connection_id ) != Smart::SMART_OK )
+	    {
+	      // clientProxy could not communicate SID message.
+	      // The reason can be that the connection is broken or a communication error occured.
+	      // Since we are now in the destructor, it is safe to just remove this reference.
+	      if(clients == cptr) {
+	        // the current cptr is the first element
+	        // we will remove the first element, so set the clients pointer to the next lement
+	        clients = clients->next;
+	        // clean up
+	        cptr->clientProxy->trigger_shutdown();
+	        delete cptr;
+	        // set the current pointer to the beginning of the list
+	        cptr = clients;
+	      } else {
+	        // cptr points NOT to the first element in the list
+	        prevcptr->next = cptr->next;
+	        cptr->clientProxy->trigger_shutdown();
+	        delete cptr;
+	        cptr = prevcptr->next;
+	      }
+	    } else {
+	      prevcptr = cptr;
+	      cptr = cptr->next;
+	    }
+	  }
+
+	  if(clients == 0) {
+		  monitorServerInitiatedDisconnect.broadcast();
+	  }
+	  mutexClientList.release();
+
+	  //
+	  // - pending disconnects from clients can now get the mutexClientList and can
+	  //   therefore execute their disconnect
+	  // - since serverReady == 0, from now on all modifications on the list of clients
+	  //   are rejected inside the disconnect handler
+	  // - therefore one can step through the list of clients without requiring to hold
+	  //   the mutexClientList and can call disconnect at the client side
+	  // - the server has to call the client's disconnect outside the mutexClientList since
+	  //   the client calls back the server within the disconnect member function and the
+	  //   server handler requires the mutexClientList
+	  // - Concurrent calls to the client's disconnect member function from this server
+	  //   and from the client are not critical since disconnects are executed sequentially
+	  //   in the client due to the client's mutexConnection
+	  //
+
+	   monitorServerInitiatedDisconnect.wait();
+	   component->removeSmartMonitor(&monitorServerInitiatedDisconnect);
+
+	   acceptor->close();
+	   delete acceptor;
+}
+
+//
+// function called by the user for returning the answer to a specific request (see id)
+//
+template<class R, class A> Smart::StatusCode SmartACE::QueryServer<R,A>::answer(const QueryId& id, const A& a) throw()
+{
+  QueryServerList* lptr  = 0;
+  QueryServerList* hlptr = 0;
+  Smart::StatusCode       result;
+
+  result = Smart::SMART_OK;
+
+  //
+  // clients can not get disconnected while answer is sent back since disconnect
+  // as well requires this mutex. Answer is therefore always sent correctly before
+  // server executes disconnects for clients
+  //
+  mutexClientList.acquire();
+
+  mutexQueryList.acquire();
+  for( lptr = queries; lptr != 0; lptr = lptr->next )
+    if( lptr->id == id )
+      break;
+  mutexQueryList.release();
+
+  if( lptr != 0 ) {
+	if (lptr->querystatus == Smart::QUERY_DISCONNECTED) {
+      //
+      // the client awaiting this answer has been disconnected
+      // answer is not sent back
+      //
+      result = Smart::SMART_DISCONNECTED;
+    } else {
+      //<alexej date="26.11.2008">
+      //
+      // Message Buffer
+      //
+      SmartMessageBlock *any = 0;
+
+      //
+      // Get message data from CommObj
+      //
+      a.get(any);
+
+      //
+      // Send answer back to requestor
+      //
+      result = lptr->clientProxy->answer(any,lptr->cltId);
+
+      //
+      // Release(free) message buffer
+      //
+      any->release();
+      //</alexej>
+    }
+
+    mutexQueryList.acquire();
+
+    //
+    // now delete list entry
+    //
+    // since we have already found an entry with the correct id, we know
+    // that the entry is still in the list ... each id also occurs only
+    // once in the list
+    //
+    if ( id == queries->id ) {
+      //
+      // first entry in list therefore remove head of list ...
+      //
+      lptr    = queries;
+      queries = queries->next;
+      delete lptr;
+    } else {
+      //
+      // not first entry in list, must therefore be second or later one ...
+      //
+      lptr = queries;
+      while (lptr->next != 0) {
+        if (lptr->next->id == id) {
+          hlptr      = lptr->next;
+          lptr->next = lptr->next->next;
+          delete hlptr;
+        } else {
+          lptr = lptr->next;
+        }
+      }
+    }
+
+    mutexQueryList.release();
+
+  } else {
+    result = Smart::SMART_WRONGID;
+  }
+
+  mutexClientList.release();
+
+  return result;
+}
+
