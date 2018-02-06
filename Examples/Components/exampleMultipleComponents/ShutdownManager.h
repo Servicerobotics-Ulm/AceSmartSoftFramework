@@ -32,8 +32,8 @@
 #ifndef SHUTDOWNMANAGER_H_
 #define SHUTDOWNMANAGER_H_
 
-#include <smartSoft.hh>
 #include <list>
+#include "../../../AceSmartSoftKernel/aceSmartSoft.hh"
 
 class ShutdownManager : public ACE_Event_Handler {
 private:

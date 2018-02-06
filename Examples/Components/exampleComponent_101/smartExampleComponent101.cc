@@ -30,11 +30,12 @@
 //
 // --------------------------------------------------------------------------
 
-#include "smartSoft.hh"
-
+#include "aceSmartSoft.hh"
 #include "commExampleTime.hh"
 #include "commExampleValues.hh"
 #include "commExampleResult.hh"
+
+#include "aceSerializationExamples.hh"
 
 // -------------------------------------------------------------------
 //
@@ -61,10 +62,7 @@ public:
       std::cout << "time service " << id << " received time: ";
       r.print();
 
-      time_t time_now = time(0);
-	  struct tm *time_p = ACE_OS::gmtime(&time_now);
-
-      a.set(time_p->tm_hour,time_p->tm_min,time_p->tm_sec);
+      a.set_now();
 
       std::cout << "time service " << id << " sent answer time: ";
       a.print();
@@ -90,14 +88,14 @@ public:
 
     {
       SmartACE::CommExampleResult a;
-      std::list<int>    l;
+      std::vector<int>    l;
       int               result;
 
       std::cout << "calc service " << id << std::endl;
 
       r.get(l);
       result = 0;
-      for (std::list<int>::iterator i=l.begin();i!=l.end();++i) {
+      for (std::vector<int>::iterator i=l.begin();i!=l.end();++i) {
 		result += *i;
       }
       a.set(result);

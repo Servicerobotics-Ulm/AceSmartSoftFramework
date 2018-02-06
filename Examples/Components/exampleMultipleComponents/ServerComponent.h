@@ -32,8 +32,7 @@
 #ifndef SERVERCOMPONENT_H_
 #define SERVERCOMPONENT_H_
 
-#include <smartSoft.hh>
-
+#include "../../../AceSmartSoftKernel/aceSmartSoft.hh"
 #include "ServerTask.h"
 
 class ServerComponent : public SmartACE::ManagedTask {

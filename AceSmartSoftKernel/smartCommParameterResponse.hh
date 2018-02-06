@@ -59,20 +59,22 @@
 
 #include <iostream>
 
+#include <ace/CDR_Stream.h>
+
 namespace SmartACE
 {
 
 class CommParameterResponse
 {
-protected:
-	CommParameterIDL::CommParameterResponse idl_CommParameterResponse;
 public:
+	CommParameterIDL::CommParameterResponse data;
+
 	CommParameterResponse()
 	{
 	}
 
 	CommParameterResponse(const CommParameterIDL::CommParameterResponse &obj) :
-		idl_CommParameterResponse(obj)
+		data(obj)
 	{
 	}
 
@@ -82,11 +84,8 @@ public:
 
 	operator CommParameterIDL::CommParameterResponse() const
 	{
-		return idl_CommParameterResponse;
+		return data;
 	}
-
-	void get(ACE_Message_Block *&msg) const;
-	void set(const ACE_Message_Block *msg);
 
 	static inline std::string identifier(void)
 	{
@@ -99,11 +98,11 @@ public:
 
 	inline ParamResponseType getResponse() const
 	{
-		return idl_CommParameterResponse.response;
+		return data.response;
 	}
 	inline void setResponse(const ParamResponseType &response)
 	{
-		idl_CommParameterResponse.response = response;
+		data.response = response;
 	}
 
 	// helper method to easily implement output stream in derived classes
@@ -117,4 +116,12 @@ inline std::ostream &operator<<(std::ostream &os, const CommParameterResponse &c
 }
 
 }
+
+////////////////////////////////////////////////////////////////////////
+//
+// serialization operators
+//
+////////////////////////////////////////////////////////////////////////
+ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const SmartACE::CommParameterResponse &obj);
+ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, SmartACE::CommParameterResponse &obj);
 #endif

@@ -30,8 +30,8 @@
 //
 // --------------------------------------------------------------------------
 
-#ifndef _SMARTSOFT_HH
-#define _SMARTSOFT_HH
+#ifndef _ACESMARTSOFT_HH
+#define _ACESMARTSOFT_HH
 
 #include "smartOSMapping.hh"
 #include "smartErrno.hh"
@@ -55,7 +55,8 @@
 
 //<alexej date="2009-10-26">
 #include "smartManagedTask.hh"
+#include "smartInputTaskTrigger.h"
 //</alexej>
 
-#endif // _SMARTSOFT_HH
+#endif // _ACESMARTSOFT_HH
 

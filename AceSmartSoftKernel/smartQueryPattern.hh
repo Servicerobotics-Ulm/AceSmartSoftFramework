@@ -58,7 +58,7 @@ class SmartQueryClientInterface
    virtual ~SmartQueryClientInterface() {  }
 
   //oneway void answer(in any user,in long id);
-  virtual Smart::StatusCode answer(SmartACE::SmartMessageBlock*, int) = 0;
+  virtual Smart::StatusCode answer(const SmartACE::SmartMessageBlock*, int) = 0;
   // user : user data type from the answer communication object
   // id   : returned query identifier previously provided in the request
 
@@ -81,7 +81,7 @@ class SmartQueryServerInterface
    virtual ~SmartQueryServerInterface() {  }
 
   //oneway void request(in any user,in SmartQueryClientPattern client, in long id);
-  virtual Smart::StatusCode request(SmartACE::SmartMessageBlock*, int id) = 0;
+  virtual Smart::StatusCode request(const SmartACE::SmartMessageBlock*, int id) = 0;
   // user   : user data type from the request communication object
   // client : reference to the client object
   // id     : query identifier needed by client to distribute answer

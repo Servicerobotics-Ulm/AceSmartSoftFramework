@@ -34,6 +34,8 @@
 
 #include "ace/CDR_Stream.h"
 
+#include <ctime>
+
 using namespace SmartACE;
 
 CommExampleTime::CommExampleTime()
@@ -44,45 +46,50 @@ CommExampleTime::~CommExampleTime()
 {
 }
 
-void CommExampleTime::get(ACE_Message_Block *&msg) const
-{
-	ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
+//void CommExampleTime::get(ACE_Message_Block *&msg) const
+//{
+//	ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
+//
+//	cdr << time.nanoseconds;
+//
+//	msg = cdr.begin()->clone();
+//}
+//
+//void CommExampleTime::set(const ACE_Message_Block *msg)
+//{
+//	ACE_InputCDR cdr(msg);
+//
+//	cdr >> time.nanoseconds;
+//}
 
-	cdr << time.hour;
-	cdr << time.minute;
-	cdr << time.second;
+//void CommExampleTime::get(int &h,int &m,int &s)
+//{
+//  h = time.hour;
+//  m = time.minute;
+//  s = time.second;
+//}
+//
+//void CommExampleTime::set(int h,int m,int s)
+//{
+//  time.hour   = h;
+//  time.minute = m;
+//  time.second = s;
+//}
 
-	msg = cdr.begin()->clone();
+void CommExampleTime::set_now() {
+	std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
+	time.nanoseconds = tp.time_since_epoch().count();
 }
 
-void CommExampleTime::set(const ACE_Message_Block *msg)
-{
-	ACE_InputCDR cdr(msg);
-
-	cdr >> time.hour;
-	cdr >> time.minute;
-	cdr >> time.second;
+std::chrono::system_clock::time_point CommExampleTime::get_timepoint() {
+	return std::chrono::system_clock::time_point(std::chrono::nanoseconds(time.nanoseconds));
 }
 
-void CommExampleTime::get(int &h,int &m,int &s)
-{
-  h = time.hour;
-  m = time.minute;
-  s = time.second;
-}
-
-void CommExampleTime::set(int h,int m,int s)
-{
-  time.hour   = h;
-  time.minute = m;
-  time.second = s;
-}
 
 void CommExampleTime::print(std::ostream &os) const
 {
-  os << "Time in Greenwich is "
-     << std::setw (2) << std::setfill ('0') << time.hour << ":"
-     << std::setw (2) << std::setfill ('0') << time.minute << ":"
-     << std::setw (2) << std::setfill ('0') << time.second << std::endl;
+	std::chrono::system_clock::time_point tp(std::chrono::nanoseconds(time.nanoseconds));
+	std::time_t tt = std::chrono::system_clock::to_time_t(tp);
+	os << "Time in Greenwich is " << ctime(&tt) << std::endl;
 }
 

@@ -47,11 +47,11 @@
 //
 // --------------------------------------------------------------------------
 
-
-
 #include <sstream>
 
 #include "smartCommParameterRequest.hh"
+
+#include <ace/SString.h>
 
 using namespace SmartACE;
 
@@ -91,22 +91,23 @@ void CommParameterRequest::setTag(const std::string &value)
 	setString("slot", value);
 }
 
+/*
 void CommParameterRequest::get(ACE_Message_Block *&msg) const
 {
 	ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
 
-	cdr << static_cast<ACE_CDR::Long> (idl_CommParameterRequest.items.size());
+	cdr << static_cast<ACE_CDR::Long> (data.items.size());
 	std::vector<CommParameterIDL::NameValue>::const_iterator
-			idl_CommParameterRequest_itemsIt;
-	for (idl_CommParameterRequest_itemsIt
-			= idl_CommParameterRequest.items.begin(); idl_CommParameterRequest_itemsIt
-			!= idl_CommParameterRequest.items.end(); idl_CommParameterRequest_itemsIt++)
+			data_itemsIt;
+	for (data_itemsIt
+			= data.items.begin(); data_itemsIt
+			!= data.items.end(); data_itemsIt++)
 	{
 
-		cdr << (*idl_CommParameterRequest_itemsIt).key;
-		cdr << static_cast<ACE_CDR::Long> ((*idl_CommParameterRequest_itemsIt).values.size());
-		for(unsigned i=0; i<(*idl_CommParameterRequest_itemsIt).values.size(); ++i) {
-			cdr << (*idl_CommParameterRequest_itemsIt).values[i];
+		cdr << (*data_itemsIt).key;
+		cdr << static_cast<ACE_CDR::Long> ((*data_itemsIt).values.size());
+		for(unsigned i=0; i<(*data_itemsIt).values.size(); ++i) {
+			cdr << (*data_itemsIt).values[i];
 		}
 	}
 
@@ -117,39 +118,40 @@ void CommParameterRequest::set(const ACE_Message_Block *msg)
 {
 	ACE_InputCDR cdr(msg);
 
-	ACE_CDR::Long idl_CommParameterRequest_itemsNbr;
-	cdr >> idl_CommParameterRequest_itemsNbr;
-	idl_CommParameterRequest.items.clear();
-	CommParameterIDL::NameValue idl_CommParameterRequest_itemsItem;
-	for (ACE_CDR::Long i = 0; i < idl_CommParameterRequest_itemsNbr; ++i)
+	ACE_CDR::Long data_itemsNbr;
+	cdr >> data_itemsNbr;
+	data.items.clear();
+	CommParameterIDL::NameValue data_itemsItem;
+	for (ACE_CDR::Long i = 0; i < data_itemsNbr; ++i)
 	{
-		cdr >> idl_CommParameterRequest_itemsItem.key;
+		cdr >> data_itemsItem.key;
 
-		ACE_CDR::Long idl_CommParameterRequest_items_valuesNbr;
-		cdr >> idl_CommParameterRequest_items_valuesNbr;
-		idl_CommParameterRequest_itemsItem.values.clear();
-		for(ACE_CDR::Long i2 = 0; i2 < idl_CommParameterRequest_items_valuesNbr; ++i2)
+		ACE_CDR::Long data_items_valuesNbr;
+		cdr >> data_items_valuesNbr;
+		data_itemsItem.values.clear();
+		for(ACE_CDR::Long i2 = 0; i2 < data_items_valuesNbr; ++i2)
 		{
-			ACE_CString idl_CommParameterRequest_itemsItem_valueItem;
-			cdr >> idl_CommParameterRequest_itemsItem_valueItem;
-			idl_CommParameterRequest_itemsItem.values.push_back(idl_CommParameterRequest_itemsItem_valueItem);
+			ACE_CString data_itemsItem_valueItem;
+			cdr >> data_itemsItem_valueItem;
+			data_itemsItem.values.push_back(data_itemsItem_valueItem);
 		}
 
-		idl_CommParameterRequest.items.push_back(
-				idl_CommParameterRequest_itemsItem);
+		data.items.push_back(
+				data_itemsItem);
 	}
 }
+*/
 
 int CommParameterRequest::remove(const std::string &key) {
 	bool found = false;
 	std::vector<CommParameterIDL::NameValue>::iterator it;
-	for(it=idl_CommParameterRequest.items.begin(); it!=idl_CommParameterRequest.items.end(); it++) {
+	for(it=data.items.begin(); it!=data.items.end(); it++) {
 		if(it->key.c_str() == key.c_str()) {
 			found = true;
 			break;
 		}
 	}
-	idl_CommParameterRequest.items.erase(it);
+	data.items.erase(it);
 	return found? 0 : -1;
 }
 
@@ -158,18 +160,63 @@ void CommParameterRequest::to_ostream(std::ostream &os) const
   os << "CommParameterRequest(";
 
   std::vector<CommParameterIDL::NameValue>::const_iterator
-		idl_CommParameterRequest_itemsIt;
-  for (idl_CommParameterRequest_itemsIt
-		= idl_CommParameterRequest.items.begin(); idl_CommParameterRequest_itemsIt
-		!= idl_CommParameterRequest.items.end(); idl_CommParameterRequest_itemsIt++)
+		data_itemsIt;
+  for (data_itemsIt
+		= data.items.begin(); data_itemsIt
+		!= data.items.end(); data_itemsIt++)
   {
 
-	os << "([" << (*idl_CommParameterRequest_itemsIt).key << "] ";
-	for(unsigned i=0; i<idl_CommParameterRequest_itemsIt->values.size(); ++i) {
-		os << idl_CommParameterRequest_itemsIt->values[i] << " ";
+	os << "([" << (*data_itemsIt).key << "] ";
+	for(unsigned i=0; i<data_itemsIt->values.size(); ++i) {
+		os << data_itemsIt->values[i] << " ";
 	}
 	os << ")";
   }
   os << ")";
+}
+
+ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const CommParameterRequest &obj)
+{
+	ACE_CDR::Boolean good_bit = true;
+	good_bit = good_bit && cdr << static_cast<ACE_CDR::Long> (obj.data.items.size());
+	std::vector<CommParameterIDL::NameValue>::const_iterator nvIt;
+	for (nvIt = obj.data.items.begin(); nvIt != obj.data.items.end(); nvIt++)
+	{
+
+		good_bit = good_bit && cdr << ACE_CString((*nvIt).key.c_str());
+		good_bit = good_bit && cdr << static_cast<ACE_CDR::Long> ((*nvIt).values.size());
+		for(unsigned i=0; i<(*nvIt).values.size(); ++i) {
+			good_bit = good_bit && cdr << ACE_CString((*nvIt).values[i].c_str());
+		}
+	}
+	return good_bit;
+}
+ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, CommParameterRequest &obj)
+{
+	ACE_CDR::Boolean good_bit = true;
+	ACE_CDR::Long data_itemsNbr;
+	good_bit = good_bit && cdr >> data_itemsNbr;
+	obj.data.items.clear();
+
+	CommParameterIDL::NameValue nv;
+	ACE_CString key;
+	for (ACE_CDR::Long i = 0; i < data_itemsNbr; ++i)
+	{
+		good_bit = good_bit && cdr >> key;
+		nv.key = key.c_str();
+
+		ACE_CDR::Long data_items_valuesNbr;
+		good_bit = good_bit && cdr >> data_items_valuesNbr;
+		nv.values.clear();
+		for(ACE_CDR::Long i2 = 0; i2 < data_items_valuesNbr; ++i2)
+		{
+			ACE_CString data_itemsItem_valueItem;
+			good_bit = good_bit && cdr >> data_itemsItem_valueItem;
+			nv.values.push_back(data_itemsItem_valueItem.c_str());
+		}
+
+		obj.data.items.push_back(nv);
+	}
+	return good_bit;
 }
 

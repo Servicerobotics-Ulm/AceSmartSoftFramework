@@ -43,7 +43,7 @@ public:
    virtual ~SmartPushClientInterface() {  }
 
    //oneway void update(in any user);
-   virtual Smart::StatusCode update(SmartACE::SmartMessageBlock*, int sid) = 0;
+   virtual Smart::StatusCode update(const SmartACE::SmartMessageBlock*, int sid) = 0;
    // push newest data to the client
    // user : user data type from the answer communication object
 

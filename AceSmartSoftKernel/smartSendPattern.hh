@@ -61,7 +61,7 @@ class SmartSendServerInterface
   public:
    virtual ~SmartSendServerInterface() {  }
 
-  virtual Smart::StatusCode command(SmartACE::SmartMessageBlock *message) = 0;
+  virtual Smart::StatusCode command(const SmartACE::SmartMessageBlock *message) = 0;
   // message   : user data type from the request communication object
   //
   // "oneway" is needed to finish the send command before the

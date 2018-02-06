@@ -40,25 +40,17 @@
 
 #include <string>
 
-#include "ace/Message_Block.h"
-
 #include "exampleValues.hh"
 
 namespace SmartACE {
 
 class CommExampleValues
 {
-protected:
+public:
   ExampleValues values;
 
-public:
   CommExampleValues();
   virtual ~CommExampleValues();
-
-  //<alexej date="26.11.2008">
-  void get(ACE_Message_Block *&msg) const;
-  void set(const ACE_Message_Block *msg);
-  //</alexej>
 
   static inline std::string identifier(void) {
     return "SmartACE::exampleValues";
@@ -68,8 +60,8 @@ public:
   //
   // user interface
   //
-  void set(std::list<int>);
-  void get(std::list<int>&) const;
+  void set(std::vector<int>);
+  void get(std::vector<int>&) const;
 };
 
 }

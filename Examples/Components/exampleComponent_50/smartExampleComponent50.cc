@@ -30,9 +30,10 @@
 //
 // --------------------------------------------------------------------------
 
-#include "smartSoft.hh"
-
+#include "aceSmartSoft.hh"
 #include "commExamplePrint.hh"
+
+#include "aceSerializationExamples.hh"
 
 //
 // handler of the send service of this component

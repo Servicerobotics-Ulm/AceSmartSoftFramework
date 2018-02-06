@@ -44,7 +44,7 @@ public:
 
   //void event(in any user,in long id);
    // D:
-   virtual Smart::StatusCode event(SmartACE::SmartMessageBlock *user, int id) = 0;
+   virtual Smart::StatusCode event(const SmartACE::SmartMessageBlock *user, int id) = 0;
   // event fires and therefore transmit event object to client
   // user : user event data
   // id   : activation id from client

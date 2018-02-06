@@ -30,6 +30,9 @@
 //
 // --------------------------------------------------------------------------
 
+#ifndef _EXAMPLEEVENT1_H_
+#define _EXAMPLEEVENT1_H_
+
 struct ExampleEvent1Parameter
 {
   int value;
@@ -40,3 +43,4 @@ struct ExampleEvent1Result
   int value;
 };
 
+#endif

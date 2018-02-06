@@ -30,9 +30,10 @@
 //
 // --------------------------------------------------------------------------
 
-#include "smartSoft.hh"
-
+#include "aceSmartSoft.hh"
 #include "commExampleTime.hh"
+
+#include "aceSerializationExamples.hh"
 
 // -------------------------------------------------------------------
 //
@@ -66,10 +67,7 @@ public:
 
       ACE_OS::sleep(6);
 
-      time_t time_now = time(0);
-      struct tm *time_p = gmtime(&time_now);
-
-      a.set(time_p->tm_hour,time_p->tm_min,time_p->tm_sec);
+      a.set_now();
 
       std::cout << "time service " << id << " sent answer time: ";
       a.print();

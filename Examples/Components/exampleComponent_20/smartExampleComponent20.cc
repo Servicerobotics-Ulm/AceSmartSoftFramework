@@ -30,10 +30,10 @@
 //
 // --------------------------------------------------------------------------
 
-#include "smartSoft.hh"
-
+#include "aceSmartSoft.hh"
 #include "commExampleTime.hh"
 
+#include "aceSerializationExamples.hh"
 
 // -------------------------------------------------------------------
 //
@@ -188,7 +188,7 @@ public:
 int UserThreadC::on_entry()
 {
   // arbitrary test-time
-  r.set(1,2,3);
+  r.set_now();
   return 0;
 }
 

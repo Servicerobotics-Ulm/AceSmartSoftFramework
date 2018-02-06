@@ -4,7 +4,7 @@
 if [ `ps -Al | grep -c SmartSoftNaming` -eq 1 ]
 then 
   echo "shuttting down SmartSoft Naming Service ..."
-  killall SmartSoftNamingService
+  killall AceSmartSoftNamingService
   if test -e /tmp/SMART_NAMES
   then 
     rm /tmp/SMART_NAMES

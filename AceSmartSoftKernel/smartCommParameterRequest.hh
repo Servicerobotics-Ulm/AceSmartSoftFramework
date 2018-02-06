@@ -59,23 +59,22 @@
 // include core class
 #include "smartCommParameterRequestIdl.hh"
 
-// include ACE_Message_Block definition
-#include "ace/Message_Block.h"
+#include <ace/CDR_Stream.h>
 
 namespace SmartACE
 {
 
 class CommParameterRequest
 {
-protected:
-	CommParameterIDL::CommParameterRequest idl_CommParameterRequest;
 public:
+	CommParameterIDL::CommParameterRequest data;
+
 	CommParameterRequest()
 	{
 	}
 
 	CommParameterRequest(const CommParameterIDL::CommParameterRequest &obj) :
-		idl_CommParameterRequest(obj)
+		data(obj)
 	{
 	}
 
@@ -85,11 +84,8 @@ public:
 
 	operator CommParameterIDL::CommParameterRequest() const
 	{
-		return idl_CommParameterRequest;
+		return data;
 	}
-
-	void get(ACE_Message_Block *&msg) const;
-	void set(const ACE_Message_Block *msg);
 
 	static inline std::string identifier(void)
 	{
@@ -229,5 +225,14 @@ inline std::ostream &operator<<(std::ostream &os, const CommParameterRequest &co
 	return os;
 }
 
-}
+} // end namespace SmartACE
+
+////////////////////////////////////////////////////////////////////////
+//
+// serialization operators
+//
+////////////////////////////////////////////////////////////////////////
+ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const SmartACE::CommParameterRequest &obj);
+ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, SmartACE::CommParameterRequest &obj);
+
 #endif

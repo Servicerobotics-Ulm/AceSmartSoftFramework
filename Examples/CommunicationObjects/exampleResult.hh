@@ -30,7 +30,12 @@
 //
 // --------------------------------------------------------------------------
 
+#ifndef _EXAMPLERESULT_H_
+#define _EXAMPLERESULT_H_
+
 struct ExampleResult
 {
   int value;
 };
+
+#endif

@@ -140,7 +140,7 @@ int EventServerServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
 	return 0;
 }
 
-Smart::StatusCode EventServerServiceHandler::event(SmartACE::SmartMessageBlock *user, int id)
+Smart::StatusCode EventServerServiceHandler::event(const SmartACE::SmartMessageBlock *user, int id)
 {
 	Smart::StatusCode result = Smart::SMART_OK;
 

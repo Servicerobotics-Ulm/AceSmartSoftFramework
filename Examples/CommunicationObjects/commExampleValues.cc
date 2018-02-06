@@ -32,8 +32,6 @@
 
 #include "commExampleValues.hh"
 
-#include "ace/CDR_Stream.h"
-
 using namespace SmartACE;
 
 CommExampleValues::CommExampleValues()
@@ -44,45 +42,12 @@ CommExampleValues::~CommExampleValues()
 {
 }
 
-void CommExampleValues::get(ACE_Message_Block *&msg) const
-{
-	ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
-
-	// Set number of values in list.
-	// this helps by reading (see set function)
-	cdr << static_cast<ACE_UINT32>(values.size());
-
-	std::list<int>::const_iterator it;
-	for(it=values.begin(); it != values.end(); it++) {
-		cdr << *it;
-	}
-
-	msg = cdr.begin()->clone();
-}
-
-void CommExampleValues::set(const ACE_Message_Block *msg)
-{
-	ACE_InputCDR cdr(msg);
-	int temp = 0;
-	int nmbrOfValues = 0;
-
-	cdr >> nmbrOfValues;
-
-	values.clear();
-
-	for(int i=0; i<nmbrOfValues; ++i) {
-		cdr >> temp;
-		values.push_back(temp);
-	}
-
-}
-
-void CommExampleValues::set(std::list<int> a)
+void CommExampleValues::set(std::vector<int> a)
 {
   values = a;
 }
 
-void CommExampleValues::get(std::list<int> &l) const
+void CommExampleValues::get(std::vector<int> &l) const
 {
   l = values;
 }

@@ -30,9 +30,6 @@
 //
 // --------------------------------------------------------------------------
 
-#include "ace/CDR_Stream.h"
-#include "ace/SString.h"
-
 #include "commExampleEvent2.hh"
 
 using namespace SmartACE;
@@ -43,24 +40,6 @@ CommExampleEvent2Parameter::CommExampleEvent2Parameter() : state(0)
 
 CommExampleEvent2Parameter::~CommExampleEvent2Parameter()
 {
-}
-
-void CommExampleEvent2Parameter::get(ACE_Message_Block *&msg) const
-{
-   ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
-
-   cdr << parameter.upper;
-   cdr << parameter.lower;
-
-   msg = cdr.begin()->clone();
-}
-
-void CommExampleEvent2Parameter::set(const ACE_Message_Block *msg)
-{
-   ACE_InputCDR cdr(msg);
-
-   cdr >> parameter.upper;
-   cdr >> parameter.lower;
 }
 
 void CommExampleEvent2Parameter::get(int& s) const
@@ -99,25 +78,6 @@ CommExampleEvent2Result::CommExampleEvent2Result()
 
 CommExampleEvent2Result::~CommExampleEvent2Result()
 {
-}
-
-void CommExampleEvent2Result::get(ACE_Message_Block *&msg) const
-{
-   ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
-
-   ACE_CString str_temp(result.state.c_str());
-   cdr << str_temp;
-
-   msg = cdr.begin()->clone();
-}
-
-void CommExampleEvent2Result::set(const ACE_Message_Block *msg)
-{
-   ACE_InputCDR cdr(msg);
-
-   ACE_CString str_temp;
-   cdr >> str_temp;
-   result.state = str_temp.c_str();
 }
 
 void CommExampleEvent2Result::set(std::string s)

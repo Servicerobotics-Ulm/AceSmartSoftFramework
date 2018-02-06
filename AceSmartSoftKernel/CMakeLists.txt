@@ -35,7 +35,7 @@ PROJECT(${PARENT_NAME}Kernel)
 
 # find ACE library package
 IF(NOT TARGET ACE)
-  FIND_PACKAGE(ACE 6.0.2 PATHS $ENV{SMART_ROOT_ACE} /opt/smartSoftAce)
+  FIND_PACKAGE(ACE 6.0.2 PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
 ENDIF(NOT TARGET ACE)
 
 # create a ConfigFile including the current SmartSoft version
@@ -44,10 +44,21 @@ CONFIGURE_FILE(
   "${PROJECT_BINARY_DIR}/middlewareMapping/smartConfig.hh" @ONLY
 )
 
+# use ExternalProject to download and build the SmartSoftAPI
+INCLUDE(ExternalProject)
 
-INCLUDE(${PROJECT_SOURCE_DIR}/LoadSmartSoftApi.cmake)
-LoadSmartSoftApi(${PROJECT_BINARY_DIR}/SmartSoftAPI)
-#SET(SmartSoftAPI_INCLUDES "$ENV{HOME}/SOFTWARE/SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API")
+# checkout and build the SmartSoftAPI
+ExternalProject_Add(SmartSoftAPI
+  PREFIX SmartSoftAPI
+  GIT_REPOSITORY https://github.com/Servicerobotics-Ulm/SmartSoftComponentDeveloperAPIcpp.git
+  GIT_TAG develop
+  INSTALL_COMMAND "" # don't autoinstall this (leave the sources in build-tree)
+)
+
+# get the source-folder of the dowloaded SmartSoftAPI
+ExternalProject_Get_Property(SmartSoftAPI SOURCE_DIR)
+# set the root include-folder for the SmartSoftAPI
+SET(SmartSoftAPI_INCLUDES "${SOURCE_DIR}/SmartSoft_CD_API")
 
 
 # OS mapping sources
@@ -78,7 +89,8 @@ TARGET_COMPILE_FEATURES(${PROJECT_NAME} PUBLIC cxx_auto_type)
 # link SmartSoftKernel with the ACE library
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ACE)
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} SmartSoft_CD_API)
+# build SmartSoftAPI before ${PROJECT_NAME}
+ADD_DEPENDENCIES(${PROJECT_NAME} SmartSoftAPI)
 
 # define include paths for the SmartSoftKernel target
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC

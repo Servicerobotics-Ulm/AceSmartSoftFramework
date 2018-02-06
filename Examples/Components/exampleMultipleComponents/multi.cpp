@@ -29,8 +29,7 @@
 //
 // --------------------------------------------------------------------------
 
-#include <smartSoft.hh>
-
+#include "../../../AceSmartSoftKernel/aceSmartSoft.hh"
 #include "ShutdownManager.h"
 
 #include "ServerComponent.h"

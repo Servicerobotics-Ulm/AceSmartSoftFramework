@@ -32,8 +32,7 @@
 #ifndef CLIENTCOMPONENT_H_
 #define CLIENTCOMPONENT_H_
 
-#include <smartSoft.hh>
-
+#include "../../../AceSmartSoftKernel/aceSmartSoft.hh"
 #include "ClientTask.h"
 
 class ClientComponent : public SmartACE::ManagedTask {

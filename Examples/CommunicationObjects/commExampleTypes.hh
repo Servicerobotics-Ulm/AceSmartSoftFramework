@@ -44,24 +44,10 @@
 
 #include <string>
 
-#include "ace/CDR_Stream.h"
+#include "exampleTypes.hh"
 
 namespace SmartACE
 {
-
-   struct ExampleTypes
-   {
-      ACE_CDR::Boolean cdr_bool;
-      ACE_CDR::Char cdr_char;
-      ACE_CDR::Double cdr_dbl;
-      ACE_CDR::Float cdr_float;
-      ACE_CDR::Long cdr_long;
-      ACE_CDR::LongLong cdr_longlong;
-      ACE_CDR::ULong cdr_ulong;
-      ACE_CDR::ULongLong cdr_ulonglong;
-      ACE_CDR::UShort cdr_ushort;
-   };
-
    class CommExampleTypes
    {
    public:
@@ -77,10 +63,6 @@ namespace SmartACE
       static inline std::string identifier(void) {
         return "SmartACE::exampleTypes";
       };
-
-      // Helper functions to pack/unpack comm-obj data
-      void get(ACE_Message_Block *&msg) const;
-      void set(const ACE_Message_Block *msg);
 
       // print data to std-out
       void print_data();

@@ -30,9 +30,10 @@
 //
 // --------------------------------------------------------------------------
 
-#include "smartSoft.hh"
-
+#include "aceSmartSoft.hh"
 #include "commExampleTime.hh"
+
+#include "aceSerializationExamples.hh"
 
 // -------------------------------------------------------------------
 //
@@ -46,8 +47,6 @@ SmartACE::PushServer<SmartACE::CommExampleTime> *timeUpdate;
 class UserThreadA : public SmartACE::ManagedTask
 {
 private:
-	  time_t time_now;
-	  struct tm *time_p;
 	  Smart::StatusCode status;
 	  int i;
 
@@ -55,10 +54,8 @@ private:
 public:
   UserThreadA()
   :	SmartACE::ManagedTask(component)
-  , time_now()
   {
 	  i=0;
-	  time_p=0;
 	  status = Smart::SMART_OK;
   };
   virtual ~UserThreadA() {};
@@ -68,10 +65,7 @@ public:
 
 int UserThreadA::on_execute()
 {
-	time_now = time(0);
-	time_p   = ACE_OS::gmtime(&time_now);
-
-	a.set(time_p->tm_hour,time_p->tm_min,time_p->tm_sec);
+	a.set_now();
 	status = timeUpdate->put(a);
 
 	std::cout << "thread A <push new data> " << i++ << " status: " << status << " ";a.print();

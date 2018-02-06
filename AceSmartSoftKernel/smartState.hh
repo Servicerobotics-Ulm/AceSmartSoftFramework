@@ -40,7 +40,7 @@
 #include <cmath>
 
 #include <string>
-#include <list>
+#include <vector>
 
 #include "smartComponent.hh"
 #include "smartCommState.hh"
@@ -382,7 +382,7 @@ namespace SmartACE {
     // used to manage the states of a component
     //
     typedef struct SmartSubStateEntry {
-      std::list<std::string>  mainstates;
+      std::vector<std::string>  mainstates;
       std::string             name;
       //<alexej date="2010-09-08">
       //SmartCondClass        cond;
@@ -440,8 +440,8 @@ namespace SmartACE {
     /// private handler functions
     static void hndSetMainState(void*, QueryServer<SmartCommStateRequest,SmartCommStateResponse> *server, const QueryId &qid, const std::string&);
     static Smart::StatusCode hndGetCurrentState(void*, std::string &);
-    static Smart::StatusCode hndGetMainStates(void*, std::list<std::string>&);
-    static Smart::StatusCode hndGetSubStates(void*, const std::string&, std::list<std::string>&);
+    static Smart::StatusCode hndGetMainStates(void*, std::vector<std::string>&);
+    static Smart::StatusCode hndGetSubStates(void*, const std::string&, std::vector<std::string>&);
 
     /// Default constructor
     StateSlave() throw(SmartError);

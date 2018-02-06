@@ -72,7 +72,9 @@ template<class P, class E> void SmartACE::EventClient<P,E>::hndEvent(void* ptr, 
         // not yet fired
         lptr->eventAvailable = 1;
         lptr->eventFired     = 1;
-        lptr->e.set(user);
+
+        ACE_InputCDR cdr(user);
+        cdr >> lptr->e;
 
         // always signal both condition variables since both are used ...
         lptr->condW.signal();
@@ -94,7 +96,9 @@ template<class P, class E> void SmartACE::EventClient<P,E>::hndEvent(void* ptr, 
       // in continuous mode, only the "eventAvailable" flag is needed
       //
       lptr->eventAvailable = 1;
-      lptr->e.set(user);
+
+      ACE_InputCDR cdr(user);
+      cdr >> lptr->e;
 
       // always signal both condition variables since both are used ...
       lptr->condW.signal();
@@ -835,8 +839,8 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activat
    //
    // get parameter commObj-stream
    //
-   SmartMessageBlock *any;
-   p.get(any);
+   ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
+   cdr << p;
 
    //
    //
@@ -846,7 +850,7 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activat
    //
    // call activate message
    //
-   result = serverProxy->activate(m, id, any);
+   result = serverProxy->activate(m, id, cdr.begin());
 
    //
    // wait on aknowledge activate up to a second
@@ -1496,7 +1500,10 @@ void SmartACE::EventServer<P,E,S>::hndActivate(void *ptr, const EventServerServi
   lthis->mutexEventList.acquire();
 
   lptr = new EventServerList;
-  lptr->p.set(user);
+
+  ACE_InputCDR cdr(user);
+  cdr >> lptr->p;
+
   lptr->eventMode = static_cast<Smart::EventMode>(mode);
   lptr->clientId  = cltId;
   //<alexej date="2009-10-26">
@@ -1587,7 +1594,7 @@ template<class P, class E, class S> inline SmartACE::EventServer<P,E,S>::EventSe
 template<class P, class E, class S>
 inline SmartACE::EventServer<P,E,S>::EventServer(SmartComponent* m,
                                             const std::string& svc,
-											EventTestHandler<P,E,S> *handler) throw()
+											Smart::IEventTestHandler<P,E,S> *handler) throw()
   : Smart::IEventServerPattern<P,E,S,EventId>(m,svc,handler),
 	uuid_genrator(),
     service_identifier(0),
@@ -1816,29 +1823,17 @@ template<class P, class E, class S> Smart::StatusCode SmartACE::EventServer<P,E,
         //
         lptr->eventCnt++;
 
-    //<alexej date="2009-11-10">
-         //
-         // Message data buffer (for holding serialized CommObj data)
-         //
-         SmartMessageBlock *any = 0;
+        //<alexej date="2009-11-10">
+        ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
+        cdr << e;
 
-         //
-         // Get(serialize) CommObj data and store it in MessageBlock
-         //
-         e.get(any);
+        //
+        // send Message to client
+        //
+        status = lptr->clientProxy->event(cdr.begin(), lptr->clientId);
+        //ACE_DEBUG((LM_DEBUG, ACE_TEXT("event()\n") ));
 
-         //
-         // send Message to client
-         //
-         status = lptr->clientProxy->event(any, lptr->clientId);
-         //ACE_DEBUG((LM_DEBUG, ACE_TEXT("event()\n") ));
-
-
-         //
-         // Release(free) message memory, otherwise memory leaks will ocur.
-         //
-         any->release();
-   //</alexej>
+        //</alexej>
 
       }
     }

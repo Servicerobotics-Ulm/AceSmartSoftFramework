@@ -6,35 +6,6 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/SmartMacros2internal.cmake)
 # include all the general helper macros
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/SmartMacros2helpers.cmake)
 
-#############################################################
-## FIND_SMARTSOFT
-## This macro encapsulates the find package command of cmake
-#############################################################
-MACRO(FIND_SMARTSOFT VERSION)
-  IF(${BUILD_DEPENDENCIES})
-    INTERNAL_ADD_PACKAGE(SmartSoft)
-  ENDIF(${BUILD_DEPENDENCIES})
-
-  IF(NOT TARGET SmartSoftKernel)
-    # get the root folder of the external package
-    INTERNAL_FIND_PACKAGE(SmartSoft)
-
-    # run CMake configure command if needed
-    INTERNAL_CMAKE_CONFIGURE(${SmartSoft_ROOT})
-
-    # include ${PACKAGE_NAME}Config.cmake file from the external project
-    MESSAGE("-- Include ${SmartSoft_ROOT}/build/SmartSoftConfig.cmake")
-    INCLUDE(${SmartSoft_ROOT}/build/SmartSoftConfig.cmake)
-
-    # make sure that the external project is automatically rebuilt for the imported target
-    IF(TARGET SmartSoftExternal)
-      ADD_DEPENDENCIES(SmartSoftKernel SmartSoftExternal)
-    ENDIF(TARGET SmartSoftExternal)
-  ENDIF(NOT TARGET SmartSoftKernel)
-
-  LIST(APPEND ${PROJECT_NAME}_LOCAL_DEPENDENCIES SmartSoft)
-ENDMACRO(FIND_SMARTSOFT VERSION)
-
 
 ############################################################
 ## This macro can be used to add a SmartSoft package into
@@ -89,7 +60,7 @@ MACRO(SMART_COMPONENT_PROJECT)
   ADD_CUSTOM_TARGET(nodep COMMAND ${CMAKE_BUILD_TOOL} ${PROJECT_NAME}/fast WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Build ${PROJECT_NAME} without dependency checking")
 
   # define uninstall and disstclean targets
-  FIND_FILE(UNINSTALL_FILE cmake_uninstall.cmake.in PATHS $ENV{SMART_ROOT_ACE}/src/smartSoftKernel/CMakeTemplates $ENV{SMART_ROOT_ACE}/cmake-templates /opt/smartSoftAce/cmake-templates)
+  FIND_FILE(UNINSTALL_FILE cmake_uninstall.cmake.in PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
   IF(UNINSTALL_FILE)
     CONFIGURE_FILE(${UNINSTALL_FILE} ${PROJECT_BINARY_DIR}/cmake_uninstall.cmake @ONLY)
     ADD_CUSTOM_TARGET(uninstall ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake COMMENT "uninstall ${PROJECT_NAME}")
@@ -131,9 +102,6 @@ MACRO(SMART_COMPONENT_AUTOLINK_DEPENDENCIES)
     # link all external dependencies to the current comm-object
     TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${${PROJECT_NAME}_DEPENDENCIES})
   ENDIF(DEFINED ${PROJECT_NAME}_DEPENDENCIES)
-
-  # SmartSoftKernel is the default (main) dependency for each component
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} SmartSoftKernel)
 ENDMACRO(SMART_COMPONENT_AUTOLINK_DEPENDENCIES)
 
 
@@ -208,7 +176,7 @@ MACRO(SMART_COMMOBJECT_PROJECT)
   MESSAGE("-- COMMOBJECT_PROJECT(${PROJECT_NAME})")
 
   IF(DEFINED ${PROJECT_NAME}_VERSION)
-      FIND_FILE(PACKAGE_VERION_FILE PackageConfigVersion.cmake.in PATHS $ENV{SMART_ROOT_ACE}/cmake-templates /opt/smartSoftAce/cmake-templates)
+      FIND_FILE(PACKAGE_VERION_FILE PackageConfigVersion.cmake.in PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
       IF(PACKAGE_VERION_FILE)
         CONFIGURE_FILE(${PACKAGE_VERION_FILE} ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake @ONLY)
         SMART_TRACE_GENERATED_FILE("${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
@@ -226,12 +194,12 @@ MACRO(SMART_COMMOBJECT_PROJECT)
   SMART_INIT_DISTCLEAN_ALL()
 
   # each comm-obj depend on the ACE middleware library
-  FIND_PACKAGE(ACE 6.0.2 PATHS $ENV{SMART_ROOT_ACE} /opt/smartSoftAce)
+  FIND_PACKAGE(ACE 6.0.2 PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
 
   # default installation prefix is set to the path given in the SMART_ROOT_ACE environment variable
   SMART_SETUP_INSTALL_PREFIX()
 
-  FIND_FILE(UNINSTALL_FILE cmake_uninstall.cmake.in PATHS $ENV{SMART_ROOT_ACE}/src/smartSoftKernel/CMakeTemplates $ENV{SMART_ROOT_ACE}/cmake-templates /opt/smartSoftAce/cmake-templates)
+  FIND_FILE(UNINSTALL_FILE cmake_uninstall.cmake.in PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
   IF(UNINSTALL_FILE)
     CONFIGURE_FILE(${UNINSTALL_FILE} ${PROJECT_BINARY_DIR}/cmake_uninstall.cmake @ONLY)
     ADD_CUSTOM_TARGET(uninstall ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake COMMENT "uninstall ${PROJECT_NAME}")
@@ -258,7 +226,7 @@ MACRO(SMART_COMMOBJECT_AUTOBUILD_DEPENDENCIES)
   ENDIF(${BUILD_DEPENDENCIES})
 
   # generate hash header file (using the toolchain-generated CMake script)
-  FIND_FILE(GENERATE_HASH_SCRIPT GenerateHashHeader.cmake.in PATHS $ENV{SMART_ROOT_ACE}/cmake-templates /opt/smartSoftAce/cmake-templates)
+  FIND_FILE(GENERATE_HASH_SCRIPT GenerateHashHeader.cmake.in PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
   IF(GENERATE_HASH_SCRIPT)
     CONFIGURE_FILE(${GENERATE_HASH_SCRIPT} ${CMAKE_CURRENT_BINARY_DIR}/GenerateHashHeader.cmake @ONLY)
     ADD_CUSTOM_TARGET(${PROJECT_NAME}Hash 
@@ -363,7 +331,7 @@ MACRO(SMART_UTILITY_PROJECT PROJ_NAME VERSION)
   MESSAGE("-- UTILITY_PROJECT(${PROJECT_NAME})")
 
   IF(DEFINED ${PROJECT_NAME}_VERSION)
-      FIND_FILE(PACKAGE_VERION_FILE PackageConfigVersion.cmake.in PATHS $ENV{SMART_ROOT_ACE}/cmake-templates /opt/smartSoftAce/cmake-templates)
+      FIND_FILE(PACKAGE_VERION_FILE PackageConfigVersion.cmake.in PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
       IF(PACKAGE_VERION_FILE)
         CONFIGURE_FILE(${PACKAGE_VERION_FILE} ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake @ONLY)
         SMART_TRACE_GENERATED_FILE("${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
@@ -376,7 +344,7 @@ MACRO(SMART_UTILITY_PROJECT PROJ_NAME VERSION)
   # default installation prefix is set to the path given in the SMART_ROOT_ACE environment variable
   SMART_SETUP_INSTALL_PREFIX()
 
-  FIND_FILE(UNINSTALL_FILE cmake_uninstall.cmake.in PATHS $ENV{SMART_ROOT_ACE}/src/smartSoftKernel/CMakeTemplates $ENV{SMART_ROOT_ACE}/cmake-templates /opt/smartSoftAce/cmake-templates)
+  FIND_FILE(UNINSTALL_FILE cmake_uninstall.cmake.in PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
   IF(UNINSTALL_FILE)
     CONFIGURE_FILE(${UNINSTALL_FILE} ${PROJECT_BINARY_DIR}/cmake_uninstall.cmake @ONLY)
     ADD_CUSTOM_TARGET(uninstall ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake COMMENT "uninstall ${PROJECT_NAME}")

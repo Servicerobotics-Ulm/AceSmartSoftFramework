@@ -19,8 +19,6 @@
 #ifndef _COMMPARAMETER_IDL_ENUM_PARAMRESPONSETYPE
 #define _COMMPARAMETER_IDL_ENUM_PARAMRESPONSETYPE
 
-#include <ace/CDR_Stream.h>
-
 namespace CommParameterIDL
 {
 enum ENUM_INTERNAL_ParamResponseType
@@ -28,7 +26,7 @@ enum ENUM_INTERNAL_ParamResponseType
 	LITERAL_BUSY, LITERAL_INVALID, LITERAL_OK
 };
 
-typedef ACE_CDR::Long ENUM_ParamResponseType;
+typedef int ENUM_ParamResponseType;
 }
 ;
 #endif

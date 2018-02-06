@@ -36,6 +36,8 @@
 #include "smartErrno.hh"
 #include "smartOSMapping.hh"
 
+#include <ace/CDR_Stream.h>
+
 #include <string>
 
 namespace SmartACE {
@@ -43,47 +45,24 @@ namespace SmartACE {
   class SmartCommWiring
   {
   protected:
-    //
-    // This is the data structure which is described in the IDL. Therefore
-    // CORBA can marshal / unmarshal this type for communication purposes.
-    //
-
-	//<alexej date="2009-04-22">
 	struct SmartWiring
 	{
-	   ACE_CString command;
-	   ACE_CString slaveport;
-	   ACE_CString servercomponent;
-	   ACE_CString serverservice;
-		int  status;
+	   std::string command;
+	   std::string slaveport;
+	   std::string servercomponent;
+	   std::string serverservice;
+	   int  status;
 	};
 
-    SmartWiring wiring;
-	//</alexej>
-
   public:
+    SmartWiring wiring;
+
     //
     // constructors, destructors, copy constructors etc. ...
     //
     SmartCommWiring();
     virtual ~SmartCommWiring();
 
-    //
-    // The following methods MUST be available in a communication object.
-    // This however is not too bad for implementers of a communication
-    // object since you can get cookbook like instructions on how
-    // to implement these. They are always the same since they have to
-    // set / get the above IDL structure. They are used by the communication
-    // patterns and should not be used by users.
-    //
-    //<alexej date="26.11.2008">
-		/*
-		void get(CORBA::Any &) const;
-		void set(const CORBA::Any &);
-		*/
-		void get(SmartACE::SmartMessageBlock *&msg) const;
-		void set(const SmartACE::SmartMessageBlock *msg);
-    //</alexej>
     static inline std::string identifier(void) {
       return "SmartACE::smartWiring";
     };
@@ -101,7 +80,15 @@ namespace SmartACE {
     void setStatus(const Smart::StatusCode);
     void getStatus(Smart::StatusCode&) const;
   };
-
 }
+
+////////////////////////////////////////////////////////////////////////
+//
+// serialization operators
+//
+////////////////////////////////////////////////////////////////////////
+ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const SmartACE::SmartCommWiring &obj);
+ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, SmartACE::SmartCommWiring &obj);
+
 #endif
 

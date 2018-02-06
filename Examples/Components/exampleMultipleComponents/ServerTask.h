@@ -32,9 +32,8 @@
 #ifndef SERVERTASK_H_
 #define SERVERTASK_H_
 
-#include <smartSoft.hh>
-
 #include <commExampleValues.hh>
+#include "../../../AceSmartSoftKernel/aceSmartSoft.hh"
 
 class ServerTask : public SmartACE::ManagedTask {
 protected:

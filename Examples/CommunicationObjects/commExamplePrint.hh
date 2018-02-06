@@ -46,38 +46,15 @@
 #include <iomanip>
 #include <string>
 
-//#include "examplePrintC.hh"
-
-#include "ace/Message_Block.h"
+#include "examplePrint.hh"
 
 namespace SmartACE {
 
-struct ExamplePrint
-{
-	short hour;
-	short minute;
-	short second;
-	std::string text;
-};
-
 class CommExamplePrint
 {
-protected:
-  //
-  // This is the data structure which is described in the IDL. Therefore
-  // CORBA can marshal / unmarshal this type for communication purposes.
-  //
+public:
   ExamplePrint message;
 	
-	
-  //
-  // We can add further data structures here but only those data structures
-  // described in IDL and being accessible by the get/set-methods are
-  // transmitted. Currently I assume that everything to be transmitted
-  // is wrapped by a single structure. This is no restriction since
-  // IDL interfaces can easily composed of several structures.
-  //
-public:
   //
   // constructors, destructors, copy constructors etc. ...
   //
@@ -97,9 +74,6 @@ public:
   static inline std::string identifier(void) {
     return "SmartACE::examplePrint";
   };
-  
-  void get(ACE_Message_Block *&msg) const;
-  void set(const ACE_Message_Block *msg);
   //</alexej>
 
 

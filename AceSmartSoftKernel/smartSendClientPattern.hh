@@ -69,7 +69,7 @@ namespace SmartACE
          void (*)(void *, int),
          void (*)(void *));
 
-      Smart::StatusCode command(ACE_Message_Block *message);
+      Smart::StatusCode command(const SmartACE::SmartMessageBlock *message);
       Smart::StatusCode connect(int cid, const ACE_Utils::UUID &serviceID);
       Smart::StatusCode discard();
       Smart::StatusCode disconnect();

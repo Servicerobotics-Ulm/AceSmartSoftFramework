@@ -67,7 +67,7 @@ namespace SmartACE {
       virtual int open(void *handler = 0);
 
       // D
-      Smart::StatusCode event(SmartACE::SmartMessageBlock *user, int id);
+      Smart::StatusCode event(const SmartACE::SmartMessageBlock *user, int id);
 
       // R3:
       Smart::StatusCode serverInitiatedDisconnect(int cid);

@@ -37,24 +37,24 @@
 # PEOJECT(<YourPorjectName>)
 #
 # components are optional (Kernel component is always included by default)
-# FIND_PACKAGE(SmartSoft 
+# FIND_PACKAGE(AceSmartSoft 
 #    COMPONENTS Kernel MonitoringMaster MonitoringSlave NamingService 
 #    PATHS $ENV{SMART_ROOT_ACE}
 # )
 #
 # ADD_EXECUTABLE(${PROJECT_NAME} ...)
-# TARGET_LINK_LIBRARIES(${PROJECT_NAME} SmartSoftKernel)
+# TARGET_LINK_LIBRARIES(${PROJECT_NAME} AceSmartSoftKernel)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 
 # include OS-specific configs (if available)
-IF(EXISTS "$ENV{SMART_ROOT_ACE}/SmartOSConfig.cmake")
+IF(EXISTS "$ENV{SMART_ROOT_ACE}/CMakeMacros/SmartOSConfig.cmake")
   # In build tree
-  INCLUDE("$ENV{SMART_ROOT_ACE}/SmartOSConfig.cmake")
+  INCLUDE("$ENV{SMART_ROOT_ACE}/CMakeMacros/SmartOSConfig.cmake")
 ENDIF()
 
 # find the ACE library which is the main SmartSoft dependency 
-FIND_PACKAGE(ACE 6.0.2 PATHS $ENV{SMART_ROOT_ACE} /opt/smartSoftAce)
+FIND_PACKAGE(ACE 6.0.2 PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
 
 # always add the Kernel component by default and always as the first element
 IF(DEFINED @PROJECT_NAME@_FIND_COMPONENTS)

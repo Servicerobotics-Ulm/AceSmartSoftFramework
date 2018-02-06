@@ -1,1 +1,9 @@
 build/
+lib/
+include/
+modules/
+bin/
+showSmartSoftNamingService
+startSmartSoftNamingService
+stopSmartSoftNamingService
+VERSION

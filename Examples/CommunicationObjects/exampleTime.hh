@@ -30,10 +30,12 @@
 //
 // --------------------------------------------------------------------------
 
+#ifndef _EXAMPLETIME_H_
+#define _EXAMPLETIME_H_
+
 struct ExampleTime
 {
-  int hour;
-  int minute;
-  int second;
+  long int nanoseconds;
 };
 
+#endif

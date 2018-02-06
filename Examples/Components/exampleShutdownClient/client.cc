@@ -30,13 +30,14 @@
 // --------------------------------------------------------------------------
  
 // SmartSoft 
-#include "smartSoft.hh" 
+#include "aceSmartSoft.hh"
 #include "commExampleTypes.hh" 
- 
+#include "aceSerializationExamples.hh"
+
 class ClientPatternTask: public SmartACE::ManagedTask 
 { 
 private: 
-   SmartACE::PushNewestClient<SmartACE::CommExampleTypes> client; 
+   SmartACE::PushClient<SmartACE::CommExampleTypes> client;
    int count; 
 public: 
    ClientPatternTask(SmartACE::SmartComponent *comp); 
@@ -48,7 +49,9 @@ public:
 }; 
  
 ClientPatternTask::ClientPatternTask(SmartACE::SmartComponent *comp) 
-:  client(comp)   // initialize client-side communication-port 
+:  SmartACE::ManagedTask(comp)
+,  client(comp)   // initialize client-side communication-port
+,  count(0)
 {  } 
  
 ClientPatternTask::~ClientPatternTask() 
@@ -57,19 +60,19 @@ ClientPatternTask::~ClientPatternTask()
 int ClientPatternTask::on_execute() 
 { 
    // do not use infinite loop inside this function, otherwise shutdown wont work. 
-   SmartACE::StatusCode ret = SmartACE::SMART_OK; 
+   Smart::StatusCode ret = Smart::SMART_OK;
  
       // 1) perform a clean connect, analysing the return values 
       ret = client.connect("exampleShutdownServer", "Testserver"); 
  
       switch(ret) 
       { 
-      case SmartACE::SMART_OK: 
-      case SmartACE::SMART_ERROR_COMMUNICATION: 
-      case SmartACE::SMART_INCOMPATIBLESERVICE: 
-      case SmartACE::SMART_SERVICEUNAVAILABLE: 
-      case SmartACE::SMART_ERROR: 
-         std::cout << "ClientPatternTask::push_client::connect(): " << SmartACE::StatusCodeConversion(ret) << std::endl;
+      case Smart::SMART_OK:
+      case Smart::SMART_ERROR_COMMUNICATION:
+      case Smart::SMART_INCOMPATIBLESERVICE:
+      case Smart::SMART_SERVICEUNAVAILABLE:
+      case Smart::SMART_ERROR:
+         std::cout << "ClientPatternTask::push_client::connect(): " << ret << std::endl;
          break;
       default: 
          // this case is actualy not needed but prevents a warning with GCC-compiler 
@@ -79,7 +82,7 @@ int ClientPatternTask::on_execute()
       // 2) perform a subscribe (it returns a fail retcode if port is not connected) 
       ret = client.subscribe(); 
  
-      if( ret == SmartACE::SMART_OK ) { 
+      if( ret == Smart::SMART_OK ) {
          std::cout << "ClientPatternTask::push_client: sucessfull subscribed!" << std::endl; 
  
          // local comm-object
@@ -88,11 +91,11 @@ int ClientPatternTask::on_execute()
          // 3) Blocking wait on incomming messages. Breaks up if strg+c is pressed. 
          ret = client.getUpdateWait(types);
 
-         if( ret == SmartACE::SMART_OK ) { 
+         if( ret == Smart::SMART_OK ) {
             std::cout << "ClientPatternTask: message from server...\n" << std::endl; 
             types.print_data(); 
          }else{ 
-            std::cout << "ClientPatternTask: getUpdate failed! " << SmartACE::StatusCodeConversion(ret) << std::endl; 
+            std::cout << "ClientPatternTask: getUpdate failed! " << ret << std::endl;
          } 
       }else{ 
          // if not connected or other failure sleep 50 ms to prevent 100% CPU load 

@@ -44,22 +44,6 @@ CommExampleResult::~CommExampleResult()
 {
 }
 
-void CommExampleResult::get(ACE_Message_Block *&msg) const
-{
-	ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
-
-	cdr << result.value;
-
-	msg = cdr.begin()->clone();
-}
-
-void CommExampleResult::set(const ACE_Message_Block *msg)
-{
-	ACE_InputCDR cdr(msg);
-
-	cdr >> result.value;
-}
-
 void CommExampleResult::set(int r)
 {
   result.value = r;

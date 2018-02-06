@@ -35,13 +35,13 @@
 #include <ace/CDR_Stream.h>
 #include <ace/SString.h>
 
-
 /////////////////////////////////////////////////////////////////////////
 //
 // Request
 //
 /////////////////////////////////////////////////////////////////////////
 
+/*
 void SmartACE::SmartCommStateRequest::get(SmartMessageBlock *&msg) const
 {
   ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
@@ -72,6 +72,37 @@ void SmartACE::SmartCommStateRequest::set(const SmartMessageBlock *msg)
    cdr >> cstate_name;
    state_name = cstate_name.c_str();
 }
+*/
+
+ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const SmartACE::SmartCommStateRequest &obj)
+{
+	ACE_CDR::Boolean good_bit = true;
+
+	// write command id into stream
+	good_bit = good_bit && cdr << static_cast<ACE_CDR::Long>(obj.data.command);
+
+	// write state name into cdr stream
+	ACE_CString cstate_name(obj.data.state_name.c_str());
+	good_bit = good_bit && cdr << cstate_name;
+
+	return good_bit;
+}
+
+ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, SmartACE::SmartCommStateRequest &obj)
+{
+	ACE_CDR::Boolean good_bit = true;
+
+	// temporary variables
+	ACE_CString cstate_name;
+
+	// read command and cast it to command-enum
+	good_bit = good_bit && cdr.read_long(obj.data.command);
+
+	good_bit = good_bit && cdr >> cstate_name;
+	obj.data.state_name = cstate_name.c_str();
+
+	return good_bit;
+}
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -79,6 +110,7 @@ void SmartACE::SmartCommStateRequest::set(const SmartMessageBlock *msg)
 //
 /////////////////////////////////////////////////////////////////////////
 
+/*
 void SmartACE::SmartCommStateResponse::get(SmartMessageBlock *&msg) const
 {
    ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
@@ -124,4 +156,50 @@ void SmartACE::SmartCommStateResponse::set(const SmartMessageBlock *msg)
       state_list.push_back(cstate_name.c_str());
    }
 
+}
+*/
+
+ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const SmartACE::SmartCommStateResponse &obj)
+{
+	ACE_CDR::Boolean good_bit = true;
+
+	// write status into stream
+	good_bit = good_bit && cdr << static_cast<ACE_CDR::ULong>(obj.data.status);
+
+	// write number of strings in state_list into stream
+	good_bit = good_bit && cdr << static_cast<ACE_CDR::ULong>(obj.data.state_list.size());
+
+	// write all strings into stream
+	std::vector<std::string>::const_iterator it;
+	for(it=obj.data.state_list.begin(); it != obj.data.state_list.end(); ++it)
+	{
+	  ACE_CString cstate_name(it->c_str());
+	  good_bit = good_bit && cdr << cstate_name;
+	}
+
+	return good_bit;
+}
+ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, SmartACE::SmartCommStateResponse &obj)
+{
+	ACE_CDR::Boolean good_bit = true;
+
+	// temporary variables
+	ACE_CDR::ULong size = 0;
+
+	// read status
+	good_bit = good_bit && cdr.read_long(obj.data.status);
+
+	// read number of strings to store in state_list
+	good_bit = good_bit && cdr >> size;
+
+	obj.data.state_list.clear();
+
+	for(unsigned int i=0; i<size; ++i)
+	{
+	  ACE_CString cstate_name;
+	  good_bit = good_bit && cdr >> cstate_name;
+	  obj.data.state_list.push_back(cstate_name.c_str());
+	}
+
+	return good_bit;
 }

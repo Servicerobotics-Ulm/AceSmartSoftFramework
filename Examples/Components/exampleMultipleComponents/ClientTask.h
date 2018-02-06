@@ -31,9 +31,8 @@
 #ifndef CLIENTTASK_H_
 #define CLIENTTASK_H_
 
-#include <smartSoft.hh>
-
 #include <commExampleValues.hh>
+#include "../../../AceSmartSoftKernel/aceSmartSoft.hh"
 
 class ClientTask : public SmartACE::ManagedTask {
 private:

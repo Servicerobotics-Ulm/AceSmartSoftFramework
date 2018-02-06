@@ -136,7 +136,7 @@ int QueryClientServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
 	return 0;
 }
 
-Smart::StatusCode QueryClientServiceHandler::request(SmartACE::SmartMessageBlock *message, int id)
+Smart::StatusCode QueryClientServiceHandler::request(const SmartACE::SmartMessageBlock *message, int id)
 {
 	Smart::StatusCode result = Smart::SMART_OK;
 

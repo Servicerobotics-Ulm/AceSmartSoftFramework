@@ -17,7 +17,7 @@ MACRO(SMART_COMMOBJECT_BUILD_DEBIAN_PACKAGE PROJ_NAME VERSION)
   )
   
   # if debian package generator script exists. use it to generate debian packages
-  FIND_FILE(DEBIAN_GEN_FILE GenerateDebianPackage.cmake.in PATHS $ENV{SMART_ROOT_ACE}/cmake-templates /opt/smartSoftAce/cmake-templates)
+  FIND_FILE(DEBIAN_GEN_FILE GenerateDebianPackage.cmake.in PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
   IF(DEBIAN_GEN_FILE)
     SET(VERSION ${VERSION} CACHE INTERNAL "Version number")
     CONFIGURE_FILE(${DEBIAN_GEN_FILE} ${PROJECT_BINARY_DIR}/GenerateDebianPackage.cmake @ONLY)
@@ -32,7 +32,7 @@ ENDMACRO(SMART_COMMOBJECT_BUILD_DEBIAN_PACKAGE PROJ_NAME VERSION)
 # TODO: this macro needs to be refined (e.g. using CPackDeb generator)
 MACRO(SMART_UTILITY_BUILD_DEBIAN_PACKAGE PROJ_NAME VERSION)
   # if debian package generator script exists. use it to generate debian packages
-  FIND_FILE(DEBIAN_GEN_FILE GenerateDebianPackage.cmake.in PATHS $ENV{SMART_ROOT_ACE}/cmake-templates /opt/smartSoftAce/cmake-templates)
+  FIND_FILE(DEBIAN_GEN_FILE GenerateDebianPackage.cmake.in PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
   IF(DEBIAN_GEN_FILE)
     SET(VERSION ${VERSION} CACHE INTERNAL "Version number")
     CONFIGURE_FILE(${DEBIAN_GEN_FILE} ${PROJECT_BINARY_DIR}/GenerateDebianPackage.cmake @ONLY)

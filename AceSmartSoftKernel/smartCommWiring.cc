@@ -42,63 +42,74 @@ SmartACE::SmartCommWiring::~SmartCommWiring()
 {
 }
 
-void SmartACE::SmartCommWiring::get(SmartACE::SmartMessageBlock *&msg) const
+ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const SmartACE::SmartCommWiring &obj)
 {
-  ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
-  
-  // wiring command
-  cdr << wiring.command;
+	ACE_CDR::Boolean good_bit = true;
 
-  // wiring slaveport
-  cdr << wiring.slaveport;
+	// wiring command
+	good_bit = good_bit && cdr << ACE_CString(obj.wiring.command.c_str());
 
-  // wiring servercomponent
-  cdr << wiring.servercomponent;
+	// wiring slaveport
+	good_bit = good_bit && cdr << ACE_CString(obj.wiring.slaveport.c_str());
 
-  // wiring serverservice
-  cdr << wiring.serverservice;
+	// wiring servercomponent
+	good_bit = good_bit && cdr << ACE_CString(obj.wiring.servercomponent.c_str());
 
-  // wiring status
-  cdr << wiring.status;
+	// wiring serverservice
+	good_bit = good_bit && cdr << ACE_CString(obj.wiring.serverservice.c_str());
 
-  msg = cdr.begin()->duplicate();
+	// wiring status
+	good_bit = good_bit && cdr << static_cast<ACE_CDR::Long>(obj.wiring.status);
+
+	return good_bit;
 }
 
-void SmartACE::SmartCommWiring::set(const SmartACE::SmartMessageBlock *msg)
+ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, SmartACE::SmartCommWiring &obj)
 {
-  ACE_InputCDR cdr(msg);
+	ACE_CDR::Boolean good_bit = true;
 
-  // wiring command
-  cdr >> wiring.command;
 
-  // wiring slaveport
-  cdr >> wiring.slaveport;
+	// wiring command
+	ACE_CString command;
+	good_bit = good_bit && cdr >> command;
+	obj.wiring.command = command.c_str();
 
-  // wiring servercomponent
-  cdr >> wiring.servercomponent;
+	// wiring slaveport
+	ACE_CString slaveport;
+	good_bit = good_bit && cdr >> slaveport;
+	obj.wiring.slaveport = slaveport.c_str();
 
-  // wiring serverservice
-  cdr >> wiring.serverservice;
+	// wiring servercomponent
+	ACE_CString servercomponent;
+	good_bit = good_bit && cdr >> servercomponent;
+	obj.wiring.servercomponent = servercomponent.c_str();
 
-  // wiring status
-  cdr >> wiring.status;
+	// wiring serverservice
+	ACE_CString serverservice;
+	good_bit = good_bit && cdr >> serverservice;
+	obj.wiring.serverservice = serverservice.c_str();
+
+	// wiring status
+	good_bit = good_bit && cdr.read_long(obj.wiring.status);
+
+	return good_bit;
 }
 //</alexej>
 
 void SmartACE::SmartCommWiring::setCommand(const std::string cmd,const std::string slaveprt,const std::string servercmpt,const std::string serversvc)
 {
-  wiring.command         = cmd.c_str();
-  wiring.slaveport       = slaveprt.c_str();
-  wiring.servercomponent = servercmpt.c_str();
-  wiring.serverservice   = serversvc.c_str();
+  wiring.command         = cmd;
+  wiring.slaveport       = slaveprt;
+  wiring.servercomponent = servercmpt;
+  wiring.serverservice   = serversvc;
 }
 
 void SmartACE::SmartCommWiring::getCommand(std::string& cmd,std::string& slaveprt,std::string& servercmpt,std::string& serversvc) const
 {
-  cmd        = wiring.command.c_str();
-  slaveprt   = wiring.slaveport.c_str();
-  servercmpt = wiring.servercomponent.c_str();
-  serversvc  = wiring.serverservice.c_str();
+  cmd        = wiring.command;
+  slaveprt   = wiring.slaveport;
+  servercmpt = wiring.servercomponent;
+  serversvc  = wiring.serverservice;
 }
 
 void SmartACE::SmartCommWiring::setStatus(const Smart::StatusCode status)

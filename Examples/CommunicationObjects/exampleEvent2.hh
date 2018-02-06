@@ -30,6 +30,9 @@
 //
 // --------------------------------------------------------------------------
 
+#ifndef _EXAMPLEEVENT2_H_
+#define _EXAMPLEEVENT2_H_
+
 #include <string>
 
 struct ExampleEvent2Parameter
@@ -43,3 +46,4 @@ struct ExampleEvent2Result
    std::string state;
 };
 
+#endif

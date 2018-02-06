@@ -30,7 +30,11 @@
 //
 // --------------------------------------------------------------------------
 
-#include <list>
+#ifndef _EXAMPLEVALUES_H_
+#define _EXAMPLEVALUES_H_
 
-typedef std::list<int> ExampleValues;
+#include <vector>
 
+typedef std::vector<int> ExampleValues;
+
+#endif

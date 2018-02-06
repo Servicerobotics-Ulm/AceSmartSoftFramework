@@ -1,13 +1,13 @@
 #!/bin/bash
 
-  if test -e $SMART_ROOT_ACE/bin/NamingService/SmartSoftNamingServiceList
+  if test -e $SMART_ROOT_ACE/bin/NamingService/AceSmartSoftNamingService
   then
-    $SMART_ROOT_ACE/bin/NamingService/SmartSoftNamingServiceList
+    $SMART_ROOT_ACE/bin/NamingService/AceSmartSoftNamingService
   else
-    if test -e /usr/bin/SmartSoftNamingServiceList
+    if test -e /usr/bin/AceSmartSoftNamingService
     then
-      /usr/bin/SmartSoftNamingServiceList
+      /usr/bin/AceSmartSoftNamingService
     else
-      echo "ERROR: could not find /usr/bin/SmartSoftNamingServiceList!"
+      echo "ERROR: could not find /usr/bin/AceSmartSoftNamingService!"
     fi
   fi  

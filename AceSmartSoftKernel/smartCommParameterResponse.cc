@@ -50,8 +50,7 @@
 
 #include "smartCommParameterResponse.hh"
 
-using namespace SmartACE;
-
+/*
 void CommParameterResponse::get(ACE_Message_Block *&msg) const
 {
 	ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
@@ -67,10 +66,27 @@ void CommParameterResponse::set(const ACE_Message_Block *msg)
 
 	cdr >> idl_CommParameterResponse.response;
 }
-
-void CommParameterResponse::to_ostream(std::ostream &os) const
+*/
+void SmartACE::CommParameterResponse::to_ostream(std::ostream &os) const
 {
   os << "CommParameterResponse(";
   os << getResponse();
   os << ")";
+}
+
+ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const SmartACE::CommParameterResponse &obj)
+{
+	ACE_CDR::Boolean good_bit = true;
+
+	good_bit = good_bit && cdr << static_cast<ACE_CDR::Long>(obj.data.response);
+
+	return good_bit;
+}
+ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, SmartACE::CommParameterResponse &obj)
+{
+	ACE_CDR::Boolean good_bit = true;
+
+	good_bit = good_bit && cdr.read_long(obj.data.response);
+
+	return good_bit;
 }

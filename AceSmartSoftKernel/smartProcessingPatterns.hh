@@ -83,7 +83,6 @@ namespace SmartACE {
      */
     ThreadQueueQueryHandler(Smart::IComponent *component, QueryServerHandler<R,A>* handler)
       : Smart::IActiveQueueQueryServerHandlerDecorator<R,A,QueryId>(component, handler)
-	  , Smart::ITask(component)
       , SmartACE::Task(component)
       {
     	this->start();

@@ -34,6 +34,7 @@
 #define SMARTMANAGEDTASK_HH_
 
 #include <smartIManagedTask.h>
+#include <smartInputTaskTrigger.h>
 #include "smartTask.hh"
 
 namespace SmartACE {

@@ -803,7 +803,7 @@ namespace SmartACE {
      *  @param service name of the service
      *  @param testHandler test handler decide if a event needs to fire
      */
-    EventServer(SmartComponent* component,const std::string& service, EventTestHandler<P,E,S> *handler) throw();
+    EventServer(SmartComponent* component,const std::string& service, Smart::IEventTestHandler<P,E,S> *handler) throw();
 
     /** Destructor.
      *  Properly disconnects all service requestors in case of destruction

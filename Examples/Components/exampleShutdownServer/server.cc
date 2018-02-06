@@ -30,22 +30,25 @@
 // --------------------------------------------------------------------------
  
 // SmartSoft
-#include <smartSoft.hh> 
+#include "aceSmartSoft.hh"
 #include <commExampleTypes.hh> 
- 
+#include "aceSerializationExamples.hh"
+
 class ServerTask: public SmartACE::ManagedTask 
 { 
 private:
    SmartACE::SmartComponent *component;
-   SmartACE::PushNewestServer<SmartACE::CommExampleTypes> *server; 
+   SmartACE::PushServer<SmartACE::CommExampleTypes> *server;
    int count;
 
    SmartACE::CommExampleTypes types;
  
 public: 
    ServerTask(SmartACE::SmartComponent *comp) 
-      : component(comp) 
-      , count(0) 
+   : SmartACE::ManagedTask(comp)
+   , component(comp)
+   , server(0)
+   , count(0)
    { 
       //server = new SmartACE::PushNewestServer<SmartACE::CommExampleTypes>(comp, "Testserver"); 
    } 
@@ -57,7 +60,7 @@ public:
  
    int on_entry()
    {
-      server = new SmartACE::PushNewestServer<SmartACE::CommExampleTypes>(component, "Testserver");
+      server = new SmartACE::PushServer<SmartACE::CommExampleTypes>(component, "Testserver");
 
       types.text = "ServerTask"; 
  
@@ -76,7 +79,7 @@ public:
 
    int on_execute() 
    { 
-         if( server->put(types) == SmartACE::SMART_OK) { 
+         if( server->put(types) == Smart::SMART_OK) {
             ACE_OS::printf("PushMessage:%d\n\n", count);
             types.print_data(); 
          } 

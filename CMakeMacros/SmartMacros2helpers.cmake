@@ -19,7 +19,7 @@ MACRO(SMART_VERSION)
     
       # the following variable is used to generate the PackageConfigVersion.cmake file
       SET(PACKAGE_VERSION_STRING ${${UPPER_NAME}_VERSION_STRING})
-      FIND_FILE(PACKAGE_VERION_FILE PackageConfigVersion.cmake.in PATHS $ENV{SMART_ROOT_ACE}/cmake-templates /opt/smartSoftAce/cmake-templates)
+      FIND_FILE(PACKAGE_VERION_FILE PackageConfigVersion.cmake.in PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
       IF(PACKAGE_VERION_FILE)
         CONFIGURE_FILE(${PACKAGE_VERION_FILE} ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake @ONLY)
 		#CMAKE_TRACE_GENERATED_FILE("${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
@@ -83,7 +83,7 @@ MACRO(SMART_INIT_DISTCLEAN_ALL)
 		FILE(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/cmake_generated_files.txt")
 	ENDIF(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/cmake_generated_files.txt")
 
-	FIND_FILE(CMAKE_DISTCLEAN_ALL_TEMPLATE cmake_distclean_all.cmake.in PATHS $ENV{SMART_ROOT_ACE}/cmake-templates /opt/smartSoftAce/cmake-templates)
+	FIND_FILE(CMAKE_DISTCLEAN_ALL_TEMPLATE cmake_distclean_all.cmake.in PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
 	IF(CMAKE_DISTCLEAN_ALL_TEMPLATE)
 		CONFIGURE_FILE("${CMAKE_DISTCLEAN_ALL_TEMPLATE}" "${CMAKE_CURRENT_BINARY_DIR}/cmake_distclean_all.cmake" @ONLY)
 

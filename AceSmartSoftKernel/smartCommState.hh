@@ -35,8 +35,9 @@
 
 #include "smartOSMapping.hh"
 
-#include <string>
-#include <list>
+#include "smartCommStateIdl.hh"
+
+#include <ace/CDR_Stream.h>
 
 namespace SmartACE {
 
@@ -55,36 +56,22 @@ namespace SmartACE {
       STATE_CMD_GET_SUB_STATES
    };
 
-
   class SmartCommStateRequest
   {
-  protected:
-     // internal data structure
-     StateCommand command;
-     std::string state_name;
-   
   public:
+     // internal data structure
+	 CommStateIDL::SmartCommStateRequest data;
+   
     //
     // constructors, destructors, copy constructors etc. ...
     //
      SmartCommStateRequest()
-        :   command(STATE_CMD_ERROR)
-     {  }
+     {
+    	 data.command = static_cast<int>(STATE_CMD_ERROR);
+     }
 
      virtual ~SmartCommStateRequest() {  };
 
-    //
-    // The following methods MUST be available in a communication object.
-    // This however is not too bad for implementers of a communication
-    // object since you can get cookbook like instructions on how
-    // to implement these. They are always the same since they have to
-    // set / get the above IDL structure. They are used by the communication
-    // patterns and should not be used by users.
-    //
-    //<alexej date="26.11.2008">
-    void get(SmartMessageBlock *&msg) const;
-    void set(const SmartMessageBlock *msg);
-    //</alexej>
     static inline std::string identifier(void) {
       return "SmartACE::smartStateRequest";
     };
@@ -93,24 +80,23 @@ namespace SmartACE {
     /// Set/Get the command-enum defined above
     inline void setCommand(const StateCommand &command)
     {
-       this->command = command;
+    	data.command = static_cast<int>(command);
     }
     inline StateCommand  getCommand(void) const
     {
-      return command;
+      return static_cast<StateCommand>(data.command);
     }
 
     /// Set/Get state-name
     inline void setStateName(const std::string &name)
     {
-      state_name = name;
+    	data.state_name = name;
     }
     inline std::string getStateName(void) const
     {
-      return state_name;
+      return data.state_name;
     }
   };
-
 
 /////////////////////////////////////////////////////////////////////////
 //
@@ -120,34 +106,20 @@ namespace SmartACE {
 
   class SmartCommStateResponse
   {
-  protected:
-     // internal data structure
-     std::list<std::string> state_list;
-     int status;
-   
   public:
+     // internal data structure
+	 CommStateIDL::SmartCommStateResponse data;
+
     //
     // constructors, destructors, copy constructors etc. ...
     //
     SmartCommStateResponse()
-       : status(0)
     {
-       state_list.clear();
+    	data.status = 0;
+    	data.state_list.clear();
     }
     virtual ~SmartCommStateResponse() {  }
 
-    //
-    // The following methods MUST be available in a communication object.
-    // This however is not too bad for implementers of a communication
-    // object since you can get cookbook like instructions on how
-    // to implement these. They are always the same since they have to
-    // set / get the above IDL structure. They are used by the communication
-    // patterns and should not be used by users.
-    //
-    //<alexej date="26.11.2008">
-    void get(SmartMessageBlock *&msg) const;
-    void set(const SmartMessageBlock *msg);
-    //</alexej>
     static inline std::string identifier(void) {
       return "SmartACE::smartStateResponse";
     };
@@ -156,25 +128,35 @@ namespace SmartACE {
     /// Get/Set return status
     inline void setStatus(const int &status)
     {
-       this->status = status;
+    	data.status = status;
     }
     inline int getStatus(void) const
     {
-       return status;
+       return data.status;
     }
 
     ///
-    inline void setStateList(const std::list<std::string> &states)
+    inline void setStateList(const std::vector<std::string> &states)
     {
-      this->state_list = states;
+    	data.state_list = states;
     }
-    inline std::list<std::string> getStateList(void) const
+    inline std::vector<std::string> getStateList(void) const
     {
-      return state_list;
+      return data.state_list;
     }
   };
-
-
 } // end namespace SMART_COMM_STATE_HH
+
+
+////////////////////////////////////////////////////////////////////////
+//
+// serialization operators
+//
+////////////////////////////////////////////////////////////////////////
+ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const SmartACE::SmartCommStateRequest &obj);
+ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, SmartACE::SmartCommStateRequest &obj);
+
+ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const SmartACE::SmartCommStateResponse &obj);
+ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, SmartACE::SmartCommStateResponse &obj);
 #endif
 

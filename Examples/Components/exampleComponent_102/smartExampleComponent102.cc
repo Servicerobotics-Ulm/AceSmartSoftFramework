@@ -30,11 +30,12 @@
 //
 // --------------------------------------------------------------------------
 
-#include "smartSoft.hh"
-
+#include "aceSmartSoft.hh"
 #include "commExampleValues.hh"
 #include "commExampleResult.hh"
 #include "commExampleTime.hh"
+
+#include "aceSerializationExamples.hh"
 
 // -------------------------------------------------------------
 //
@@ -70,25 +71,16 @@ int UserThreadA::task_execution()
 
   Smart::StatusCode status1, status2;
 
-  time_t time_now;
-  struct tm *time_p;
-
   while(1) {
     //
     // interleaved queries to ask for time
     //
-    time_now = time(0);
-    time_p   = ACE_OS::gmtime(&time_now);
-
-    q1.set(time_p->tm_hour,time_p->tm_min,time_p->tm_sec);
+    q1.set_now();
     status1 = timeClient->queryRequest(q1,id1);
 
     ACE_OS::sleep(1);
 
-    time_now = time(0);
-    time_p   = ACE_OS::gmtime(&time_now);
-
-    q2.set(time_p->tm_hour,time_p->tm_min,time_p->tm_sec);
+    q2.set_now();
     status2 = timeClient->queryRequest(q2,id2);
 
     std::cout << "thread A REQUEST (status1, id1): " << status1 << " " << id1 << std::endl;
@@ -143,7 +135,7 @@ public:
 int UserThreadB::task_execution()
 {
   int i=0;
-  std::list<int> l;
+  std::vector<int> l;
 
   SmartACE::CommExampleValues q;
   SmartACE::CommExampleResult r;

@@ -196,7 +196,8 @@ Smart::StatusCode SmartACE::StateMaster::getAllMainStates(std::list<std::string>
             // copy received list back into mainstates-list
             if(status == Smart::SMART_OK)
             {
-               mainstates = response.getStateList();
+            	std::vector<std::string> stateList = response.getStateList();
+               mainstates = std::list<std::string>(stateList.begin(), stateList.end());
             }else{
                mainstates.clear();
             }
@@ -239,7 +240,8 @@ Smart::StatusCode SmartACE::StateMaster::getSubStates(const std::string& mainsta
             // copy received list back into substates-list
             if(status == Smart::SMART_OK)
             {
-               substates = response.getStateList();
+            	std::vector<std::string> stateList = response.getStateList();
+               substates = std::list<std::string>(stateList.begin(), stateList.end());
             }else{
                substates.clear();
             }
@@ -297,7 +299,7 @@ SmartACE::StateSlaveHandler::~StateSlaveHandler() throw()
 void SmartACE::StateSlaveHandler::handleQuery(const QueryId &id, const SmartCommStateRequest& request) throw()
 {
    SmartCommStateResponse reply;
-   std::list<std::string> state_list;
+   std::vector<std::string> state_list;
    std::string mainstate;
    Smart::StatusCode ret_val;
 
@@ -463,13 +465,12 @@ Smart::StatusCode SmartACE::StateSlave::hndGetCurrentState(void *ptr, std::strin
 }
 
 
-Smart::StatusCode SmartACE::StateSlave::hndGetMainStates(void *ptr, std::list<std::string> &mainstates)
+Smart::StatusCode SmartACE::StateSlave::hndGetMainStates(void *ptr, std::vector<std::string> &mainstates)
 {
   StateSlave* lthis = (StateSlave *)ptr;
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<std::string>           stateResults;
-  std::list<std::string>::iterator mIterator;
-  std::list<std::string>::iterator rIterator;
+  std::vector<std::string>::iterator mIterator;
 
   Smart::StatusCode result;
 
@@ -533,11 +534,11 @@ Smart::StatusCode SmartACE::StateSlave::hndGetMainStates(void *ptr, std::list<st
   return result;
 }
 
-Smart::StatusCode SmartACE::StateSlave::hndGetSubStates(void *ptr, const std::string &mainstate, std::list<std::string> &substates)
+Smart::StatusCode SmartACE::StateSlave::hndGetSubStates(void *ptr, const std::string &mainstate, std::vector<std::string> &substates)
 {
   StateSlave* lthis = (StateSlave *)ptr;
   std::list<SmartSubStateEntry>::iterator iterator;
-  std::list<std::string>::iterator mIterator;
+  std::vector<std::string>::iterator mIterator;
   unsigned int count = 0;
   Smart::StatusCode result;
 
@@ -803,7 +804,7 @@ void SmartACE::StateSlave::setUpInitialStateList()
 void SmartACE::StateSlave::updateState(void)
 {
   std::list<SmartSubStateEntry>::iterator sIterator;
-  std::list<std::string>::iterator        mIterator;
+  std::vector<std::string>::iterator        mIterator;
 
   //<alexej date="2009-10-13">
   int currentFlag;
@@ -1320,7 +1321,7 @@ Smart::StatusCode SmartACE::StateSlave::defineStates(const std::string& mainstat
   std::list<SmartSubStateEntry>::iterator substatePtr;
   SmartSubStateEntry newEntry;
   int countS;
-  std::list<std::string>::iterator mIterator;
+  std::vector<std::string>::iterator mIterator;
   int countM;
 
   Smart::StatusCode result = Smart::SMART_ERROR;
@@ -1508,7 +1509,7 @@ Smart::StatusCode SmartACE::StateSlave::setUpInitialState(const std::string &Mai
    std::list<SmartSubStateEntry>::iterator iterator;
    std::list<SmartSubStateEntry>::iterator substatePtr;
    int countS;
-   std::list<std::string>::iterator mIterator;
+   std::vector<std::string>::iterator mIterator;
 
    Smart::StatusCode result = Smart::SMART_ERROR;
 

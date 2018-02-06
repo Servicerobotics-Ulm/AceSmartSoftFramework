@@ -32,9 +32,6 @@
 
 #include "commExamplePrint.hh"
 
-#include "ace/CDR_Stream.h"
-#include "ace/SString.h"
-
 using namespace SmartACE;
 
 CommExamplePrint::CommExamplePrint()
@@ -45,34 +42,6 @@ CommExamplePrint::~CommExamplePrint()
 {
 }
 
-void CommExamplePrint::get(ACE_Message_Block *&msg) const
-{
-   ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
-
-   cdr << message.hour;
-   cdr << message.minute;
-   cdr << message.second;
-
-   ACE_CString str_temp(message.text.c_str());
-   cdr << str_temp;
-
-   msg = cdr.begin()->clone();
-}
-
-void CommExamplePrint::set(const ACE_Message_Block *msg)
-{
-   ACE_InputCDR cdr(msg);
-	
-   cdr >> message.hour;
-   cdr >> message.minute;
-   cdr >> message.second;
-
-   ACE_CString str_temp;
-   cdr >> str_temp;
-   message.text = str_temp.c_str();
-}
-
-//</alexej>
 
 void CommExamplePrint::get(int &h,int &m,int &s,std::string& t) const
 {

@@ -24,10 +24,10 @@ int SmartACE::CommParameterRequest::set(const std::string &key, const Value &val
 	std::stringstream s;
 	s << value;
 	bool found = false;
-	for(size_t i=0; i<idl_CommParameterRequest.items.size(); ++i) {
-		if(key.compare(idl_CommParameterRequest.items[i].key.c_str()) == 0) {
+	for(size_t i=0; i<data.items.size(); ++i) {
+		if(key.compare(data.items[i].key.c_str()) == 0) {
 			found = true;
-			idl_CommParameterRequest.items[i].values.push_back(s.str().c_str());
+			data.items[i].values.push_back(s.str().c_str());
 			break;
 		}
 	}
@@ -35,7 +35,7 @@ int SmartACE::CommParameterRequest::set(const std::string &key, const Value &val
 		CommParameterIDL::NameValue nv;
 		nv.key = key.c_str();
 		nv.values.push_back(s.str().c_str());
-		idl_CommParameterRequest.items.push_back(nv);
+		data.items.push_back(nv);
 	}
 	return s.fail()? -1 : 0;
 }
@@ -47,7 +47,7 @@ int SmartACE::CommParameterRequest::get(const std::string &key, Value &value) co
 	std::string str_val;
 	CommParameterIDL::NameValue nv;
 	std::vector<CommParameterIDL::NameValue>::const_iterator it;
-	for(it=idl_CommParameterRequest.items.begin(); it!=idl_CommParameterRequest.items.end(); it++) {
+	for(it=data.items.begin(); it!=data.items.end(); it++) {
 		if(key.compare(it->key.c_str()) == 0) {
 			found = true;
 			str_val = it->values.back().c_str();
@@ -69,7 +69,7 @@ int SmartACE::CommParameterRequest::getList(const std::string &key, std::list<Va
 	std::list<std::string> str_val_list;
 	CommParameterIDL::NameValue nv;
 	std::vector<CommParameterIDL::NameValue>::const_iterator it;
-	for(it=idl_CommParameterRequest.items.begin(); it!=idl_CommParameterRequest.items.end(); it++) {
+	for(it=data.items.begin(); it!=data.items.end(); it++) {
 		if(key.compare(it->key.c_str()) == 0) {
 			found = true;
 			for(unsigned i=0; i<it->values.size(); ++i) {
@@ -98,7 +98,7 @@ inline int SmartACE::CommParameterRequest::get<std::string>(const std::string &k
 	std::string str_val;
 	CommParameterIDL::NameValue nv;
 	std::vector<CommParameterIDL::NameValue>::const_iterator it;
-	for(it=idl_CommParameterRequest.items.begin(); it!=idl_CommParameterRequest.items.end(); it++) {
+	for(it=data.items.begin(); it!=data.items.end(); it++) {
 		if(key.compare(it->key.c_str()) == 0) {
 			value = it->values.back().c_str();
 			return 0;
@@ -112,7 +112,7 @@ inline int SmartACE::CommParameterRequest::getList<std::string>(const std::strin
 	std::string str_val;
 	CommParameterIDL::NameValue nv;
 	std::vector<CommParameterIDL::NameValue>::const_iterator it;
-	for(it=idl_CommParameterRequest.items.begin(); it!=idl_CommParameterRequest.items.end(); it++) {
+	for(it=data.items.begin(); it!=data.items.end(); it++) {
 		if(key.compare(it->key.c_str()) == 0) {
 			for(unsigned i=0; i<it->values.size(); ++i) {
 				valueList.push_back(it->values[i].c_str());

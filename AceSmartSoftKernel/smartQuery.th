@@ -68,7 +68,11 @@ template<class R, class A> void SmartACE::QueryClient<R,A>::hndAnsw(void* ptr, c
       //
       // everything is ok, answer is expected
       //
-      lptr->a.set(user);
+
+      ACE_InputCDR cdr(user);
+
+      cdr >> lptr->a;
+
       lptr->querystatus = Smart::QUERY_VALIDANSWER;
       lptr->cond.signal();
     } else if (lptr->querystatus == Smart::QUERY_DISCONNECTED) {
@@ -829,25 +833,15 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
 
   //<alexej date="02.10.2008">
 
-  //
-  // Message data buffer (for holding serialized CommObj data)
-  //
-  SmartMessageBlock *any = 0;
+  ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
 
-  //
-  // get SmartMessageBlock from communicationObject
-  //
-  r.get(any);
+  cdr << r;
 
   //
   // send message content to server
   //
-  result = serverProxy->request(any,id);
+  result = serverProxy->request(cdr.begin(), id);
 
-  //
-  // Release(free) message memory, otherwise memory leaks will ocur.
-  //
-  any->release();
   //</alexej>
 
 
@@ -1056,7 +1050,10 @@ template<class R,class A> void SmartACE::QueryServer<R,A>::hndRqst(void* ptr, co
 
   lthis->queryCnt++;
   lptr              = new QueryServerList;
-  lptr->r.set(user);
+
+  ACE_InputCDR cdr(user);
+  cdr >> lptr->r;
+
   lptr->id          = lthis->queryCnt;
   lptr->cltId       = cltId;
   lptr->clientProxy = (QueryServerServiceHandler*)client;
@@ -1556,25 +1553,15 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryServer<R,A>::answer(
       result = Smart::SMART_DISCONNECTED;
     } else {
       //<alexej date="26.11.2008">
-      //
-      // Message Buffer
-      //
-      SmartMessageBlock *any = 0;
+	  ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
 
-      //
-      // Get message data from CommObj
-      //
-      a.get(any);
+	  cdr << a;
 
       //
       // Send answer back to requestor
       //
-      result = lptr->clientProxy->answer(any,lptr->cltId);
+      result = lptr->clientProxy->answer(cdr.begin(), lptr->cltId);
 
-      //
-      // Release(free) message buffer
-      //
-      any->release();
       //</alexej>
     }
 

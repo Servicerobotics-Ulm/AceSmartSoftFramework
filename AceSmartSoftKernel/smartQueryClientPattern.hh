@@ -71,7 +71,7 @@ namespace SmartACE
          void (*)(void *, int),
          void (*)(void *));
 
-      Smart::StatusCode request(SmartACE::SmartMessageBlock *message, int id);
+      Smart::StatusCode request(const SmartACE::SmartMessageBlock *message, int id);
 
       Smart::StatusCode connect(int cid, const ACE_Utils::UUID &serviceID);
       Smart::StatusCode discard();

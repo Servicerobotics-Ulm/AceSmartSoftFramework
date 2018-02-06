@@ -46,6 +46,8 @@
 #include <iomanip>
 #include <string>
 
+#include <chrono>
+
 #include "ace/Message_Block.h"
 
 #include "exampleTime.hh"
@@ -54,40 +56,13 @@ namespace SmartACE {
 
 class CommExampleTime
 {
-protected:
-  //
-  // This is the data structure which is described in the IDL. Therefore
-  // CORBA can marshal / unmarshal this type for communication purposes.
-  //
-  ExampleTime time;
-
-  //
-  // We can add further data structures here but only those data structures
-  // described in IDL and being accessible by the get/set-methods are
-  // transmitted. Currently I assume that everything to be transmitted
-  // is wrapped by a single structure. This is no restriction since
-  // IDL interfaces can easily composed of several structures.
-  //
 public:
+  ExampleTime time;
   //
   // constructors, destructors, copy constructors etc. ...
   //
   CommExampleTime();
   virtual ~CommExampleTime();
-
-  //
-  // The following methods MUST be available in a communication object.
-  // This however is not too bad for implementers of a communication
-  // object since you can get cookbook like instructions on how
-  // to implement these. They are always the same since they have to
-  // set / get the above IDL structure. They are used by the communication
-  // patterns and should not be used by users.
-  //
-
-  //<alexej date="26.11.2008">
-  void get(ACE_Message_Block *&msg) const;
-  void set(const ACE_Message_Block *msg);
-  //</alexej>
 
   static inline std::string identifier(void) {
     return "SmartACE::exampleTime";
@@ -102,8 +77,11 @@ public:
   // IDL data structure into STL vectors ...
   //
 
-  void get(int&,int&,int&);
-  void set(int,int,int);
+//  void get(int&,int&,int&);
+//  void set(int,int,int);
+
+  void set_now();
+  std::chrono::system_clock::time_point get_timepoint();
 
   void print(std::ostream &os = std::cout) const;
 };

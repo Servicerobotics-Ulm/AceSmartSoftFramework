@@ -30,11 +30,12 @@
 //
 // --------------------------------------------------------------------------
 
-#include "smartSoft.hh"
-
+#include "aceSmartSoft.hh"
 #include "commExampleTime.hh"
 #include "commExampleValues.hh"
 #include "commExampleResult.hh"
+
+#include "aceSerializationExamples.hh"
 
 // -------------------------------------------------------------
 //
@@ -62,18 +63,14 @@ private:
 
   Smart::StatusCode status1, status2;
 
-  time_t time_now;
-  struct tm *time_p;
 public:
   UserThreadA(SmartACE::SmartComponent *component)
   : SmartACE::ManagedTask(component)
-  ,	time_now(0)
   {
 	  status1 = Smart::SMART_OK;
 	  status2 = Smart::SMART_OK;
 	  id1 = 0;
 	  id2 = 0;
-	  time_p = 0;
   };
   ~UserThreadA() {};
 
@@ -86,16 +83,10 @@ int UserThreadA::on_execute()
     //
     // interleaved queries
     //
-    time_now = time(0);
-	 time_p   = ACE_OS::gmtime(&time_now);
-
-    q1.set(time_p->tm_hour,time_p->tm_min,time_p->tm_sec);
+    q1.set_now();
     status1 = timeClient->queryRequest(q1,id1);
 
-    time_now = time(0);
-	 time_p   = ACE_OS::gmtime(&time_now);
-
-    q2.set(time_p->tm_hour,time_p->tm_min,time_p->tm_sec);
+    q2.set_now();
     status2 = timeClient->queryRequest(q2,id2);
 
 #ifdef DEBUG
@@ -133,7 +124,7 @@ class UserThreadB : public SmartACE::ManagedTask
 {
 private:
   int i;
-  std::list<int> l;
+  std::vector<int> l;
 
   SmartACE::CommExampleValues q;
   SmartACE::CommExampleResult r;
@@ -244,6 +235,11 @@ int main (int argc, char *argv[])
     user2.start();
 
     component->run();
+
+    delete calcClient;
+    delete timeClient;
+    delete component;
+
   } catch (std::exception &e) {
       std::cerr << e.what() << std::endl;
       return 1;

@@ -38,8 +38,6 @@
 
 #include "exampleEvent1.hh"
 
-#include "ace/Message_Block.h"
-
 namespace SmartACE {
 
 // --------------------------------------------------------------------------
@@ -49,18 +47,12 @@ namespace SmartACE {
 // --------------------------------------------------------------------------
 class CommExampleEvent1Parameter
 {
-protected:
+public:
   ExampleEvent1Parameter parameter;
 
-public:
   CommExampleEvent1Parameter();
   virtual ~CommExampleEvent1Parameter();
 
-  //<alexej date="2009-10-26">
-      // Helper functions to pack/unpack comm-obj data
-      void get(ACE_Message_Block *&msg) const;
-      void set(const ACE_Message_Block *msg);
-  //</alexej>
   static inline std::string identifier(void) {
     return "SmartACE::exampleEvent1Parameter";
   };
@@ -82,18 +74,12 @@ inline std::ostream &operator<< (std::ostream &os, const CommExampleEvent1Parame
 // --------------------------------------------------------------------------
 class CommExampleEvent1Result
 {
-protected:
+public:
   ExampleEvent1Result result;
 
-public:
   CommExampleEvent1Result();
   virtual ~CommExampleEvent1Result();
 
-  //<alexej date="2009-10-26">
-      // Helper functions to pack/unpack comm-obj data
-      void get(ACE_Message_Block *&msg) const;
-      void set(const ACE_Message_Block *msg);
-  //</alexej>
   static inline std::string identifier(void) {
     return "SmartACE::exampleEvent1Result";
   };

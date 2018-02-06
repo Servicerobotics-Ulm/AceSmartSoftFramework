@@ -120,7 +120,7 @@ int SendClientServiceHandler::handle_incomming_message(ACE_CDR::Long command, AC
 	return 0;
 }
 
-Smart::StatusCode SendClientServiceHandler::command(ACE_Message_Block *message)
+Smart::StatusCode SendClientServiceHandler::command(const SmartACE::SmartMessageBlock *message)
 {
 	Smart::StatusCode result = Smart::SMART_OK;
 

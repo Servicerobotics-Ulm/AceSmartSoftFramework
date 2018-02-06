@@ -1,0 +1,110 @@
+# --------------------------------------------------------------------------
+#
+#  Copyright (C) 2013 Alex Lotz
+#
+#        lotz@fh-ulm.de
+#
+#        Alex Lotz
+#        University of Applied Sciences
+#        Prittwitzstr. 10
+#        D-89075 Ulm
+#        Germany
+#
+#  This file is part of the "SmartSoft Communication Library".
+#  It provides standardized patterns for communication between
+#  different components.
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License, or (at your option) any later version.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# --------------------------------------------------------------------------
+
+# Execute uninstall command if available and remove the corresponding files
+IF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/cmake_uninstall.cmake")
+	MESSAGE(STATUS "Execute uninstall command")
+	EXECUTE_PROCESS(COMMAND @CMAKE_COMMAND@ -P "@CMAKE_CURRENT_BINARY_DIR@/cmake_uninstall.cmake")
+	MESSAGE(STATUS "Remove cmake uninstall files")
+	EXECUTE_PROCESS(COMMAND @CMAKE_COMMAND@ -E remove "@CMAKE_CURRENT_BINARY_DIR@/cmake_uninstall.cmake")
+	IF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+		EXECUTE_PROCESS(
+			COMMAND @CMAKE_COMMAND@ -E remove "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt"
+		)
+	ENDIF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+ENDIF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/cmake_uninstall.cmake")
+
+# remove the default CMakeCache.txt file
+IF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/CMakeCache.txt")
+	MESSAGE(STATUS "Remove CMakeCache.txt")
+	EXECUTE_PROCESS(COMMAND @CMAKE_COMMAND@ -E remove "@CMAKE_CURRENT_BINARY_DIR@/CMakeCache.txt")
+ENDIF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/CMakeCache.txt")
+
+# remove the CMakeFiles directory
+IF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@@CMAKE_FILES_DIRECTORY@")
+	MESSAGE(STATUS "Remove directory @CMAKE_FILES_DIRECTORY@")
+	EXECUTE_PROCESS(COMMAND @CMAKE_COMMAND@ -E remove_directory "@CMAKE_CURRENT_BINARY_DIR@@CMAKE_FILES_DIRECTORY@")
+ENDIF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@@CMAKE_FILES_DIRECTORY@")
+
+# remove the default Makefile (only available when using make)
+IF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/Makefile")
+	MESSAGE(STATUS "Remove Makefile")
+	EXECUTE_PROCESS(COMMAND @CMAKE_COMMAND@ -E remove "@CMAKE_CURRENT_BINARY_DIR@/Makefile")
+ENDIF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/Makefile")
+
+# remove the default cmake_install.cmake
+IF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/cmake_install.cmake")
+	MESSAGE(STATUS "Remove cmake_install.cmake")
+	EXECUTE_PROCESS(COMMAND @CMAKE_COMMAND@ -E remove "@CMAKE_CURRENT_BINARY_DIR@/cmake_install.cmake")
+ENDIF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/cmake_install.cmake")
+
+# remove the default Makefile (only available when using make)
+IF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+	MESSAGE(STATUS "Remove install_manifest.txt")
+	EXECUTE_PROCESS(COMMAND @CMAKE_COMMAND@ -E remove "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+ENDIF(EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+
+# now check for the cmake_generated_files.txt which contains all other cmake generated (custom) files
+# remove each file separatelly
+IF(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/cmake_generated_files.txt")
+  MESSAGE("Cannot find file that traces cmake generated files: \"@CMAKE_CURRENT_BINARY_DIR@/cmake_generated_files.txt\"")
+ELSE(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/cmake_generated_files.txt")
+  FILE(READ "@CMAKE_CURRENT_BINARY_DIR@/cmake_generated_files.txt" files)
+  STRING(REGEX REPLACE "\n" ";" files "${files}")
+  # LIST(REVERSE files)
+  FOREACH (file ${files})
+    MESSAGE(STATUS "Remove \"${file}\"")
+    IF (EXISTS "${file}")
+      EXECUTE_PROCESS(
+        COMMAND @CMAKE_COMMAND@ -E remove "${file}"
+        OUTPUT_VARIABLE rm_out
+        RESULT_VARIABLE rm_retval
+      )
+      IF (NOT ${rm_retval} EQUAL 0)
+        MESSAGE(FATAL_ERROR "Problem when removing \"${file}\"")
+      ENDIF (NOT ${rm_retval} EQUAL 0)
+    ELSE (EXISTS "${file}")
+      MESSAGE(STATUS "File \"${file}\" does not exist.")
+    ENDIF (EXISTS "${file}")
+  ENDFOREACH(file)
+
+  EXECUTE_PROCESS(
+    COMMAND @CMAKE_COMMAND@ -E remove "@CMAKE_CURRENT_BINARY_DIR@/cmake_generated_files.txt"
+    OUTPUT_VARIABLE rm_out
+    RESULT_VARIABLE rm_retval
+  )
+
+  IF (NOT ${rm_retval} EQUAL 0)
+    MESSAGE(FATAL_ERROR "Problem when removing \"@CMAKE_CURRENT_BINARY_DIR@/cmake_generated_files.txt\"")
+  ENDIF (NOT ${rm_retval} EQUAL 0)
+
+ENDIF(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/cmake_generated_files.txt")

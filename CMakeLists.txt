@@ -49,9 +49,9 @@ CONFIGURE_FILE(
   "${PROJECT_BINARY_DIR}/VERSION" @ONLY
 )
 
-IF(EXISTS $ENV{SMART_ROOT_ACE}/SmartOSConfig.cmake)
-  INCLUDE("$ENV{SMART_ROOT_ACE}/SmartOSConfig.cmake")
-ENDIF(EXISTS $ENV{SMART_ROOT_ACE}/SmartOSConfig.cmake)
+IF(EXISTS $ENV{SMART_ROOT_ACE}/CMakeMacros/SmartOSConfig.cmake)
+  INCLUDE("$ENV{SMART_ROOT_ACE}/CMakeMacros/SmartOSConfig.cmake")
+ENDIF(EXISTS $ENV{SMART_ROOT_ACE}/CMakeMacros/SmartOSConfig.cmake)
 
 # default installation prefix is set to the path given in the SMART_ROOT_ACE environment variable
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -59,7 +59,7 @@ IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   SET(CMAKE_INSTALL_PREFIX $ENV{SMART_ROOT_ACE} CACHE PATH "Set default SmartSoft install prefix" FORCE)
 ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
-FIND_PACKAGE(ACE 6.0.2 PATHS $ENV{SMART_ROOT_ACE} /opt/smartSoftAce)
+FIND_PACKAGE(ACE 6.0.2 PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
 # include directories are depricated since CMake v3
 #INCLUDE_DIRECTORIES(${ACE_INCLUDE_DIRS})
 

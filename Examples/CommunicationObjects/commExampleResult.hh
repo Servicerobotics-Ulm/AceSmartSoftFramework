@@ -36,25 +36,17 @@
 #include <iostream>
 #include <string>
 
-#include "ace/Message_Block.h"
-
 #include "exampleResult.hh"
 
 namespace SmartACE {
 
 class CommExampleResult
 {
-protected:
+public:
   ExampleResult result;
 
-public:
   CommExampleResult();
   virtual ~CommExampleResult();
-
-  //<alexej date="26.11.2008">
-  void get(ACE_Message_Block *&msg) const;
-  void set(const ACE_Message_Block *msg);
-  //</alexej>
 
   static inline std::string identifier(void) {
     return "SmartACE::exampleResult";

@@ -142,7 +142,7 @@ int PushServerServiceHandler::handle_incomming_message(ACE_CDR::Long command, AC
 	return 0;
 }
 
-Smart::StatusCode PushServerServiceHandler::update(SmartMessageBlock *message, int sid)
+Smart::StatusCode PushServerServiceHandler::update(const SmartMessageBlock *message, int sid)
 {
 	Smart::StatusCode result = Smart::SMART_OK;
 

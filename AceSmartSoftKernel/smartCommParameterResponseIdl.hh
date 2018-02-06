@@ -23,9 +23,6 @@
 #include "smartEnumParamResponseTypeBase.hh"
 #include <vector>
 
-#include <ace/CDR_Stream.h>
-#include <ace/SString.h>
-
 namespace CommParameterIDL
 {
 struct CommParameterResponse

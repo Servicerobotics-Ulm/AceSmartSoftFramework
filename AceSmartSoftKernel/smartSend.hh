@@ -450,7 +450,7 @@ namespace SmartACE {
     SendServerAcceptor *acceptor;
 
     /// private handler function
-    static void hndCmd(void*, const ACE_Message_Block *);
+    static void hndCmd(void*, const SmartMessageBlock *);
 
     /// private handler function
     static void hndConnect(void*, const SendServerServiceHandler *,int,const ACE_Utils::UUID&);

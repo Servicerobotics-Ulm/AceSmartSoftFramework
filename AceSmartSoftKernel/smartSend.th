@@ -589,25 +589,14 @@ template<class C> Smart::StatusCode SmartACE::SendClient<C>::send(const C &c) th
   result = Smart::SMART_OK;
 
   //<alexej date="02.10.2008">
-  //
-  // Message data buffer (for holding serialized CommObj data)
-  //
-  SmartMessageBlock *any;
-
-  //
-  // get SmartMessageBlock from communicationObject
-  //
-  c.get(any);
+  ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
+  cdr << c;
 
   //
   // send message content to server
   //
-  result = serverProxy->command(any);
+  result = serverProxy->command(cdr.begin());
 
-  //
-  // Release(free) message memory, otherwise memory leaks will ocur.
-  //
-  any->release();
   //</alexej>
   mutexConnection.release();
 
@@ -624,7 +613,7 @@ template<class C> Smart::StatusCode SmartACE::SendClient<C>::send(const C &c) th
 //
 // static handle method called by ACE ServiceHandler(SendServerServiceHandler) object
 //
-template<class C> void SmartACE::SendServer<C>::hndCmd(void *ptr, const ACE_Message_Block *message)
+template<class C> void SmartACE::SendServer<C>::hndCmd(void *ptr, const SmartMessageBlock *user)
 {
   SendServer<C>* lthis = (SendServer<C> *)ptr;
 
@@ -636,7 +625,8 @@ template<class C> void SmartACE::SendServer<C>::hndCmd(void *ptr, const ACE_Mess
   //
   // Fill communication object with message data
   //
-  c.set(message);
+  ACE_InputCDR cdr(user);
+  cdr >> c;
 
   //
   // now call user provided handle method

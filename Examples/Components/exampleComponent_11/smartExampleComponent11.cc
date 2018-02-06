@@ -30,9 +30,10 @@
 //
 // --------------------------------------------------------------------------
 
-#include "smartSoft.hh"
-
+#include "aceSmartSoft.hh"
 #include "commExampleTime.hh"
+
+#include "aceSerializationExamples.hh"
 
 // -------------------------------------------------------------
 //
@@ -104,7 +105,7 @@ int UserThreadA::on_execute()
     if (status != Smart::SMART_OK) {
       std::cout << "blocking wait  status " << status << " not ok => retry ..." << std::endl;
     } else {
-      std::cout << "blocking wait  status " << status << " ";a.print();
+      std::cout << "blocking wait  status " << status << " " << a << std::endl;
     }
 
     counter++;

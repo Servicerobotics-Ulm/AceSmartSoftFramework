@@ -30,10 +30,11 @@
 //
 // --------------------------------------------------------------------------
 
-#include "smartSoft.hh"
-
+#include "aceSmartSoft.hh"
 #include "commExampleEvent1.hh"
 #include "commExampleEvent2.hh"
+
+#include "aceSerializationExamples.hh"
 
 // -------------------------------------------------------------
 //

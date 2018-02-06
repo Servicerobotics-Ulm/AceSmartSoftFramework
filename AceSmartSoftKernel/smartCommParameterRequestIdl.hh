@@ -51,17 +51,15 @@
 #define _COMMPARAMETER_IDL_COMMPARAMETERREQUEST
 
 #include <vector>
-
-#include <ace/CDR_Stream.h>
-#include <ace/SString.h>
+#include <string>
 
 namespace CommParameterIDL
 {
-typedef std::vector<ACE_CString> NameValue_values_type;
+typedef std::vector<std::string> NameValue_values_type;
 
 struct NameValue
 {
-	ACE_CString key;
+	std::string key;
 	NameValue_values_type values;
 };
 

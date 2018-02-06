@@ -30,8 +30,6 @@
 //
 // --------------------------------------------------------------------------
 
-#include "ace/CDR_Stream.h"
-
 #include "commExampleEvent1.hh"
 
 using namespace SmartACE;
@@ -42,22 +40,6 @@ CommExampleEvent1Parameter::CommExampleEvent1Parameter()
 
 CommExampleEvent1Parameter::~CommExampleEvent1Parameter()
 {
-}
-
-void CommExampleEvent1Parameter::get(ACE_Message_Block *&msg) const
-{
-   ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
-
-   cdr << parameter.value;
-
-   msg = cdr.begin()->clone();
-}
-
-void CommExampleEvent1Parameter::set(const ACE_Message_Block *msg)
-{
-   ACE_InputCDR cdr(msg);
-
-   cdr >> parameter.value;
 }
 
 void CommExampleEvent1Parameter::set(int r)
@@ -86,22 +68,6 @@ CommExampleEvent1Result::~CommExampleEvent1Result()
 {
 }
 
-void CommExampleEvent1Result::get(ACE_Message_Block *&msg) const
-{
-   ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
-
-   cdr << result.value;
-
-   msg = cdr.begin()->clone();
-}
-
-void CommExampleEvent1Result::set(const ACE_Message_Block *msg)
-{
-   ACE_InputCDR cdr(msg);
-
-   cdr >> result.value;
-}
-
 void CommExampleEvent1Result::set(int r)
 {
   result.value = r;
@@ -121,6 +87,7 @@ void CommExampleEvent1Result::print(std::ostream &os) const
 
 
 ExampleEventState::ExampleEventState()
+:	state(0)
 {
 }
 

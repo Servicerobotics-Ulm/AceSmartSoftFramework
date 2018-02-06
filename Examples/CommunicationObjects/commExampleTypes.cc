@@ -31,8 +31,6 @@
 // --------------------------------------------------------------------------
 
 #include "commExampleTypes.hh"
-#include "ace/SString.h"
-
 #include <iostream>
 
 namespace SmartACE
@@ -46,82 +44,6 @@ CommExampleTypes::CommExampleTypes(void)
 CommExampleTypes::~CommExampleTypes(void)
 {
 
-}
-
-void CommExampleTypes::get(ACE_Message_Block *&msg) const
-{
-   ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
-
-   // 1) write std::string
-   ACE_CString str_temp(text.c_str());
-   cdr << str_temp;
-
-
-
-   // 2) write primitive data types
-   cdr << ACE_OutputCDR::from_boolean( data.cdr_bool );
-   cdr << data.cdr_char;
-   cdr << data.cdr_long;
-   cdr << data.cdr_dbl;
-   cdr << data.cdr_float;
-
-   cdr << data.cdr_longlong;
-   cdr << data.cdr_ulong;
-   cdr << data.cdr_ulonglong;
-   cdr << data.cdr_ushort;
-
-/*
-   // TODO: figure out how to send unicode strings...
-   // 3) write ACE_CDR::WChar
-   size = wstring.length();
-
-	cdr << static_cast<ACE_UINT32>(size);
-   cdr.write_wchar_array(wstring.c_str(), static_cast<ACE_UINT32>(size) );
-*/
-
-
-    msg = cdr.begin()->clone();
-}
-
-
-void CommExampleTypes::set(const ACE_Message_Block *msg)
-{
-   ACE_InputCDR cdr(msg);
-
-   // 1) read std::string
-   ACE_CString str_temp;
-   cdr >> str_temp;
-   text = str_temp.c_str();
-
-   // 2) read primitive data types
-   cdr >> ACE_InputCDR::to_boolean( data.cdr_bool );
-   cdr >> data.cdr_char;
-   cdr >> data.cdr_long;
-   cdr >> data.cdr_dbl;
-   cdr >> data.cdr_float;
-
-   cdr >> data.cdr_longlong;
-   cdr >> data.cdr_ulong;
-   cdr >> data.cdr_ulonglong;
-   cdr >> data.cdr_ushort;
-
-
-   // 3) read ACE_CDR::WChar
-   // TODO: figure out how to send unicode strings...
-/*
-	cdr >> size;
-
-   ACE_CDR::WChar *wtemp = new ACE_CDR::WChar[size+1];
-   wstring.clear();
-
-   cdr.read_wchar_array( wtemp , static_cast<ACE_UINT32>(size) );
-
-   wtemp[size] = ACE_TEXT_WIDE('\0');
-
-   wstring.set( wtemp, size );
-
-	delete[] wtemp;
-*/
 }
 
 void CommExampleTypes::print_data()

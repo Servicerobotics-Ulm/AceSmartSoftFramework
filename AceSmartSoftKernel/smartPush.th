@@ -46,8 +46,10 @@ template<class T> void SmartACE::PushClient<T>::hndUpdate(void* ptr,const SmartM
   lthis->mutexConnection.acquire();
     if(lthis->statusSubscribed == 1 && sid == lthis->session_id)
     {
-      // signal new data
-      lthis->data.set(user);
+      // set new data
+      ACE_InputCDR cdr(user);
+      cdr >> lthis->data;
+
       // set new state: data-available
       lthis->dataAvailable = 1;
 
@@ -1630,26 +1632,16 @@ template<class T> Smart::StatusCode SmartACE::PushServer<T>::put(const T& d) thr
 
                //<alexej date="2009-04-29">
                //
-               // Message data buffer (for holding serialized CommObj data)
+               // serialize communication-object into ACE_OutputCDR
                //
-               SmartMessageBlock *any = 0;
-
-               //
-               // Get(serialize) CommObj data and store it in MessageBlock
-               //
-               d.get(any);
+               ACE_OutputCDR cdr(ACE_DEFAULT_CDR_BUFSIZE);
+               cdr << d;
 
                //
                // send Message to client
                //
-               result = lptr->clientProxy->update(any, lptr->subscription_id);
+               result = lptr->clientProxy->update(cdr.begin(), lptr->subscription_id);
                //ACE_DEBUG((LM_DEBUG, ACE_TEXT("put()\n") ));
-
-
-               //
-               // Release(free) message memory, otherwise memory leaks will ocur.
-               //
-               any->release();
                //</alexej>
             }
          } // end if(lptr->subscribed == 1)
