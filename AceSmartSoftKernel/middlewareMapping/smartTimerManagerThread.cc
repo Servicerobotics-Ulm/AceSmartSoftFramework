@@ -169,7 +169,7 @@ int TimerManagerThread::svc (void)
 	   * ACE_Event::wait().
 	   *
 	   */
-	
+
           // Block till next timer expires.
           result = timer_event_.wait (&absolute_time);
         }
@@ -199,14 +199,19 @@ int TimerManagerThread::svc (void)
   return 0;
 }
 
-long
-TimerManagerThread::scheduleTimer(
-		Smart::ITimerHandler *handler,
-		const std::chrono::steady_clock::duration &first_time,
-		const std::chrono::steady_clock::duration &interval)
+//long
+//TimerManagerThread::scheduleTimer(Smart::ITimerHandler *handler,
+//			   const void *act,
+//			   const ACE_Time_Value &time,
+//			   const ACE_Time_Value &interval)
+Smart::ITimerManager::TimerId TimerManagerThread::scheduleTimer(
+			Smart::ITimerHandler *handler,
+			const std::chrono::steady_clock::duration &first_time,
+			const std::chrono::steady_clock::duration &interval
+		)
 {
   // absolute time.
-  ACE_Time_Value absolute_time = timer_queue.gettimeofday () + convertToAceTimeFrom(first_time);
+  ACE_Time_Value absolute_time = timer_queue.gettimeofday() + convertToAceTimeFrom(first_time);
 
   // Only one guy goes in here at a time
   ACE_Guard<ACE_SYNCH_RECURSIVE_MUTEX> guard(timer_queue.mutex());
@@ -216,13 +221,15 @@ TimerManagerThread::scheduleTimer(
 
   // Schedule the timer
   long result = timer_queue.schedule (handler,
+				      (void*)0,
 				      absolute_time,
 					  convertToAceTimeFrom(interval));
   if (result != -1)
   {
+    handlers.insert(handler);
     // no failures: check to see if we are the earliest time
     if (timer_queue.earliest_time () == absolute_time)
-
+    {
       // wake up the timer thread
       if (timer_event_.signal () == -1)
       {
@@ -230,20 +237,22 @@ TimerManagerThread::scheduleTimer(
         timer_queue.cancel (result);
         result = -1;
       }
-  }
-  if(result != -1) {
-	  handlers.insert(handler);
+    }
   }
   return result;
 }
 
-int
-TimerManagerThread::cancelTimer(const TimerId &timer_id)
+//int
+//TimerManagerThread::cancelTimer(long timer_id,
+//			   const void **arg,
 //			   bool notifyHandler)
+int TimerManagerThread::cancelTimer(const TimerId& id)
 {
   // No need to singal timer event here. Even if the cancel timer was
   // the earliest, we will have an extra wakeup.
-  int result = timer_queue.cancel (timer_id, 0, 1);
+  long timer_id = id;
+  int result = timer_queue.cancel (timer_id);
+//					   arg,
 //					   !notifyHandler ? 0 : 1);
   if (result == 1) {
     return 0;
@@ -253,27 +262,28 @@ TimerManagerThread::cancelTimer(const TimerId &timer_id)
   }
 }
 
-int
-TimerManagerThread::cancelTimersOf(Smart::ITimerHandler *handler)
+//int
+//TimerManagerThread::cancelTimers(Smart::ITimerHandler *handler,
 //			  bool notifyHandler)
+int TimerManagerThread::cancelTimersOf(Smart::ITimerHandler *handler)
 {
-  // only one at a time.
-  ACE_Guard<ACE_SYNCH_RECURSIVE_MUTEX> guard(timer_queue.mutex());
-  if (guard.locked() == 0) {
-	return -1;
-  }
   // No need to signal timer event here. Even if the cancel timer was
   // the earliest, we will have an extra wakeup.
-  auto it = handlers.find(handler);
-  if(it != handlers.end()) {
-	  handlers.erase(it);
-  }
-  return timer_queue.cancel (handler, 1);
+  return timer_queue.cancel (handler);
 //			     !notifyHandler ? 0 : 1);
 }
 
+void TimerManagerThread::cancelAllTimers()
+{
+  for(std::set<Smart::ITimerHandler*>::iterator it=handlers.begin(); it!=handlers.end(); it++) {
+    this->cancelTimersOf(*it);
+  }
+}
+
+//int TimerManagerThread::resetTimerInterval(long timer_id,
+//						const ACE_Time_Value &interval)
 int TimerManagerThread::resetTimerInterval(
-		const TimerId& timer_id,
+		const TimerId& id,
 		const std::chrono::steady_clock::duration &interval
 	)
 {
@@ -285,6 +295,7 @@ int TimerManagerThread::resetTimerInterval(
     return -1;
   }
 
+  long timer_id = id;
   int result = timer_queue.reset_interval(timer_id,
 		  convertToAceTimeFrom(interval));
   if (result != 0) {
@@ -302,16 +313,4 @@ int TimerManagerThread::resetTimerInterval(
     }
   }
   return 0;
-}
-
-void TimerManagerThread::cancelAllTimers() {
-  // only one at a time.
-  ACE_Guard<ACE_SYNCH_RECURSIVE_MUTEX> guard(timer_queue.mutex());
-  if (guard.locked() == 0) {
-	return;
-  }
-
-  for(auto it=handlers.begin(); it!=handlers.end(); it++) {
-	  timer_queue.cancel (*it, 1);
-  }
 }

@@ -46,134 +46,134 @@ class ACE_Handler;
 
 namespace SmartACE {
 
-  /** Interface to receive notification from a TimerThread.
-   *
-   *  handler methods (hooks) are not abstract -> the user is not forced to
-   *  provide handler methods he does not need.
+/** Interface to receive notification from a TimerThread.
+ *
+ *  handler methods (hooks) are not abstract -> the user is not forced to
+ *  provide handler methods he does not need.
+ */
+class TimerHandler : public Smart::ITimerHandler {
+public:
+  TimerHandler();
+  virtual ~TimerHandler();
+
+  /** hook called on timer expiration
    */
-  class TimerHandler : public Smart::ITimerHandler {
-  public:
-    TimerHandler();
-    virtual ~TimerHandler();
+  virtual void timerExpired(const std::chrono::system_clock::time_point &abs_time) = 0;
 
-    /** hook called on timer expiration
-     */
-    virtual void timerExpired(const std::chrono::system_clock::time_point &abs_time) = 0;
+  /// This method is called when the timer is cancelled
+  virtual void timerCancelled() {  }
 
-    /// This method is called when the timer is cancelled
-	virtual void timerCancelled() { }
+  /// This method is called when the timer queue is destroyed and
+  /// the timer is still contained in it
+  virtual void timerDeleted() {  }
+};
 
-    /// This method is called when the timer queue is destroyed and
-    /// the timer is still contained in it
-	virtual void timerDeleted() { }
-  };
+/** Functor for Timer_Queues.
+ *
+ *  @internal
+ *
+ * This class implements the functor required by ACE_Timer_Queue
+ * to call the Handler method in a TimerHandler Object
+ */
+template <class ACE_LOCK>
+class TimerHandlerHandleUpcall
+{
+public:
+  typedef ACE_Timer_Queue_T<Smart::ITimerHandler *,
+                            TimerHandlerHandleUpcall<ACE_LOCK>,
+                            ACE_LOCK>
+  TIMER_QUEUE;
 
-  /** Functor for Timer_Queues.
-   * 
-   *  @internal
-   * 
-   * This class implements the functor required by ACE_Timer_Queue
-   * to call the Handler method in a TimerHandler Object
-   */
-  template <class ACE_LOCK>
-  class TimerHandlerHandleUpcall
-  {
-  public:
-    typedef ACE_Timer_Queue_T<Smart::ITimerHandler *,
-                              TimerHandlerHandleUpcall<ACE_LOCK>,
-                              ACE_LOCK>
-    TIMER_QUEUE;
+  // = Initialization and termination methods.
+  /// Constructor.
+  TimerHandlerHandleUpcall () {};
 
-    // = Initialization and termination methods.
-    /// Constructor.
-    TimerHandlerHandleUpcall () {};
+  /// Destructor.
+  ~TimerHandlerHandleUpcall () {};
 
-    /// Destructor.
-    ~TimerHandlerHandleUpcall () {};
-
-    /// This method is called when the timer expires
-    int timeout (TIMER_QUEUE &timer_queue,
-    	 Smart::ITimerHandler *handler,
+  /// This method is called when the timer expires
+  int timeout (TIMER_QUEUE &timer_queue,
+		 Smart::ITimerHandler *handler,
 		 const void *arg,
 		 int recurring_timer,
 		 const ACE_Time_Value &cur_time)
-      {
-        // Upcall to the <handler>s handle_timeout method.
-        handler->timerExpired (std::chrono::system_clock::now());
-        return 0;
-      };
+    {
+	// Upcall to the <handler>s handle_timeout method.
+	handler->timerExpired (std::chrono::system_clock::now());
+	return 0;
+    };
 
 
-    /// This method is called when the timer is cancelled
-    int cancel_timer (TIMER_QUEUE &timer_queue,
-    		Smart::ITimerHandler *handler,
-                      int dont_call_handle_close,
-                      int requires_reference_counting)
-      {
-        handler->timerCancelled();
-        return 0;
-      };
+  /// This method is called when the timer is cancelled
+  int cancel_timer (TIMER_QUEUE &timer_queue,
+		  Smart::ITimerHandler *handler,
+                    int dont_call_handle_close,
+                    int requires_reference_counting)
+    {
+	handler->timerCancelled ();
+	return 0;
+    };
 
-    /// This method is called when the timer queue is destroyed and
-    /// the timer is still contained in it
-    int deletion (TIMER_QUEUE &timer_queue,
-    		Smart::ITimerHandler *handler,
+  /// This method is called when the timer queue is destroyed and
+  /// the timer is still contained in it
+  int deletion (TIMER_QUEUE &timer_queue,
+		  Smart::ITimerHandler *handler,
 		  const void *arg)
-      {
-        handler->timerDeleted();
-        return 0;
-      }
-
-    /// This method is called when a time is registered
-    int registration (TIMER_QUEUE &timer_queue,
-    		Smart::ITimerHandler *handler,
-                      const void *arg)
     {
-      return 0;
+	handler->timerDeleted();
+	return 0;
     }
 
-    /// This method is called before the timer expires
-    int preinvoke (TIMER_QUEUE &timer_queue,
-    		Smart::ITimerHandler *handler,
-                   const void *arg,
-                   int reccuring_timer,
-                   const ACE_Time_Value &cur_time,
-                   const void *upcall_act)
-    {
-      return 0;
-    }
+  /// This method is called when a time is registered
+  int registration (TIMER_QUEUE &timer_queue,
+		  Smart::ITimerHandler *handler,
+                    const void *arg)
+  {
+    return 0;
+  }
 
-    /// This method is called after the timer expires
-    int postinvoke (TIMER_QUEUE &timer_queue,
-    		Smart::ITimerHandler *handler,
-                    const void *arg,
-                    int recurring_timer,
-                    const ACE_Time_Value &cur_time,
-                    const void *upcall_act)
-    {
-      return 0;
-    }
+  /// This method is called before the timer expires
+  int preinvoke (TIMER_QUEUE &timer_queue,
+		  Smart::ITimerHandler *handler,
+                 const void *arg,
+                 int reccuring_timer,
+                 const ACE_Time_Value &cur_time,
+                 const void *upcall_act)
+  {
+    return 0;
+  }
 
-    /// This method is called when a handler is canceled
-    int cancel_type (TIMER_QUEUE &timer_queue,
-    		Smart::ITimerHandler *handler,
-                     int dont_call_handle_close,
-                     int &requires_reference_counting)
-    {
-      return 0;
-    }
+  /// This method is called after the timer expires
+  int postinvoke (TIMER_QUEUE &timer_queue,
+		  Smart::ITimerHandler *handler,
+                  const void *arg,
+                  int recurring_timer,
+                  const ACE_Time_Value &cur_time,
+                  const void *upcall_act)
+  {
+    return 0;
+  }
 
-  private:
-    // = Don't allow these operations for now.
-    ACE_UNIMPLEMENTED_FUNC (TimerHandlerHandleUpcall (const TimerHandlerHandleUpcall<ACE_LOCK> &));
-    ACE_UNIMPLEMENTED_FUNC (void operator= (const TimerHandlerHandleUpcall<ACE_LOCK> &));
-  };
+  /// This method is called when a handler is canceled
+  int cancel_type (TIMER_QUEUE &timer_queue,
+		  Smart::ITimerHandler *handler,
+                   int dont_call_handle_close,
+                   int &requires_reference_counting)
+  {
+    return 0;
+  }
+
+private:
+  // = Don't allow these operations for now.
+  ACE_UNIMPLEMENTED_FUNC (TimerHandlerHandleUpcall (const TimerHandlerHandleUpcall<ACE_LOCK> &));
+  ACE_UNIMPLEMENTED_FUNC (void operator= (const TimerHandlerHandleUpcall<ACE_LOCK> &));
+};
 
 
-  typedef ACE_Timer_Heap_T<Smart::ITimerHandler *,
-                           TimerHandlerHandleUpcall<ACE_SYNCH_RECURSIVE_MUTEX>,
-                           ACE_SYNCH_RECURSIVE_MUTEX>
-  TimerHeap;
+typedef ACE_Timer_Heap_T<Smart::ITimerHandler *,
+                         TimerHandlerHandleUpcall<ACE_SYNCH_RECURSIVE_MUTEX>,
+                         ACE_SYNCH_RECURSIVE_MUTEX>
+TimerHeap;
 
   /** single/continuous timer.
    *
@@ -185,7 +185,9 @@ namespace SmartACE {
    *
    *  Some code taken from ace/Proactor.cpp
    */
-  class TimerManagerThread : public Smart::ITimerManager, public ACE_Task<ACE_NULL_SYNCH>
+  class TimerManagerThread
+  :   public ACE_Task<ACE_NULL_SYNCH>
+  ,   public Smart::ITimerManager
   {
   public:
     /// Constructor.
@@ -209,15 +211,15 @@ namespace SmartACE {
      *                     the the interval of a timer with
      *                     resetTimerInterval().
      */
-//    long scheduleTimer(TimerHandler &handler,
-//		       const void *act,
-//		       const ACE_Time_Value &time,
-//		       const ACE_Time_Value &interval = ACE_Time_Value::zero);
 	virtual TimerId scheduleTimer(
 			Smart::ITimerHandler *handler,
 			const std::chrono::steady_clock::duration &first_time,
 			const std::chrono::steady_clock::duration &interval=std::chrono::steady_clock::duration::zero()
 		);
+//    long scheduleTimer(Smart::ITimerHandler *handler,
+//		       const void *act,
+//		       const ACE_Time_Value &time,
+//		       const ACE_Time_Value &interval = ACE_Time_Value::zero);
 
 
     /** Cancel a single timer.
@@ -232,11 +234,10 @@ namespace SmartACE {
      *  @return 0 on success
      *  @return -1 on error
      */
+	virtual int cancelTimer(const TimerId& id);
 //    int cancelTimer(long timer_id,
 //			   const void **act=0,
 //			   bool notifyHandler=true);
-	virtual int cancelTimer(const TimerId& id);
-
 
     /** Cancel all timers associated with a handler
      *
@@ -247,10 +248,9 @@ namespace SmartACE {
      *
      *  @return number of timers canceled.
      */
-//    int cancelTimers(TimerHandler &handler,
-//		     bool notifyHandler=true);
 	virtual int cancelTimersOf(Smart::ITimerHandler *handler);
-
+//    int cancelTimers(Smart::ITimerHandler *handler,
+//		     bool notifyHandler=true);
 	virtual void cancelAllTimers();
 
     /** Resets the interval of a timer.
@@ -260,12 +260,12 @@ namespace SmartACE {
      *  @return 0 on success
      *  @return -1 on error
      */
-//    int resetTimerInterval(long timer_id,
-//				  const ACE_Time_Value &interval);
 	virtual int resetTimerInterval(
-			const TimerId& timer_id,
+			const TimerId& id,
 			const std::chrono::steady_clock::duration &interval
 		);
+//    int resetTimerInterval(long timer_id,
+//				  const ACE_Time_Value &interval);
 
     /** Start execution of the internal timer thread
      * @return >=0 on success
