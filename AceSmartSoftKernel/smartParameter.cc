@@ -147,7 +147,7 @@ void SmartACE::ParameterSlave::ParameterQueryHandler::handleQuery(const QueryId 
 
   answer = param_handler->handleParameter(request);
 
-  server->answer(id,answer);
+  this->server->answer(id,answer);
 }
 
 

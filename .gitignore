@@ -7,3 +7,4 @@ showSmartSoftNamingService
 startSmartSoftNamingService
 stopSmartSoftNamingService
 VERSION
+backing_store_SMART_NAMES

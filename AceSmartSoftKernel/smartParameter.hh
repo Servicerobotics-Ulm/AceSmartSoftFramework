@@ -224,15 +224,15 @@ namespace SmartACE {
       void handleQuery(const QueryId &id, const SmartACE::CommParameterRequest & request) throw();
     };
 
-    ///
-    ParameterQueryHandler query_handler;
-
-
-    /// Decorator for ParameterHandler (important with ACE implementation)
-    ThreadQueueQueryHandler<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse> thread_handler;
 
     /// query server part
     QueryServer<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse> query_server;
+
+    ///
+    ParameterQueryHandler query_handler;
+
+    /// Decorator for ParameterHandler (important with ACE implementation)
+    ThreadQueueQueryHandler<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse> thread_handler;
 
   public:
     /** constructor.

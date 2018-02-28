@@ -59,6 +59,7 @@ ExternalProject_Add(SmartSoftAPI
 ExternalProject_Get_Property(SmartSoftAPI SOURCE_DIR)
 # set the root include-folder for the SmartSoftAPI
 SET(SmartSoftAPI_INCLUDES "${SOURCE_DIR}/SmartSoft_CD_API")
+#SET(SmartSoftAPI_INCLUDES "$ENV{HOME}/SOFTWARE/SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API")
 
 
 # OS mapping sources
