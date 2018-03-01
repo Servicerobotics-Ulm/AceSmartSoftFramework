@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # compare to 3 because 1st is the script name itself, 2nd is the grep call and 3rd is the actual binary SmartSoftNamingService
-if [ `ps -Al | grep -c SmartSoftNaming` -eq 1 ]
+if [ `ps -Al | grep -c AceSmartSoftNam` -eq 1 ]
 then 
   echo "shuttting down SmartSoft Naming Service ..."
   killall AceSmartSoftNamingService
