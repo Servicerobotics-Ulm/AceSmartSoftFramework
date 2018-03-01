@@ -35,7 +35,7 @@ PROJECT(${PARENT_NAME}Kernel)
 
 # find ACE library package
 IF(NOT TARGET ACE)
-  FIND_PACKAGE(ACE 6.0.2 PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
+  FIND_PACKAGE(ACE 6.0.2 PATHS ${CMAKE_CURRENT_SOURCE_DIR}/CMakeMacros)
 ENDIF(NOT TARGET ACE)
 
 # create a ConfigFile including the current SmartSoft version
