@@ -287,10 +287,10 @@ NameAcceptor::init (int argc, ACE_TCHAR *argv[])
   return 0;
 }
 
-ACE_Naming_Context *
+LockingProxy<ACE_Naming_Context>
 NameAcceptor::naming_context (void)
 {
-  return &naming_context_;
+  return LockingProxy<ACE_Naming_Context>(&naming_context_, mutex_);
 }
 
 

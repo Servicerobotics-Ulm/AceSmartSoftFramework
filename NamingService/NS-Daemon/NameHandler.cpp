@@ -56,10 +56,12 @@ ACE_RCSID(lib,
           "$Id: Name_Handler.cpp 27 2011-02-16 17:07:52Z alotz $")
 #endif
 
+
+NameAcceptor *acceptor=NULL;
+
+
 NameHandler::NameHandler(ACE_Thread_Manager *mg)
 :	is_remote_ns_proxy(false)
-,	mutex()
-,	naming_context_(NULL)
 {
 	ACE_TRACE (ACE_TEXT ("NameHandler::NameHandler"));
 }
@@ -74,8 +76,7 @@ int NameHandler::open (void * v)
 	ACE_TRACE (ACE_TEXT ("NameHandler::open"));
 
 	// create the local naming-context database
-	NameAcceptor* acceptor_ = static_cast<NameAcceptor*>(v);
-	naming_context_ = acceptor_->naming_context();
+	acceptor = static_cast<NameAcceptor*>(v);
 
 	// Call to our parent which registers the READ_MASKin the reactor.
 	if (SmartACE::ServiceHandler::open (0) == -1)
@@ -87,6 +88,12 @@ int NameHandler::open (void * v)
 	}
 
 	return 0;
+}
+
+int NameHandler::handle_close(ACE_HANDLE handle, ACE_Reactor_Mask close_mask)
+{
+	connectionResetByReactor = true;
+	this->destroy();
 }
 
 // Create and send a reply to the client.
@@ -137,14 +144,8 @@ ACE_HANDLE NameHandler::get_handle (void) const
   return this->peer().get_handle();
 }
 
-ACE_Naming_Context* NameHandler::naming_context (void)
-{
-  return naming_context_;
-}
-
 void NameHandler::handle_local_rebind(const ACE_CString &name, const ACE_CString &value, const ACE_CString &type)
 {
-	ACE_Guard<SmartACE::SmartMutex> g(mutex);
 	ACE_TRACE (ACE_TEXT ("NameHandler::handle_local_rebind"));
 
 	this->name_request_ =
@@ -167,7 +168,6 @@ void NameHandler::handle_local_rebind(const ACE_CString &name, const ACE_CString
 
 int NameHandler::handle_incomming_message(ACE_CDR::Long command, ACE_InputCDR &cmd_is, ACE_InputCDR &msg_is)
 {
-	ACE_Guard<SmartACE::SmartMutex> g(mutex);
 	ACE_TRACE (ACE_TEXT ("NameHandler::handle_incomming_message"));
 
 	int result = 0;
@@ -341,7 +341,7 @@ int NameHandler::generic_bind(const bool &rebind)
 	if(rebind == true)
 	{
 		// propagate the rebind request to internal (local) name-space
-		int result = this->naming_context()->rebind(a_name, a_value, ctype.fast_rep());
+		int result = acceptor->naming_context()->rebind(a_name, a_value, ctype.fast_rep());
 		if(result == 1 || result == 0) {
 			// all good
 			return this->send_reply(0);
@@ -350,7 +350,7 @@ int NameHandler::generic_bind(const bool &rebind)
 	} else {
 		// rebind == false => bind only
 		// propagate the bind request to internal (local) name-space
-		int result = this->naming_context()->bind(a_name, a_value, ctype.fast_rep());
+		int result = acceptor->naming_context()->bind(a_name, a_value, ctype.fast_rep());
 		if(result == 0) {
 			return this->send_reply(0);
 		}
@@ -373,7 +373,7 @@ int NameHandler::resolve()
 
 	ACE_NS_WString avalue;
 	char *atype;
-	if(this->naming_context()->resolve(a_name, avalue, atype) == 0)
+	if(acceptor->naming_context()->resolve(a_name, avalue, atype) == 0)
 	{
 		ACE_Auto_Basic_Array_Ptr<ACE_WCHAR_T> avalue_urep (avalue.rep ());
 		ACE_Name_Request nrq (ACE_Name_Request::RESOLVE,
@@ -399,7 +399,7 @@ int NameHandler::unbind(void)
 
   // propagate the unbind request to the internal (local) name-space
   // then according to the result, return a reply
-  if (this->naming_context()->unbind(a_name) == 0)
+  if (acceptor->naming_context()->unbind(a_name) == 0)
 	  return this->send_reply(0);
   else
 	  return this->send_reply(-1);
@@ -421,13 +421,13 @@ int NameHandler::generic_list_x(void)
   switch(curr_msg_type)
   {
 	case ACE_Name_Request::LIST_NAMES:
-		result = this->naming_context()->list_names(set, pattern);
+		result = acceptor->naming_context()->list_names(set, pattern);
 		break;
 	case ACE_Name_Request::LIST_VALUES:
-		result = this->naming_context()->list_values(set, pattern);
+		result = acceptor->naming_context()->list_values(set, pattern);
 		break;
 	case ACE_Name_Request::LIST_TYPES:
-		result = this->naming_context()->list_types(set, pattern);
+		result = acceptor->naming_context()->list_types(set, pattern);
 		break;
 	default:
 		// send an empty result as msg_type is incompatible
@@ -487,13 +487,13 @@ int NameHandler::generic_list_x_entries(void)
 	switch(this->name_request_.msg_type())
 	{
 	case ACE_Name_Request::LIST_NAME_ENTRIES:
-		result = this->naming_context()->list_name_entries(set, pattern);
+		result = acceptor->naming_context()->list_name_entries(set, pattern);
 		break;
 	case ACE_Name_Request::LIST_VALUE_ENTRIES:
-		result = this->naming_context()->list_value_entries(set, pattern);
+		result = acceptor->naming_context()->list_value_entries(set, pattern);
 		break;
 	case ACE_Name_Request::LIST_TYPE_ENTRIES:
-		result = this->naming_context()->list_type_entries(set, pattern);
+		result = acceptor->naming_context()->list_type_entries(set, pattern);
 		break;
 	default:
 		// send an empty result as msg_type is incompatible

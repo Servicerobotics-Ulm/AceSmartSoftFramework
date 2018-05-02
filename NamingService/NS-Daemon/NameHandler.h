@@ -92,6 +92,8 @@ protected:
 	/// arrive.
 	virtual int handle_incomming_message(ACE_CDR::Long command, ACE_InputCDR &cmd_is, ACE_InputCDR &msg_is);
 
+	virtual int handle_close(ACE_HANDLE handle, ACE_Reactor_Mask close_mask);
+
 	// = Timer hook.
 	/// Enable clients to limit the amount of time they wait for a name.
 	virtual int handle_timeout (const ACE_Time_Value &tv, const void *arg);
@@ -101,8 +103,6 @@ protected:
 
 private:
 	bool is_remote_ns_proxy;
-
-	SmartACE::SmartMutex mutex;
 
 	enum REPLY_ID { REPLY_OK=0, REPLY_ERROR=-1, REPLY_ALREADY_BOUND=-2, REPLY_ERROR_COMMUNICATION=-3 };
 
@@ -117,11 +117,6 @@ private:
 
 	/// Address of client we are connected with.
 	ACE_INET_Addr addr_;
-
-	///  Naming Context
-	ACE_Naming_Context *naming_context_;
-
-	ACE_Naming_Context *naming_context (void);
 
 	int generic_bind(const bool &rebind=true);
 

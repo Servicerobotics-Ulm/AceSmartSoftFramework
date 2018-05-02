@@ -43,6 +43,29 @@
 
 #include "NameHandler.h"
 
+template <typename T>
+class LockingProxy {
+private:
+	T *object_;
+	SmartACE::SmartRecursiveMutex &mutex;
+public:
+	LockingProxy(T *object, SmartACE::SmartRecursiveMutex &mutex)
+	:	object_(object)
+	,	mutex(mutex)
+	{
+		mutex.acquire();
+	}
+	~LockingProxy()
+	{
+		mutex.release();
+	}
+
+	T* operator->() const
+	{
+		return object_;
+	}
+};
+
 /**
  * @class NameAcceptor
  *
@@ -62,7 +85,7 @@ public:
   void printHelp(std::ostream &oss=std::cout);
 
   /// Naming context for acceptor /for the listening port/
-  ACE_Naming_Context *naming_context (void);
+  LockingProxy<ACE_Naming_Context> naming_context (void);
 
 private:
   /// The scheduling strategy is designed for Reactive services.
@@ -76,6 +99,8 @@ private:
 
   /// The Naming Context
   ACE_Naming_Context naming_context_;
+
+  SmartACE::SmartRecursiveMutex mutex_;
 };
 
 #endif /* NAMEACCEPTOR_H_ */
