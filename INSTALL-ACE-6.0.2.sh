@@ -132,7 +132,7 @@ ldconfig
 
 echo "";
 echo "set the following environment variables in $HOME/.profile";
-echo "export \$ACE_ROOT=$ACE_ROOT";
+echo "export ACE_ROOT=$ACE_ROOT";
 
 echo "";
 echo "ACE successfully installed!!!";
