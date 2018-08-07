@@ -13,7 +13,7 @@ Installation requirements:
   * [**CMake**](https://cmake.org/) min. version **3.0**
   * A C++ compiler supporting the **C++ 11** standard
 
-The **ACE/SmartSoft Framework** has two main dependencies, the [**The ADAPTIVE Communication Environment (ACE)**](http://www.cs.wustl.edu/~schmidt/ACE.html) middleware which can be comfortably installed using a bash scipt (see below) and the [**SmartSoft Component-Developer API**](https://github.com/Servicerobotics-Ulm/SmartSoftComponentDeveloperAPIcpp) which is automatically downloaded by the CMake script.
+The **ACE/SmartSoft Framework** has two main dependencies, the [**The ADAPTIVE Communication Environment (ACE)**](http://www.cs.wustl.edu/~schmidt/ACE.html) middleware which can be comfortably installed using a bash scipt (see below) and the [**SmartSoft Component-Developer API**](https://github.com/Servicerobotics-Ulm/SmartSoftComponentDeveloperAPIcpp) (see instructions below).
 
 ### Installing the ADAPTIVE Communication Environment (ACE)
 
@@ -31,6 +31,24 @@ The default location for the installed ACE library is (on Linux) **/opt/ACE_wrap
 ```
 Don't forget to either restart your system to reload the **.profile** file or call `source ~/.profile` within your currently opened terminal.
 
+### Compiling the SmartSoft Component-Developer API
+
+For cloning and building the SmartSoft Component-Developer API github repository, please follow the instructions below. Please note that the default installation folder is assumed to be defined over the environment variable named **SMART_ROOT_ACE** and the best practice for the clone location is **$SMART_ROOT_ACE/repos**.
+
+```
+> export SMART_ROOT_ACE=~/SOFTWARE/smartsoft
+> mkdir -p $SMART_ROOT_ACE/repos
+> cd $SMART_ROOT_ACE/repos
+> git clone https://github.com/Servicerobotics-Ulm/SmartSoftComponentDeveloperAPIcpp.git
+> cd SmartSoftComponentDeveloperAPIcpp
+> mkdir build
+> cd build
+> cmake ..
+> make install
+```
+
+Now the ACE/SmartSoft Framework can be compiles as shown in the following section.
+
 ### Compiling the ACE/SmartSoft Framework
 
 For compiling the ACE/SmartSoft Framework it is assumed that the ACE middleware has been installed as explained above and that CMake (at least version 3) and a C++ compiler supporting the standard 11 are preinstalled. At the moment, **Ubuntu 16.04 64bit** is the mostly tested and used operating system, however, Windows 7 and OSx have been also tested in the past.
@@ -38,18 +56,18 @@ For compiling the ACE/SmartSoft Framework it is assumed that the ACE middleware 
 First, checkout a copy of the ACE/SmartSoft github repository into any location of your choice, for example like this:
 
 ```
-> mkdir ~/SOFTWARE/smartsoft/src
-> cd ~/SOFTWARE/smartsoft/src
+> mkdir ~/SOFTWARE/smartsoft/repos
+> cd ~/SOFTWARE/smartsoft/repos
 > git clone https://github.com/Servicerobotics-Ulm/AceSmartSoftFramework.git
 ```
 
-Next, select a location where all the locally compiled binaries, libraries, headers and all other files should be installed. For instance, this can be the location **~/SOFTWARE/smartsoft**. This location should be specified using the environment variable called **SMART_ROOT_ACE** (use again .profile as above for this). After that you can compile and install ACE/SmartSoft like this:
+Next, select a location where all the locally compiled binaries, libraries, headers and all other files should be installed. For instance, this can be the location **~/SOFTWARE/smartsoft**. This location should be specified using the environment variable called **SMART_ROOT_ACE** (use .profile as above to make this variable persistent). After that you can compile and install ACE/SmartSoft like this:
 
 ```
 > cd ~/SOFTWARE/smartsoft
 > echo "export SMART_ROOT_ACE=$PWD" > ~/.profile
 > source ~/.profile
-> cd src
+> cd $SMART_ROOT_ACE/repos/AceSmartSoftFramework
 > mkdir build
 > cd build
 > cmake ..
