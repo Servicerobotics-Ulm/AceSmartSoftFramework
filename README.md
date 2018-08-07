@@ -47,7 +47,7 @@ For cloning and building the SmartSoft Component-Developer API github repository
 > make install
 ```
 
-Now the ACE/SmartSoft Framework can be compiles as shown in the following section.
+Now the ACE/SmartSoft Framework can be compiled as shown in the following section.
 
 ### Compiling the ACE/SmartSoft Framework
 
