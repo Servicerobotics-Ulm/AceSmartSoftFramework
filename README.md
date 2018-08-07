@@ -58,6 +58,13 @@ Next, select a location where all the locally compiled binaries, libraries, head
 
 That should fully compile and install the ACE/SmartSoft framework.
 
+Please note, that components will need to find the libraries at startup using the **LD_LIBRARY_PATH** environment variable which can be set as follows (you only need to do this once, if not already done):
+
+```
+> echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SMART_ROOT_ACE/lib" > ~/.bashrc
+> bash
+```
+
 ### Trying out the shipped example components
 
 For trying out the examples, first start the naming-service deamon like this:
