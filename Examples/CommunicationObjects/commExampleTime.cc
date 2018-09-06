@@ -78,17 +78,18 @@ CommExampleTime::~CommExampleTime()
 
 void CommExampleTime::set_now() {
 	std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
-	time.nanoseconds = tp.time_since_epoch().count();
+	std::chrono::time_point<std::chrono::system_clock,std::chrono::seconds> tp_sec = std::chrono::time_point_cast<std::chrono::seconds>(tp);
+	time.seconds = tp_sec.time_since_epoch().count();
 }
 
 std::chrono::system_clock::time_point CommExampleTime::get_timepoint() {
-	return std::chrono::system_clock::time_point(std::chrono::nanoseconds(time.nanoseconds));
+	return std::chrono::system_clock::time_point(std::chrono::seconds(time.seconds));
 }
 
 
 void CommExampleTime::print(std::ostream &os) const
 {
-	std::chrono::system_clock::time_point tp(std::chrono::nanoseconds(time.nanoseconds));
+	std::chrono::system_clock::time_point tp(std::chrono::seconds(time.seconds));
 	std::time_t tt = std::chrono::system_clock::to_time_t(tp);
 	os << "Time in Greenwich is " << ctime(&tt) << std::endl;
 }

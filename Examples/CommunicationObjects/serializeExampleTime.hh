@@ -17,7 +17,7 @@ ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const SmartACE::CommExampleTime 
 {
 	ACE_CDR::Boolean good_bit = true;
 	// serialize list-element newState
-	good_bit = good_bit && cdr.write_longlong(obj.time.nanoseconds);
+	good_bit = good_bit && cdr.write_longlong(obj.time.seconds);
 
 	return good_bit;
 }
@@ -27,7 +27,9 @@ ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, SmartACE::CommExampleTime &obj)
 {
 	ACE_CDR::Boolean good_bit = true;
 	// deserialize type element newState
-	good_bit = good_bit && cdr.read_longlong(obj.time.nanoseconds);
+	ACE_CDR::LongLong ll;
+	good_bit = good_bit && cdr.read_longlong(ll);
+	obj.time.seconds = ll;
 
 	return good_bit;
 }

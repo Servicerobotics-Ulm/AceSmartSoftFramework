@@ -40,9 +40,13 @@ ACE_CDR::Boolean operator>>(ACE_InputCDR &cdr, SmartACE::CommExampleTypes &obj)
 	good_bit = good_bit && cdr.read_double(obj.data.cdr_dbl);
 	good_bit = good_bit && cdr.read_float(obj.data.cdr_float);
 	good_bit = good_bit && cdr.read_long(obj.data.cdr_long);
-	good_bit = good_bit && cdr.read_longlong(obj.data.cdr_longlong);
+	ACE_CDR::LongLong ll;
+	good_bit = good_bit && cdr.read_longlong(ll);
+	obj.data.cdr_longlong = ll;
 	good_bit = good_bit && cdr.read_ulong(obj.data.cdr_ulong);
-	good_bit = good_bit && cdr.read_ulonglong(obj.data.cdr_ulonglong);
+	ACE_CDR::ULongLong ull;
+	good_bit = good_bit && cdr.read_ulonglong(ull);
+	obj.data.cdr_ulonglong = ull;
 	good_bit = good_bit && cdr.read_ushort(obj.data.cdr_ushort);
 
 	return good_bit;

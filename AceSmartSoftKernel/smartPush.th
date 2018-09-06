@@ -118,7 +118,7 @@ template<class T> void SmartACE::PushClient<T>::hndServerInformation(void *ptr, 
    PushClient<T> *lthis = (PushClient<T> *)ptr;
 
    lthis->monitorServerInfo.acquire();
-      lthis->minCycleTime.msec(cycleTimeMs);
+      lthis->minCycleTime.msec((long)cycleTimeMs);
       lthis->monitorServerInfo.signal(0, active);
    lthis->monitorServerInfo.release();
 }
