@@ -88,6 +88,7 @@ ENDIF(UNIX)
 ADD_SUBDIRECTORY(AceSmartSoftKernel)
 ADD_SUBDIRECTORY(NamingService)
 ADD_SUBDIRECTORY(Examples)
+ADD_SUBDIRECTORY(APIDocu)
 ##################################################################
 
 # ===============================================================

@@ -1,0 +1,77 @@
+/*!
+\mainpage AceSmartSoft Generated API Documentation
+
+This software-package contains the generated AceSmartSoft Application-Programing-Interface (API) documentation.
+This includes the component-internal API of the Communication-Patterns, Coordination-Patterns and
+other infrastructure interfaces such as the Task interface.
+
+The SmartSoft API is used by the <a href="https://robmosys.eu/wiki/baseline:environment_tools:smartsoft:smartmdsd-toolchain:">SmartMDSD Toolchain</a> as a basis for 
+platform independent code generation. Further information on existing components based on SmartSoft can 
+be found in the <a href="https://github.com/Servicerobotics-Ulm/ComponentRepository">Component Github repository</a>.
+   
+
+   - <i>Components</i> are technically implemented as processes. A component 
+           can contain several threads and interacts with other components via 
+           predefined communication-patterns and communication-objects. Components can 
+           be (re-)wired dynamically at runtime. 
+
+   - <i>Communication-Patterns</i> assist the component builder and the application builder 
+           in building and using distributed components in such a way that the semantics of 
+           the interface is predefined by the patterns, irrespective of where they are applied. 
+           A communication pattern defines the communication mode, provides predefined access 
+           methods and hides all the communication and synchronization issues. It always 
+           consists of two complementary parts named the <i>service requestor</i> and the 
+           <i>service provider</i> representing a <i>client/server</i>, a <i>master/slave</i> 
+           or a <i>publisher/subscriber</i> relationship. 
+
+   - <i>Communication-Objects</i> parameterize the communication pattern templates. They 
+           represent the content to be transmitted via a communication-pattern. They are 
+           always transmitted <i>by value</i> to avoid fine grained intercomponent communication 
+           each time an attribute is accessed. Furthermore, object responsibilities are much
+           simpler with locally maintained objects than with remote objects. Communication 
+           objects are ordinary objects decorated with additional member functions for use 
+           by the framework. 
+
+   - <i>Service</i>. Each instantiation of a communication-pattern within a component provides 
+           a service. A service comprises the communication mode as defined by the communication-pattern 
+           and the content as defined by the communication-objects. 
+
+   The set of communication patterns comprises the following patterns: 
+
+    - <b>send</b> 
+      - @ref SmartACE::SendClient, @ref SmartACE::SendServer, @ref SmartACE::SendServerHandler (see also <a href="http://www.servicerobotik-ulm.de/drupal/?q=node/51#sixth-example">sixth example</a>)
+    - <b>query</b> 
+      - @ref SmartACE::QueryClient, @ref SmartACE::QueryServer, @ref SmartACE::QueryServerHandler (see also <a href="http://www.servicerobotik-ulm.de/drupal/?q=node/51#first-example">first example</a> and <a href="http://www.servicerobotik-ulm.de/drupal/?q=node/51#third-example">third example</a>)
+    - <b>push newest</b>
+      - @ref SmartACE::PushClient, @ref SmartACE::PushServer (see also <a href="http://www.servicerobotik-ulm.de/drupal/?q=node/51#second-example">second example</a> and <a href="http://www.servicerobotik-ulm.de/drupal/?q=node/51#eleventh-example">eleventh example</a>)
+    - <b>event</b> 
+      - @ref SmartACE::EventClient, @ref SmartACE::EventHandler, @ref SmartACE::EventServer, @ref SmartACE::EventTestHandler (see also <a href="http://www.servicerobotik-ulm.de/drupal/?q=node/51#fifth-example">fifth example</a>)
+
+    and
+
+    - <b>wiring</b> 
+      - @ref SmartACE::WiringMaster, @ref SmartACE::WiringSlave (see also <a href="http://www.servicerobotik-ulm.de/drupal/?q=node/51#ninth-example">ninth example</a>)
+
+    The framework explicitly supports dynamic wiring of components at run-time by a separate 
+    wiring-pattern. Dynamic wiring can be considered as the pattern of robotics. Making both the
+    control flow and the data flow configurable from outside a component is for example the key 
+    to situated skill compositions and is required in nearly any robotic architecture. The dynamic
+    wiring pattern tightly interacts with the communication primitives and makes one of the major 
+    difference to other approaches. 
+
+    Additionally patterns mainly for user convenience are for example 
+
+    - state management pattern
+      - @ref SmartACE::StateMaster, @ref SmartACE::StateSlave (see also <a href="http://www.servicerobotik-ulm.de/drupal/?q=node/51#third-example">third example</a>)
+    - ini-file parameter management
+      - @ref SmartACE::SmartIniParameter
+    - task management
+      - @ref SmartACE::Task
+      - @ref SmartACE::ManagedTask (see also <a href="http://www.servicerobotik-ulm.de/drupal/?q=node/51#eleventh-example">eleventh example</a>)
+
+    Finaly some global Typedefs, Enumerations and Functions are defined in namespace @ref SmartACE.
+*/
+
+
+
+

@@ -1,0 +1,24 @@
+<doxygenlayout version="1.0">
+  <!-- Navigation index tabs for HTML output -->
+  <navindex>
+    <tab type="user" visible="yes" title="servicerobotik-ulm.de" url="http://www.servicerobotik-ulm.de" intro=""/>
+    <tab type="mainpage" visible="yes" title="Introduction"/>
+<!--    <tab type="user" visible="yes" title="Communication Objects" url="group__commObjGroup.html" intro=""/>-->
+    <tab type="user" visible="yes" title="API Index" url="namespaceSmartACE.html" intro=""/>
+    <tab type="pages" visible="no" title="" intro=""/>
+    <tab type="modules" visible="no" title="" intro=""/>
+    <tab type="namespaces" visible="no" title="">
+      <tab type="namespacelist" visible="no" title="" intro="mainpage"/>
+      <tab type="namespacemembers" visible="no" title="" intro=""/>
+    </tab>
+    <tab type="classes" visible="no" title="">
+      <tab type="classlist" visible="yes" title="" intro=""/>
+      <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/> 
+      <tab type="hierarchy" visible="yes" title="" intro=""/>
+      <tab type="classmembers" visible="yes" title="" intro=""/>
+    </tab>
+<!--    <tab type="dirs" visible="yes" title="" intro=""/> -->
+    <tab type="examples" visible="yes" title="" intro=""/>  
+  </navindex>
+
+</doxygenlayout>

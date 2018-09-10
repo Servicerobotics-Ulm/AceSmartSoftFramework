@@ -595,9 +595,8 @@ namespace SmartACE {
     /** Constructor.
      *
      * @param component  management class of the component
-     * @param service    name of the service
-     * @param handler    is called every \e cycle seconds to push the information
-     * @param cycle      cycle time of the service in [seconds]
+     * @param svc name of the service
+     * @param minCycleTime cycle time of the service in [seconds]
      *
      * (Currently exception not thrown)
      */

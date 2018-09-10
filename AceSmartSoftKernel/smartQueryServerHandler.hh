@@ -53,6 +53,14 @@ namespace SmartACE {
   class QueryServerHandler : public Smart::IQueryServerHandler<R,A,QueryId>
   {
   public:
+	/** Default constructor
+	 *
+	 * This constructor expects a pointer to the related QueryServer as the main argument.
+	 * A QueryServer uses this handler to process server-side query-requests.
+	 * A user needs to implement the handleQuery method.
+	 *
+	 * @param server a pointer to the related QueryServer
+	 */
 	QueryServerHandler(QueryServer<R,A>* server)
 	:	Smart::IQueryServerHandler<R,A,QueryId>(server)
 	{  }
@@ -71,7 +79,6 @@ namespace SmartACE {
      *  the result. The ThreadedQueryHandler decorator provides such
      *  a processing pattern.
      *
-     *  @param server   query server processing the request.
      *  @param id       id of new query
      *  @param request the request itself */
     virtual void handleQuery(const QueryId &id, const R& request) = 0;

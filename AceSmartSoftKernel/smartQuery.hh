@@ -430,6 +430,7 @@ namespace SmartACE {
      *
      *  @param id       provides the identifier of the query
      *  @param answer   is set to the answer returned from the server if it was available
+     *  @param timeout  the optional maximum waiting time for a query answer (default value zero: method blocks indefinitelly)
      *
      *  @return status code:
      *    - SMART_OK           : everything is ok and <I>answer</I> contains the answer
@@ -603,7 +604,6 @@ namespace SmartACE {
      *
      *  @param component management class of the component
      *  @param service   name of the service
-     *  @param handler   for request received by this service
      */
     QueryServer(SmartComponent* component, const std::string& service) throw(SmartACE::SmartError);
 

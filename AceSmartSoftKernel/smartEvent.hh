@@ -499,6 +499,7 @@ namespace SmartACE {
      *
      *  @param id of the event activation
      *  @param event is set to the returned event if fired (Communication Object)
+     *  @param timeout the optional maximum waiting time for an event (default value zero: method blocks indefinitelly)
      *
      *  - <b>single mode</b>:
      *      <p>
@@ -560,6 +561,7 @@ namespace SmartACE {
      *
      *  @param id of the event activation
      *  @param event is set to the returned event if fired (Communication Object)
+     *  @param timeout the optional maximum waiting time for an event (default value zero: method blocks indefinitelly)
      *
      *  - <b>single mode</b>:
      *    <p>
@@ -801,7 +803,7 @@ namespace SmartACE {
      *
      *  @param component management class of the component
      *  @param service name of the service
-     *  @param testHandler test handler decide if a event needs to fire
+     *  @param handler test handler decide if a event needs to fire
      */
     EventServer(SmartComponent* component,const std::string& service, Smart::IEventTestHandler<P,E,S> *handler) throw();
 

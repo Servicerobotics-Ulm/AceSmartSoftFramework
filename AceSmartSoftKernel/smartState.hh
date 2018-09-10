@@ -326,7 +326,7 @@ namespace SmartACE {
   public:
     /** Constructor.
      *
-     * @param slave  <I>StateSlave</I> needed to access it from the handler
+     * @param state  <I>StateSlave</I> needed to access it from the handler
      */
     StateSlaveHandler(StateSlave* state) throw();
 
@@ -453,10 +453,6 @@ namespace SmartACE {
 
     // Initialization
 
-    /** Constructor.
-     *  @param component management class of the component
-     *  @param hnd       notify this handle object when state changes occur
-     */
     //StateSlave(SmartComponent* component, StateChangeHandler & hnd) throw(SmartError);
 
     /** Constructor.
