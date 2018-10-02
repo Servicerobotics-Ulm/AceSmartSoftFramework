@@ -15,12 +15,17 @@ Installation requirements:
 
 The **ACE/SmartSoft Framework** has two main dependencies, the [**The ADAPTIVE Communication Environment (ACE)**](http://www.cs.wustl.edu/~schmidt/ACE.html) middleware which can be comfortably installed using a bash scipt (see below) and the [**SmartSoft Component-Developer API**](https://github.com/Servicerobotics-Ulm/SmartSoftComponentDeveloperAPIcpp) (see instructions below).
 
+Install the necessary build essentials:
+```bash
+sudo apt-get install build-essential pkg-config cmake
+```
+
 ### Installing the ADAPTIVE Communication Environment (ACE)
 
 For installing the ACE middleware you can use the shipped [**installation script**](https://github.com/Servicerobotics-Ulm/AceSmartSoftFramework/blob/master/INSTALL-ACE-6.0.2.sh). Download the script and execute it within a terminal as follows:
 
 ```bash
-> wget https://github.com/Servicerobotics-Ulm/AceSmartSoftFramework/blob/master/INSTALL-ACE-6.0.2.sh
+> wget https://raw.githubusercontent.com/Servicerobotics-Ulm/AceSmartSoftFramework/master/INSTALL-ACE-6.0.2.sh
 > chmod +x INSTALL-ACE-6.0.2.sh
 > sudo ./INSTALL-ACE-6.0.2.sh
 ```
