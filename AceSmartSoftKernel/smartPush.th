@@ -872,8 +872,8 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdate(T& d) thr
   mutexConnection.acquire();
   if (statusConnected == 1) {
     if (statusSubscribed == 1) {
-      if (dataAvailable == 1) {
-        if (statusServer == 1) {
+      if (statusServer == 1) {
+        if (dataAvailable == 1) {
           d = data;
           result = Smart::SMART_OK;
         } else {
