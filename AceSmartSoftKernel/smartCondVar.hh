@@ -196,10 +196,7 @@ namespace SmartACE {
     void signal();
 
     ///
-    Smart::StatusCode wait();
-
-    ///
-    Smart::StatusCode wait(const SmartTimeValue &timeout);
+    Smart::StatusCode wait(const SmartTimeValue &timeout=SmartTimeValue::zero);
   };
 }
 
@@ -272,10 +269,7 @@ namespace SmartACE {
     void signal();
 
     ///
-    Smart::StatusCode wait();
-
-    ///
-    Smart::StatusCode wait(const SmartTimeValue &timeout);
+    Smart::StatusCode wait(const SmartTimeValue &timeout=SmartTimeValue::zero);
 
     ///
     void reset();

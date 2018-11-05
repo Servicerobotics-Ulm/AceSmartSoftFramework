@@ -256,41 +256,6 @@ void SmartACE::SmartCVwithoutMemory::signal()
   mutex.release();
 }
 
-Smart::StatusCode SmartACE::SmartCVwithoutMemory::wait()
-{
-  int flag;
-  Smart::StatusCode result = Smart::SMART_OK;
-
-  mutex.acquire();
-
-  flag = 0;
-  while (flag == 0) {
-    if ((statusBlockingPattern == true) && (statusBlockingUser == true) && (statusBlockingComponent == true)) {
-      // wait for the next signal
-      cond->wait();
-      // signal can be either from change of blocking mode or a true signal
-      if ((statusBlockingComponent == true) && (statusBlockingPattern == true) && (statusBlockingUser == true)) {
-        // still both blocking therefore true signal
-        flag   = 1;
-        result = Smart::SMART_OK;
-      } else {
-        // non blocking mode ...
-        flag   = 1;
-        result = Smart::SMART_CANCELLED;
-      }
-    } else {
-      // return immediately
-      flag   = 1;
-      result = Smart::SMART_CANCELLED;
-    }
-  }
-
-  mutex.release();
-
-  return result;
-}
-
-
 Smart::StatusCode SmartACE::SmartCVwithoutMemory::wait(const SmartTimeValue &timeout)
 {
   int flag;
@@ -302,15 +267,19 @@ Smart::StatusCode SmartACE::SmartCVwithoutMemory::wait(const SmartTimeValue &tim
   while (flag == 0) {
     if ((statusBlockingPattern == true) && (statusBlockingUser == true) && (statusBlockingComponent == true)) {
       // wait for the next signal
-       SmartTimeValue time = ACE_OS::gettimeofday() + timeout;
-       if( cond->wait(&time) == -1) {
-         if(errno == ETIME) {
-            result = Smart::SMART_TIMEOUT;
-         }else{
-            result = Smart::SMART_ERROR;
-         }
-         flag = 1;
-       }
+      if(timeout == ACE_Time_Value::zero) {
+        cond->wait();
+      } else {
+        SmartTimeValue time = ACE_OS::gettimeofday() + timeout;
+        if( cond->wait(&time) == -1) {
+          if(errno == ETIME) {
+             result = Smart::SMART_TIMEOUT;
+          }else{
+             result = Smart::SMART_ERROR;
+          }
+          flag = 1;
+        }
+      }
       // signal can be either from change of blocking mode or a true signal
       if ((statusBlockingComponent == true) && (statusBlockingPattern == true) && (statusBlockingUser == true)) {
         // still both blocking therefore true signal
@@ -419,32 +388,6 @@ void SmartACE::SmartCVwithMemory::signal()
   mutex.release();
 }
 
-Smart::StatusCode SmartACE::SmartCVwithMemory::wait()
-{
-  int flag;
-  Smart::StatusCode result = Smart::SMART_OK;
-
-  mutex.acquire();
-
-  flag = 0;
-  while (flag == 0) {
-    if (signalled == true) {
-      flag      = 1;
-      signalled = false;
-      result    = Smart::SMART_OK;
-    } else if ((statusBlockingComponent == true) && (statusBlockingPattern == true) && (statusBlockingUser == true)) {
-      cond->wait();
-    } else {
-      flag   = 1;
-      result = Smart::SMART_CANCELLED;
-    }
-  }
-
-  mutex.release();
-
-  return result;
-}
-
 Smart::StatusCode SmartACE::SmartCVwithMemory::wait(const SmartTimeValue &timeout)
 {
   int flag;
@@ -459,15 +402,19 @@ Smart::StatusCode SmartACE::SmartCVwithMemory::wait(const SmartTimeValue &timeou
       signalled = false;
       result    = Smart::SMART_OK;
     } else if ((statusBlockingComponent == true) && (statusBlockingPattern == true) && (statusBlockingUser == true)) {
-       SmartTimeValue time = ACE_OS::gettimeofday() + timeout;
-       if( cond->wait(&time) == -1) {
-         if(errno == ETIME) {
-            result = Smart::SMART_TIMEOUT;
-         }else{
-            result = Smart::SMART_ERROR;
-         }
-         flag = 1;
-       }
+      if(timeout == ACE_Time_Value::zero) {
+        cond->wait();
+      } else {
+        SmartTimeValue time = ACE_OS::gettimeofday() + timeout;
+        if( cond->wait(&time) == -1) {
+          if(errno == ETIME) {
+             result = Smart::SMART_TIMEOUT;
+          }else{
+             result = Smart::SMART_ERROR;
+          }
+          flag = 1;
+        }
+      }
     } else {
       flag   = 1;
       result = Smart::SMART_CANCELLED;

@@ -38,7 +38,7 @@ else
 fi
 
 # check if script is run as root!
-if [ $(whoami) != "root" ]; then echo "ERROR: please run as root (sudo INSTALL-ACE-6.0.2.sh)!"; exit 1; fi
+if [ $(whoami) != "root" ]; then echo "ERROR: please run as root (sudo $0)!"; exit 1; fi
 
 
 # check if running on raspberry pi / raspbian
@@ -68,8 +68,8 @@ tar -xzf $ACE.tar.gz
 if [ "$?" -ne 0 ]; then echo "ERROR: extraction failed!"; exit 1; fi
 
 #  rename top level directory and set the softlink
-echo "===> mv ACE_wrappers/ ACE-6.0.2";
-mv ACE_wrappers/ ACE-6.0.2
+echo "===> mv ACE_wrappers/ $ACE";
+mv ACE_wrappers/ $ACE
 echo "===> ln -s $ACE ACE_wrappers";
 ln -s $ACE ACE_wrappers
 
@@ -117,22 +117,13 @@ echo "" >> $ACE_ROOT/include/makeinclude/platform_macros.GNU
 
 # compile ace kernel
 cd $ACE_ROOT/ace;
-if $OS_RASPBIAN; then
-	time make -j4
-	if [ "$?" -ne 0 ]; then echo "FAILED to compile $ACE_ROOT/ace!"; exit 1; fi
-else
-	time make;
-	if [ "$?" -ne 0 ]; then echo "FAILED to compile $ACE_ROOT/ace!"; exit 1; fi
-fi
+time make;
+if [ "$?" -ne 0 ]; then echo "FAILED to compile $ACE_ROOT/ace!"; exit 1; fi
 
 
 #set ace so lib dir
 echo "$INSTALL_DIR/ACE_wrappers/lib" >> /etc/ld.so.conf.d/ace.conf
 ldconfig
-
-echo "";
-echo "set the following environment variables in $HOME/.profile";
-echo "export \$ACE_ROOT=$ACE_ROOT";
 
 echo "";
 echo "ACE successfully installed!!!";

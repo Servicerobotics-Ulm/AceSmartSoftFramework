@@ -49,9 +49,12 @@ namespace SmartACE {
   }
   ACE_Time_Value convertToAceTimeFrom(const std::chrono::steady_clock::duration &dur)
   {
-	  std::chrono::seconds sec = std::chrono::duration_cast<std::chrono::seconds>(dur);
-	  std::chrono::microseconds us = std::chrono::duration_cast<std::chrono::microseconds>(dur-sec);
-	  return ACE_Time_Value(sec.count(), us.count());
+    if(dur == std::chrono::steady_clock::duration::zero()) {
+      return ACE_Time_Value::zero;
+    }
+    std::chrono::seconds sec = std::chrono::duration_cast<std::chrono::seconds>(dur);
+    std::chrono::microseconds us = std::chrono::duration_cast<std::chrono::microseconds>(dur-sec);
+    return ACE_Time_Value(sec.count(), us.count());
   }
 }
 
