@@ -30,8 +30,8 @@
 //
 // --------------------------------------------------------------------------
 
-#ifndef _SMARTPROCESSINGPATTERNS_HH
-#define _SMARTPROCESSINGPATTERNS_HH
+#ifndef _SMARTPROCESSINGPATTERNS_HH_
+#define _SMARTPROCESSINGPATTERNS_HH_
 
 #include <smartIActiveQueueInputHandlerDecorator_T.h>
 
@@ -278,4 +278,4 @@ namespace SmartACE {
   
   
 
-#endif // _SMARTPROCESSINGPATTERNS_HH
+#endif // _SMARTPROCESSINGPATTERNS_HH_
