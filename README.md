@@ -6,6 +6,11 @@ This repository provides the **ACE/SmartSoft Framework** implementation. The **A
 
 The ACE/SmartSoft Framework enables implementation of software components with clearly specified [communication patterns](http://robmosys.eu/wiki/modeling:metamodels:commpattern) as a basis for a service-oriented robotics component model which is fully compliant to the European [RobMoSys Component Metamodel](http://robmosys.eu/wiki/modeling:metamodels:component). Thereby, the ACE/SmartSoft Framework provides the required glue-code that links the component's internal [component developer API](https://github.com/Servicerobotics-Ulm/SmartSoftComponentDeveloperAPIcpp) with a specific communication middleware, in this case the [ADAPTIVE Communication Environment (ACE)](http://www.cs.wustl.edu/~schmidt/ACE.html). There also exist other implementations of the SmartSoft structures for middlewares like CORBA and DDS.
 
+This repository is maintained by Servicerobotik Ulm. For more information see:
+
+* Big picture: relation of repositories: https://wiki.servicerobotik-ulm.de/download
+* SRRC Technical Wiki on SmartSoft and SmartMDSD Toolchain: https://wiki.servicerobotik-ulm.de
+
 ## Installation instructions
 
 Installation requirements:
