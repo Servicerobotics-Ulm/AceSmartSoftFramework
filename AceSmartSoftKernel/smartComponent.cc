@@ -681,11 +681,11 @@ SmartACE::ShutdownTimer::ShutdownTimer(SmartACE::SmartComponent *comp)
 void SmartACE::ShutdownTimer::start(const std::chrono::steady_clock::duration &timeout)
 {
    SmartGuard guard(mutex);
-   timer_id = component->getTimerManager()->scheduleTimer(this, timeout);
+   timer_id = component->getTimerManager()->scheduleTimer(this, (void*)0, timeout);
    timer_started = true;
 }
 
-void SmartACE::ShutdownTimer::timerExpired(const std::chrono::system_clock::time_point &abs_time)
+void SmartACE::ShutdownTimer::timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg)
 {
    {  // begin guard scope 
       SmartGuard guard(mutex);

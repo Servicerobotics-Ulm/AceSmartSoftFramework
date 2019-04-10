@@ -99,7 +99,7 @@ namespace SmartACE {
        void stop();
        
        // function called after a timeout occures
-       virtual void timerExpired(const std::chrono::system_clock::time_point &abs_time);
+       virtual void timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg);
     };
 }
 

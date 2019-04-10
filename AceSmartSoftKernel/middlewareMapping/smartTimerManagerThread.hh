@@ -58,14 +58,14 @@ public:
 
   /** hook called on timer expiration
    */
-  virtual void timerExpired(const std::chrono::system_clock::time_point &abs_time) = 0;
+  virtual void timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg) = 0;
 
   /// This method is called when the timer is cancelled
   virtual void timerCancelled() {  }
 
   /// This method is called when the timer queue is destroyed and
   /// the timer is still contained in it
-  virtual void timerDeleted() {  }
+  virtual void timerDeleted(const void * arg) override {  }
 };
 
 /** Functor for Timer_Queues.
@@ -99,7 +99,7 @@ public:
 		 const ACE_Time_Value &cur_time)
     {
 	// Upcall to the <handler>s handle_timeout method.
-	handler->timerExpired (std::chrono::system_clock::now());
+	handler->timerExpired (std::chrono::system_clock::now(), arg);
 	return 0;
     };
 
@@ -120,7 +120,7 @@ public:
 		  Smart::ITimerHandler *handler,
 		  const void *arg)
     {
-	handler->timerDeleted();
+	handler->timerDeleted(arg);
 	return 0;
     }
 
@@ -213,6 +213,7 @@ TimerHeap;
      */
 	virtual TimerId scheduleTimer(
 			Smart::ITimerHandler *handler,
+			const void *act,
 			const std::chrono::steady_clock::duration &first_time,
 			const std::chrono::steady_clock::duration &interval=std::chrono::steady_clock::duration::zero()
 		);
@@ -234,7 +235,7 @@ TimerHeap;
      *  @return 0 on success
      *  @return -1 on error
      */
-	virtual int cancelTimer(const TimerId& id);
+	virtual int cancelTimer(const TimerId& id, const void **act=0);
 //    int cancelTimer(long timer_id,
 //			   const void **act=0,
 //			   bool notifyHandler=true);

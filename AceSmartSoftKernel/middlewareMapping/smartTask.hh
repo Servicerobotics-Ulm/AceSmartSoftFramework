@@ -46,7 +46,7 @@ namespace SmartACE {
     // = Initialization
 
     /// Constructor
-    Task (Smart::IComponent *component);
+    Task (Smart::IComponent *component = 0);
 
     /// Destructor
     virtual ~Task();

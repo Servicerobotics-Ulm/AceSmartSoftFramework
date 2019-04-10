@@ -206,6 +206,7 @@ int TimerManagerThread::svc (void)
 //			   const ACE_Time_Value &interval)
 Smart::ITimerManager::TimerId TimerManagerThread::scheduleTimer(
 			Smart::ITimerHandler *handler,
+			const void *act,
 			const std::chrono::steady_clock::duration &first_time,
 			const std::chrono::steady_clock::duration &interval
 		)
@@ -221,7 +222,7 @@ Smart::ITimerManager::TimerId TimerManagerThread::scheduleTimer(
 
   // Schedule the timer
   long result = timer_queue.schedule (handler,
-				      (void*)0,
+				      act,
 				      absolute_time,
 					  convertToAceTimeFrom(interval));
   if (result != -1)
@@ -246,12 +247,12 @@ Smart::ITimerManager::TimerId TimerManagerThread::scheduleTimer(
 //TimerManagerThread::cancelTimer(long timer_id,
 //			   const void **arg,
 //			   bool notifyHandler)
-int TimerManagerThread::cancelTimer(const TimerId& id)
+int TimerManagerThread::cancelTimer(const TimerId& id, const void **arg)
 {
   // No need to singal timer event here. Even if the cancel timer was
   // the earliest, we will have an extra wakeup.
   long timer_id = id;
-  int result = timer_queue.cancel (timer_id);
+  int result = timer_queue.cancel (timer_id, arg);
 //					   arg,
 //					   !notifyHandler ? 0 : 1);
   if (result == 1) {
