@@ -142,7 +142,7 @@ namespace SmartACE {
     ///
     /// throws exception if someone tries to use this constructor
     ///   SMART_ERROR : this constructor forbidden
-    SendClient() throw(SmartACE::SmartError);
+    SendClient();
 
     /** (Interface used by wiring service. Requires ordinary pointer since
      *   client patterns have different types and even have different template
@@ -187,7 +187,7 @@ namespace SmartACE {
      * @param port       name of the wireable port
      * @param slave      wiring slave of this component
      */
-    SendClient(SmartComponent* component, const std::string& port, SmartACE::WiringSlave* slave) throw(SmartACE::SmartError);
+    SendClient(SmartComponent* component, const std::string& port, SmartACE::WiringSlave* slave);
 
     /** Constructor (not wired with service provider and not exposed as port).
      *  add()/remove() and connect()/disconnect() can always be used to change
@@ -198,7 +198,7 @@ namespace SmartACE {
      *
      * @param component  management class of the component
      */
-    SendClient(SmartComponent* component) throw(SmartACE::SmartError);
+    SendClient(SmartComponent* component);
 
     /** Constructor (wired with specified service provider).
      *  Connects to the denoted service and blocks until the connection
@@ -219,12 +219,12 @@ namespace SmartACE {
      * @param server     name of the server
      * @param service    name of the service
      */
-    SendClient(SmartComponent* component, const std::string& server, const std::string& service) throw(SmartACE::SmartError);
+    SendClient(SmartComponent* component, const std::string& server, const std::string& service);
 
     /** Destructor.
      *  The destructor calls remove() and disconnect() and therefore properly cleans up.
      */
-    virtual ~SendClient() throw();
+    virtual ~SendClient();
 
     /** Add this instance to the set of ports wireable via the
      *  wiring pattern from outside the component. Already
@@ -245,7 +245,7 @@ namespace SmartACE {
      *                                 instance now not available as port
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode add(SmartACE::WiringSlave* slave, const std::string& port) throw();
+    Smart::StatusCode add(SmartACE::WiringSlave* slave, const std::string& port);
 
     /** Remove this service requestor from the set of ports wireable
      *  via the wiring pattern from outside the component. Already
@@ -260,7 +260,7 @@ namespace SmartACE {
      *                                 is removed from the set of ports in
      *                                 any case.
      */
-    Smart::StatusCode remove() throw();
+    Smart::StatusCode remove();
 
     /** Connect this service requestor to the denoted service provider. An
      *  already established connection is first disconnected.
@@ -285,7 +285,7 @@ namespace SmartACE {
      *   - SMART_ERROR               : something went wrong, service requestor is now not connected to any
      *                                 service provider.
      */
-    Smart::StatusCode connect(const std::string& server, const std::string& service) throw();
+    Smart::StatusCode connect(const std::string& server, const std::string& service);
 
     /** Disconnect the service requestor from the service provider.
      *
@@ -302,7 +302,7 @@ namespace SmartACE {
      *   - SMART_ERROR               : something went wrong. Again at least the service requestor
      *                                 is in the disconnected state.
      */
-    Smart::StatusCode disconnect() throw();
+    Smart::StatusCode disconnect();
 
     /** Allow or abort and reject blocking calls.
      *
@@ -316,7 +316,7 @@ namespace SmartACE {
      *   - SMART_OK                  : new mode set
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode blocking(const bool b) throw();
+    Smart::StatusCode blocking(const bool b);
 
 
     /** Perform a one-way communication. Appropriate status codes make
@@ -330,7 +330,7 @@ namespace SmartACE {
      *    - SMART_ERROR_COMMUNICATION : communication problems, data not transmitted
      *    - SMART_ERROR               : something went wrong, data not transmitted
      */
-    Smart::StatusCode send(const C& c) throw();
+    Smart::StatusCode send(const C& c);
   };
 };
 
@@ -389,7 +389,7 @@ namespace SmartACE {
      *
      *  @param cmd command object (Communication Object)
      */
-    virtual void handleSend(const C& cmd) throw() = 0;
+    virtual void handleSend(const C& cmd)  = 0;
   };
 
 
@@ -477,7 +477,7 @@ namespace SmartACE {
     ///
     /// throws exception if someone tries to use this constructor
     ///   SMART_ERROR : this constructor forbidden
-    SendServer() throw(SmartACE::SmartError);
+    SendServer();
 
   public:
     /** constructor.
@@ -490,12 +490,12 @@ namespace SmartACE {
      *  @param component management class of the component
      *  @param service   name of the service
      */
-    SendServer(SmartComponent* component, const std::string& service) throw(SmartACE::SmartError);
+    SendServer(SmartComponent* component, const std::string& service);
 
     /** Destructor.
      *  Properly disconnects all service requestors in case of destruction.
      */
-    virtual ~SendServer() throw();
+    virtual ~SendServer();
   };
 };
 

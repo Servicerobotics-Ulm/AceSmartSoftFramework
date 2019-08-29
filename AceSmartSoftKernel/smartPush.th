@@ -182,7 +182,7 @@ void SmartACE::PushClient<T>::internalServerInitiatedDisconnect(void *ptr, int c
 //
 // default constructor
 //
-template<class T> inline SmartACE::PushClient<T>::PushClient(void) throw(SmartACE::SmartError)
+template<class T> inline SmartACE::PushClient<T>::PushClient(void) 
 :	Smart::IPushClientPattern<T>(0)
 {
   std::cerr << "CommPattern (push timed): ERROR: Entered default constructor PushClient" << std::endl;
@@ -204,7 +204,7 @@ template<class T> inline SmartACE::PushClient<T>::PushClient(void) throw(SmartAC
 //
 // standard constructor port
 //
-template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* component,const std::string& port, WiringSlave* slave) throw(SmartACE::SmartError)
+template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* component,const std::string& port, WiringSlave* slave) 
 :	Smart::IPushClientPattern<T>(component)
 ,	component(component)
 {
@@ -262,7 +262,7 @@ template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* com
 //
 // standard constructor
 //
-template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* component) throw(SmartACE::SmartError)
+template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* component) 
 :	Smart::IPushClientPattern<T>(component)
 ,	component(component)
 {
@@ -304,7 +304,7 @@ template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* com
 //
 // standard constructor already wired
 //
-template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* component,const std::string& srv,const std::string& svc) throw(SmartACE::SmartError)
+template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* component,const std::string& srv,const std::string& svc) 
 :	Smart::IPushClientPattern<T>(component,srv,svc)
 ,	component(component)
 {
@@ -380,7 +380,7 @@ template<class T> inline SmartACE::PushClient<T>::PushClient(SmartComponent* com
 //
 // destructor
 //
-template<class T> inline SmartACE::PushClient<T>::~PushClient(void) throw()
+template<class T> inline SmartACE::PushClient<T>::~PushClient(void) 
 {
   //
   // remove port from managed set of ports and disconnect from server even if not
@@ -415,7 +415,7 @@ template<class T> inline SmartACE::PushClient<T>::~PushClient(void) throw()
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::add(WiringSlave* slave, const std::string& port) throw()
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::add(WiringSlave* slave, const std::string& port) 
 {
   Smart::StatusCode status;
 
@@ -439,7 +439,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::add(WiringSlave* sl
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::remove() throw()
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::remove() 
 {
   Smart::StatusCode status;
 
@@ -463,7 +463,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::remove() throw()
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::connect(const std::string& srv, const std::string& svc) throw()
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::connect(const std::string& srv, const std::string& svc) 
 {
   Smart::StatusCode result;
 
@@ -617,7 +617,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::connect(const std::
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::disconnect() throw()
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::disconnect() 
 {
   Smart::StatusCode result;
 
@@ -695,7 +695,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::disconnect() throw(
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::subscribe(const int &n) throw()
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::subscribe(const int &n) 
 {
    Smart::StatusCode result;
    int             state = 0;
@@ -800,7 +800,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::subscribe(const int
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::unsubscribe() throw()
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::unsubscribe() 
 {
   Smart::StatusCode result;
 
@@ -853,7 +853,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::unsubscribe() throw
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::blocking(const bool b) throw()
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::blocking(const bool b) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
 
@@ -865,7 +865,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::blocking(const bool
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdate(T& d) throw()
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdate(T& d) 
 {
   Smart::StatusCode result;
 
@@ -896,7 +896,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdate(T& d) thr
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdateWait(T& d, const std::chrono::steady_clock::duration &timeout) throw()
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdateWait(T& d, const std::chrono::steady_clock::duration &timeout) 
 {
   Smart::StatusCode status;
   Smart::StatusCode result;
@@ -957,7 +957,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdateWait(T& d,
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::getServerInfo(SmartTimeValue& t,bool& r) throw()
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::getServerInfo(SmartTimeValue& t,bool& r) 
 {
   Smart::StatusCode result;
   //int s;
@@ -1288,7 +1288,7 @@ template<class T> void SmartACE::PushServer<T>::hndServerInfo(void *ptr, const P
 //
 // default constructor
 //
-template<class T> inline SmartACE::PushServer<T>::PushServer(void) throw(SmartACE::SmartError)
+template<class T> inline SmartACE::PushServer<T>::PushServer(void) 
 {
   std::cerr << "CommPattern (Push): ERROR: Entered default constructor PushServer" << std::endl;
   timer = 0;
@@ -1304,7 +1304,7 @@ template<class T> inline SmartACE::PushServer<T>::PushServer(void) throw(SmartAC
 // standard constructor
 //
 template<class T> inline SmartACE::PushServer<T>::PushServer(SmartComponent* m,
-            const std::string& svc, const SmartTimeValue &minCycleTime) throw(SmartACE::SmartError)
+            const std::string& svc, const SmartTimeValue &minCycleTime) 
   : Smart::IPushServerPattern<T>(m,svc),
 	uuid_genrator(),
     service_identifier(0),
@@ -1405,7 +1405,7 @@ template<class T> inline SmartACE::PushServer<T>::PushServer(SmartComponent* m,
 //
 // default destructor
 //
-template<class T> inline SmartACE::PushServer<T>::~PushServer(void) throw()
+template<class T> inline SmartACE::PushServer<T>::~PushServer(void) 
 {
 	this->serverInitiatedDisconnect();
 
@@ -1505,7 +1505,7 @@ template<class T> inline void SmartACE::PushServer<T>::serverInitiatedDisconnect
 //
 //
 //
-//template<class T> Smart::StatusCode SmartACE::PushServer<T>::start() throw()
+//template<class T> Smart::StatusCode SmartACE::PushServer<T>::start() 
 //{
 //  Smart::StatusCode result = Smart::SMART_OK;
 //  PushClientList* lptr;
@@ -1554,7 +1554,7 @@ template<class T> inline void SmartACE::PushServer<T>::serverInitiatedDisconnect
 //
 //
 //
-//template<class T> Smart::StatusCode SmartACE::PushServer<T>::stop() throw()
+//template<class T> Smart::StatusCode SmartACE::PushServer<T>::stop() 
 //{
 //  PushClientList *lptr;
 //  Smart::StatusCode result = Smart::SMART_OK;
@@ -1592,7 +1592,7 @@ template<class T> inline void SmartACE::PushServer<T>::serverInitiatedDisconnect
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushServer<T>::put(const T& d) throw()
+template<class T> Smart::StatusCode SmartACE::PushServer<T>::put(const T& d) 
 {
    PushClientList *lptr;
    Smart::StatusCode result = Smart::SMART_OK;

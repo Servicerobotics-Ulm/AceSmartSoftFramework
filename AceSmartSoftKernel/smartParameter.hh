@@ -96,11 +96,11 @@ namespace SmartACE {
      *  (Currently exception not thrown)
      *
      */
-    ParameterMaster(SmartComponent* component) throw(SmartACE::SmartError);
+    ParameterMaster(SmartComponent* component);
 
     /** Destructor.
      */
-    virtual ~ParameterMaster() throw();
+    virtual ~ParameterMaster();
 
     /** Blocking call to send a parameter set to a component indicated by the comp_name.
      *
@@ -215,13 +215,13 @@ namespace SmartACE {
        */
       ParameterQueryHandler(
     		  QueryServer<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse>* server,
-    		  ParameterUpdateHandler *param_handler) throw();
+    		  ParameterUpdateHandler *param_handler);
 
       /// Destructor
-      virtual ~ParameterQueryHandler() throw();
+      virtual ~ParameterQueryHandler();
 
       /// handle query method of query handler class
-      void handleQuery(const QueryId &id, const SmartACE::CommParameterRequest & request) throw();
+      void handleQuery(const QueryId &id, const SmartACE::CommParameterRequest & request);
     };
 
 
@@ -239,12 +239,12 @@ namespace SmartACE {
      *
      *  (Currently exception not thrown)
      */
-	  ParameterSlave(SmartComponent* comp, ParameterUpdateHandler *hnd, std::string slave_address="param") throw(SmartACE::SmartError);
+	  ParameterSlave(SmartComponent* comp, ParameterUpdateHandler *hnd, std::string slave_address="param");
 
     /** destructor.
      *
      */
-    virtual ~ParameterSlave() throw();
+    virtual ~ParameterSlave();
   };
 
 }

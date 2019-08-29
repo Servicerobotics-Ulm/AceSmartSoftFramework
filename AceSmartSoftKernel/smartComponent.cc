@@ -284,7 +284,7 @@ void SmartACE::SmartComponent::cleanUpInternalResources()
    }
 }
 
-Smart::StatusCode SmartACE::SmartComponent::blocking(const bool b) throw()
+Smart::StatusCode SmartACE::SmartComponent::blocking(const bool b) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
   SmartCVwithMemoryStruct    *ptr1;
@@ -452,7 +452,7 @@ Smart::StatusCode SmartACE::SmartComponent::waitForCond( SmartCntCondClass& cond
 }
 
 
-Smart::StatusCode SmartACE::SmartComponent::addCV(SmartCVwithMemory* cond) throw()
+Smart::StatusCode SmartACE::SmartComponent::addCV(SmartCVwithMemory* cond) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
   SmartCVwithMemoryStruct *cptr;
@@ -471,7 +471,7 @@ Smart::StatusCode SmartACE::SmartComponent::addCV(SmartCVwithMemory* cond) throw
   return result;
 }
 
-Smart::StatusCode SmartACE::SmartComponent::removeCV(SmartCVwithMemory* cond) throw()
+Smart::StatusCode SmartACE::SmartComponent::removeCV(SmartCVwithMemory* cond) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
   SmartCVwithMemoryStruct *cptr;
@@ -516,7 +516,7 @@ Smart::StatusCode SmartACE::SmartComponent::removeCV(SmartCVwithMemory* cond) th
   return result;
 }
 
-Smart::StatusCode SmartACE::SmartComponent::addCV(SmartCVwithoutMemory* cond) throw()
+Smart::StatusCode SmartACE::SmartComponent::addCV(SmartCVwithoutMemory* cond) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
   SmartCVwithoutMemoryStruct *cptr;
@@ -535,7 +535,7 @@ Smart::StatusCode SmartACE::SmartComponent::addCV(SmartCVwithoutMemory* cond) th
   return result;
 }
 
-Smart::StatusCode SmartACE::SmartComponent::removeCV(SmartCVwithoutMemory* cond) throw()
+Smart::StatusCode SmartACE::SmartComponent::removeCV(SmartCVwithoutMemory* cond) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
   SmartCVwithoutMemoryStruct *cptr;
@@ -580,7 +580,7 @@ Smart::StatusCode SmartACE::SmartComponent::removeCV(SmartCVwithoutMemory* cond)
   return result;
 }
 
-Smart::StatusCode SmartACE::SmartComponent::addSmartMonitor(SmartMonitor* monitor) throw()
+Smart::StatusCode SmartACE::SmartComponent::addSmartMonitor(SmartMonitor* monitor) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
   SmartMonitorStruct *cptr;
@@ -599,7 +599,7 @@ Smart::StatusCode SmartACE::SmartComponent::addSmartMonitor(SmartMonitor* monito
   return result;
 }
 
-Smart::StatusCode SmartACE::SmartComponent::removeSmartMonitor(SmartMonitor* monitor) throw()
+Smart::StatusCode SmartACE::SmartComponent::removeSmartMonitor(SmartMonitor* monitor) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
   SmartMonitorStruct *cptr;

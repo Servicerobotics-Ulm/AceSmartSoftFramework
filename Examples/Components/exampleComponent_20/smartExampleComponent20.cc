@@ -43,11 +43,11 @@
 class PrintStateChangeHandler : public SmartACE::StateChangeHandler
 {
 public:
-  void handleEnterState(const std::string & s) throw()
+  void handleEnterState(const std::string & s) 
     {
       std::cout << "    enterHandler  activate   " << s << std::endl;
     };
-  void handleQuitState(const std::string & s) throw()
+  void handleQuitState(const std::string & s) 
     {
       std::cout << "    quitHandler   deactivate " << s << std::endl;
     };

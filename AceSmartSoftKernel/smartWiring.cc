@@ -43,7 +43,7 @@
 //
 // default constructor
 //
-SmartACE::WiringMaster::WiringMaster(void) throw(SmartACE::SmartError)
+SmartACE::WiringMaster::WiringMaster(void) 
 {
   std::cerr << "CommPattern (WiringMaster): ERROR: Entered default constructor WiringMaster" << std::endl;
   component=0;
@@ -54,7 +54,7 @@ SmartACE::WiringMaster::WiringMaster(void) throw(SmartACE::SmartError)
 //
 // standard constructor
 //
-SmartACE::WiringMaster::WiringMaster(SmartComponent* m) throw(SmartACE::SmartError) : component(m)
+SmartACE::WiringMaster::WiringMaster(SmartComponent* m)  : component(m)
 {
 	if(component->getName().compare(SMART_NONS) == 0) {
 		_use_ns = false;
@@ -66,7 +66,7 @@ SmartACE::WiringMaster::WiringMaster(SmartComponent* m) throw(SmartACE::SmartErr
 //
 // destructor
 //
-SmartACE::WiringMaster::~WiringMaster(void) throw()
+SmartACE::WiringMaster::~WiringMaster(void) 
 {
   // client does not bind object at naming service,
   // therefore no unbind of objects needed here
@@ -75,7 +75,7 @@ SmartACE::WiringMaster::~WiringMaster(void) throw()
 //
 //
 //
-Smart::StatusCode SmartACE::WiringMaster::connect(const std::string& slavecmpt,const std::string& slaveprt, const std::string& servercmpt,const std::string& serversvc) throw()
+Smart::StatusCode SmartACE::WiringMaster::connect(const std::string& slavecmpt,const std::string& slaveprt, const std::string& servercmpt,const std::string& serversvc) 
 {
   SmartACE::QueryClient<SmartCommWiring,SmartCommWiring> client(component);
   SmartCommWiring request,answer;
@@ -124,7 +124,7 @@ Smart::StatusCode SmartACE::WiringMaster::connect(const std::string& slavecmpt,c
 //
 //
 //
- Smart::StatusCode SmartACE::WiringMaster::disconnect(const std::string& slavecmpt,const std::string& slaveprt) throw()
+ Smart::StatusCode SmartACE::WiringMaster::disconnect(const std::string& slavecmpt,const std::string& slaveprt) 
 {
   SmartACE::QueryClient<SmartCommWiring,SmartCommWiring> client(component);
   SmartCommWiring request,answer;
@@ -180,7 +180,7 @@ Smart::StatusCode SmartACE::WiringMaster::connect(const std::string& slavecmpt,c
 //
 // default constructor
 //
-SmartACE::WiringHandler::WiringHandler(void) throw(SmartACE::SmartError)
+SmartACE::WiringHandler::WiringHandler(void) 
 :	QueryServerHandler<SmartCommWiring,SmartCommWiring>(0)
 {
   std::cerr << "CommPattern (WiringHandler): ERROR: Entered default constructor WiringHandler" << std::endl;
@@ -191,7 +191,7 @@ SmartACE::WiringHandler::WiringHandler(void) throw(SmartACE::SmartError)
 //
 // standard constructor
 //
-SmartACE::WiringHandler::WiringHandler(SmartACE::WiringSlave *s) throw()
+SmartACE::WiringHandler::WiringHandler(SmartACE::WiringSlave *s) 
 :	QueryServerHandler<SmartCommWiring,SmartCommWiring>(s->wiring)
 ,	wiringslave(s)
 {
@@ -201,7 +201,7 @@ SmartACE::WiringHandler::WiringHandler(SmartACE::WiringSlave *s) throw()
 //
 // destructor
 //
-SmartACE::WiringHandler::~WiringHandler() throw()
+SmartACE::WiringHandler::~WiringHandler() 
 {
   //
 }
@@ -230,7 +230,7 @@ void SmartACE::WiringHandler::handleQuery(const QueryId &id, const SmartCommWiri
 //
 // default constructor
 //
-SmartACE::WiringSlave::WiringSlave(void) throw(SmartACE::SmartError)
+SmartACE::WiringSlave::WiringSlave(void) 
 {
   std::cerr << "CommPattern (WiringSlave): ERROR: Entered default constructor WiringSlave" << std::endl;
   component=0;
@@ -244,7 +244,7 @@ SmartACE::WiringSlave::WiringSlave(void) throw(SmartACE::SmartError)
 //
 //
 //
-SmartACE::WiringSlave::WiringSlave(SmartComponent* m, std::string slaveaddress) throw(SmartACE::SmartError) : component(m)
+SmartACE::WiringSlave::WiringSlave(SmartComponent* m, std::string slaveaddress)  : component(m)
 {
   // reset port list
   ports = 0;
@@ -275,7 +275,7 @@ SmartACE::WiringSlave::WiringSlave(SmartComponent* m, std::string slaveaddress) 
 //
 //
 //
-SmartACE::WiringSlave::~WiringSlave(void) throw()
+SmartACE::WiringSlave::~WiringSlave(void) 
 {
   PortList *lptr;
 

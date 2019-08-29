@@ -148,7 +148,7 @@ void SmartACE::SmartIniParameter::addCommandLineArgs(const int &argc, char * con
 	}
 }
 
-void SmartACE::SmartIniParameter::addEnv(const std::string &prefix, const std::string &env) throw(SmartACE::IniParameterError)
+void SmartACE::SmartIniParameter::addEnv(const std::string &prefix, const std::string &env) 
 {
   const char *value;
 
@@ -208,7 +208,7 @@ bool SmartACE::SmartIniParameter::searchFile(const std::string &filename, std::i
 	return false;
 }
 
-void SmartACE::SmartIniParameter::addFile(const std::string &filename) throw(SmartACE::IniParameterError)
+void SmartACE::SmartIniParameter::addFile(const std::string &filename) 
 {
   std::ifstream t;
 
@@ -317,7 +317,7 @@ bool SmartACE::SmartIniParameter::tryAddFileFromArgs(const int &argc, char * con
 	return found_ini_file;
 }
 
-void SmartACE::SmartIniParameter::addFile(int argc, char * const * argv, const std::string &argname, bool allow_stdin) throw(SmartACE::IniParameterError)
+void SmartACE::SmartIniParameter::addFile(int argc, char * const * argv, const std::string &argname, bool allow_stdin) 
 {
   std::string filename = getArgsParamValue(argc, argv, argname);
 
@@ -352,7 +352,7 @@ void SmartACE::SmartIniParameter::addFile(int argc, char * const * argv, const s
   }
 }
 
-void SmartACE::SmartIniParameter::addFile(std::istream &is) throw(SmartACE::IniParameterError)
+void SmartACE::SmartIniParameter::addFile(std::istream &is) 
 {
 //  char         content[512];
   std::string  line;
@@ -517,13 +517,13 @@ std::map<std::string, std::list<std::string> > SmartACE::SmartIniParameter::getA
 	return result;
 }
 
-double SmartACE::SmartIniParameter::getDouble(std::string prefix, std::string param) const throw(SmartACE::IniParameterError)
+double SmartACE::SmartIniParameter::getDouble(std::string prefix, std::string param) const 
 {
   // return the last element from a potential value list
   return getDoubleList(prefix, param).back();
 }
 
-std::list<double> SmartACE::SmartIniParameter::getDoubleList(std::string prefix, std::string param) const throw(SmartACE::IniParameterError)
+std::list<double> SmartACE::SmartIniParameter::getDoubleList(std::string prefix, std::string param) const 
 {
   transform (param.begin(),  param.end(),  param.begin(),  ::tolower);
   transform (prefix.begin(), prefix.end(), prefix.begin(), ::tolower);
@@ -557,12 +557,12 @@ std::list<double> SmartACE::SmartIniParameter::getDoubleList(std::string prefix,
   return result;
 }
 
-int SmartACE::SmartIniParameter::getInteger(std::string prefix, std::string param) const throw(SmartACE::IniParameterError)
+int SmartACE::SmartIniParameter::getInteger(std::string prefix, std::string param) const 
 {
 	return getIntegerList(prefix, param).back();
 }
 
-std::list<int> SmartACE::SmartIniParameter::getIntegerList(std::string prefix, std::string param) const throw(SmartACE::IniParameterError)
+std::list<int> SmartACE::SmartIniParameter::getIntegerList(std::string prefix, std::string param) const 
 {
   transform (param.begin(),  param.end(),  param.begin(),  ::tolower);
   transform (prefix.begin(), prefix.end(), prefix.begin(), ::tolower);
@@ -597,12 +597,12 @@ std::list<int> SmartACE::SmartIniParameter::getIntegerList(std::string prefix, s
   return result;
 }
 
-bool SmartACE::SmartIniParameter::getBoolean(std::string prefix, std::string param) const throw(SmartACE::IniParameterError)
+bool SmartACE::SmartIniParameter::getBoolean(std::string prefix, std::string param) const 
 {
 	return getBooleanList(prefix, param).back();
 }
 
-std::list<bool> SmartACE::SmartIniParameter::getBooleanList(std::string prefix, std::string param) const throw(SmartACE::IniParameterError)
+std::list<bool> SmartACE::SmartIniParameter::getBooleanList(std::string prefix, std::string param) const 
 {
 
   transform (param.begin(),  param.end(),  param.begin(),  ::tolower);
@@ -640,7 +640,7 @@ std::list<bool> SmartACE::SmartIniParameter::getBooleanList(std::string prefix, 
   return result_list;
 }
 
-bool SmartACE::SmartIniParameter::getBoolean(const std::string &prefix, const std::string &param, bool &b) const throw()
+bool SmartACE::SmartIniParameter::getBoolean(const std::string &prefix, const std::string &param, bool &b) const 
 {
   try {
     const bool tmp = getBoolean(prefix, param);
@@ -652,7 +652,7 @@ bool SmartACE::SmartIniParameter::getBoolean(const std::string &prefix, const st
    return false;
 }
 
-bool SmartACE::SmartIniParameter::getBooleanList(const std::string &prefix, const std::string &param, std::list<bool> &b) const throw()
+bool SmartACE::SmartIniParameter::getBooleanList(const std::string &prefix, const std::string &param, std::list<bool> &b) const 
 {
   try {
     b = getBooleanList(prefix, param);
@@ -663,12 +663,12 @@ bool SmartACE::SmartIniParameter::getBooleanList(const std::string &prefix, cons
    return false;
 }
 
-std::string SmartACE::SmartIniParameter::getString(std::string prefix, std::string param) const throw(SmartACE::IniParameterError)
+std::string SmartACE::SmartIniParameter::getString(std::string prefix, std::string param) const 
 {
 	return getStringList(prefix, param).back();
 }
 
-std::list<std::string> SmartACE::SmartIniParameter::getStringList(std::string prefix, std::string param) const throw(SmartACE::IniParameterError)
+std::list<std::string> SmartACE::SmartIniParameter::getStringList(std::string prefix, std::string param) const 
 {
   transform (param.begin(),  param.end(),  param.begin(),  ::tolower);
   transform (prefix.begin(), prefix.end(), prefix.begin(), ::tolower);
@@ -692,7 +692,7 @@ std::list<std::string> SmartACE::SmartIniParameter::getStringList(std::string pr
   return result;
 }
 
-bool SmartACE::SmartIniParameter::getString(const std::string &prefix, const std::string &param, std::string &s) const throw()
+bool SmartACE::SmartIniParameter::getString(const std::string &prefix, const std::string &param, std::string &s) const 
 {
   try {
     const std::string tmp = getString(prefix, param);
@@ -704,7 +704,7 @@ bool SmartACE::SmartIniParameter::getString(const std::string &prefix, const std
     return false;
 }
 
-bool SmartACE::SmartIniParameter::getStringList(const std::string &prefix, const std::string &param, std::list<std::string> &s) const throw()
+bool SmartACE::SmartIniParameter::getStringList(const std::string &prefix, const std::string &param, std::list<std::string> &s) const 
 {
   try {
     s = getStringList(prefix, param);

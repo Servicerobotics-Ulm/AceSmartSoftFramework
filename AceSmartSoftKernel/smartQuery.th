@@ -177,7 +177,7 @@ void SmartACE::QueryClient<R,A>::internalServerInitiatedDisconnect(void *ptr, in
 //
 // default constructor
 //
-template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(void) throw(SmartACE::SmartError)
+template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(void) 
 {
   std::cerr << "CommPattern (queryClient): ERROR: Entered default constructor QueryClient" << std::endl;
   serverProxy        = 0;
@@ -196,7 +196,7 @@ template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(void) 
 //
 // standard constructor port
 //
-template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m,const std::string& port, SmartACE::WiringSlave* slave) throw(SmartACE::SmartError)
+template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m,const std::string& port, SmartACE::WiringSlave* slave) 
 :	Smart::IQueryClientPattern<R,A,QueryId>(m)
 {
   Smart::StatusCode status;
@@ -249,7 +249,7 @@ template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartC
 //
 // standard constructor
 //
-template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m) throw(SmartACE::SmartError)
+template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m) 
 :	Smart::IQueryClientPattern<R,A,QueryId>(m)
 {
   // set the configuration flags approriately
@@ -284,7 +284,7 @@ template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartC
 //
 // standard constructor already wired
 //
-template<class R,class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m,const std::string& srv,const std::string& svc) throw(SmartACE::SmartError)
+template<class R,class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m,const std::string& srv,const std::string& svc) 
 :	Smart::IQueryClientPattern<R,A,QueryId>(m, srv, svc)
 {
   Smart::StatusCode status;
@@ -358,7 +358,7 @@ template<class R,class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartCo
 //
 // destructor
 //
-template<class R, class A> inline SmartACE::QueryClient<R,A>::~QueryClient(void) throw()
+template<class R, class A> inline SmartACE::QueryClient<R,A>::~QueryClient(void) 
 {
   QueryClientList *lptr = 0;
 
@@ -400,7 +400,7 @@ template<class R, class A> inline SmartACE::QueryClient<R,A>::~QueryClient(void)
 //
 //
 //
-template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::add(SmartACE::WiringSlave* slave, const std::string& port) throw()
+template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::add(SmartACE::WiringSlave* slave, const std::string& port) 
 {
   Smart::StatusCode status;
 
@@ -424,7 +424,7 @@ template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::add(Smar
 //
 //
 //
-template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::remove() throw()
+template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::remove() 
 {
   Smart::StatusCode status;
 
@@ -448,7 +448,7 @@ template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::remove()
 //
 //
 //
-template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::connect(const std::string& srv, const std::string& svc) throw()
+template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::connect(const std::string& srv, const std::string& svc) 
 {
    Smart::StatusCode result;
 
@@ -601,7 +601,7 @@ template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::connect(
 //
 //
 //
-template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::disconnect() throw()
+template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::disconnect() 
 {
   // disconnecting a query requires to consider several cases since a
   // query client can get disconnected while the server calculates the
@@ -749,7 +749,7 @@ template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::disconne
 //
 //
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::blocking(const bool b) throw()
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::blocking(const bool b) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
   QueryClientList *lptr = 0;
@@ -774,7 +774,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::blockin
 //
 //
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::query(const R& r, A& a) throw()
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::query(const R& r, A& a) 
 {
   Smart::StatusCode result;
   SmartACE::QueryId    id;
@@ -793,7 +793,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::query(c
 //
 //
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRequest(const R& r, QueryId& id) throw()
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRequest(const R& r, QueryId& id) 
 {
   QueryClientList *lptr = 0;
   Smart::StatusCode result;
@@ -860,7 +860,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
 //
 //
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryReceive(const QueryId& id,A& a) throw()
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryReceive(const QueryId& id,A& a) 
 {
   QueryClientList *lptr  = 0;
   QueryClientList *hlptr = 0;
@@ -903,7 +903,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
 //
 //
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryReceiveWait(const QueryId& id,A& a, const std::chrono::steady_clock::duration &timeout) throw()
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryReceiveWait(const QueryId& id,A& a, const std::chrono::steady_clock::duration &timeout) 
 {
   QueryClientList *lptr  = 0;
   Smart::StatusCode result;
@@ -973,7 +973,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
 //
 //
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryDiscard(const QueryId& id) throw()
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryDiscard(const QueryId& id) 
 {
 
   QueryClientList *lptr  = 0;
@@ -1304,7 +1304,7 @@ template<class R,class A> void SmartACE::QueryServer<R,A>::hndDisconnect(void* p
 //
 // default constructor
 //
-template<class R, class A> inline SmartACE::QueryServer<R,A>::QueryServer(void) throw(SmartACE::SmartError)
+template<class R, class A> inline SmartACE::QueryServer<R,A>::QueryServer(void) 
 {
   std::cerr << "CommPattern (query): ERROR: Entered default constructor QueryServer" << std::endl;
   clients = 0;
@@ -1322,7 +1322,7 @@ template<class R, class A> inline SmartACE::QueryServer<R,A>::QueryServer(void) 
 //
 template<class R, class A>
 inline SmartACE::QueryServer<R,A>::QueryServer(SmartComponent* m,
-					  const std::string & svc) throw(SmartACE::SmartError)
+					  const std::string & svc) 
   : Smart::IQueryServerPattern<R,A,QueryId>(m,svc),
 	uuid_genrator(),
     service_identifier(0),
@@ -1425,7 +1425,7 @@ inline SmartACE::QueryServer<R,A>::QueryServer(SmartComponent* m,
 //
 // default destructor
 //
-template<class R, class A> inline SmartACE::QueryServer<R,A>::~QueryServer(void) throw()
+template<class R, class A> inline SmartACE::QueryServer<R,A>::~QueryServer(void) 
 {
   this->serverInitiatedDisconnect();
 
@@ -1523,7 +1523,7 @@ template<class R, class A> void SmartACE::QueryServer<R,A>::serverInitiatedDisco
 //
 // function called by the user for returning the answer to a specific request (see id)
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryServer<R,A>::answer(const QueryId& id, const A& a) throw()
+template<class R, class A> Smart::StatusCode SmartACE::QueryServer<R,A>::answer(const QueryId& id, const A& a) 
 {
   QueryServerList* lptr  = 0;
   QueryServerList* hlptr = 0;

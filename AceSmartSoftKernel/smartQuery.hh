@@ -167,7 +167,7 @@ namespace SmartACE {
     ///
     /// throws exception if someone tries to use this constructor
     ///   SMART_ERROR : this constructor is forbidden
-    QueryClient() throw(SmartACE::SmartError);
+    QueryClient();
 
     /** (Interface used by wiring service. Requires ordinary pointer since
      *   client patterns have different types and even have different template
@@ -211,7 +211,7 @@ namespace SmartACE {
      * @param port       name of the wireable port
      * @param slave      wiring slave of this component
      */
-    QueryClient(SmartComponent* component, const std::string& port, WiringSlave* slave) throw(SmartACE::SmartError);
+    QueryClient(SmartComponent* component, const std::string& port, WiringSlave* slave);
 
     /** Constructor (not wired with service provider and not exposed as port).
      *  add()/remove() and connect()/disconnect() can always be used to change
@@ -222,7 +222,7 @@ namespace SmartACE {
      *
      * @param component  management class of the component
      */
-    QueryClient(SmartComponent* component) throw(SmartACE::SmartError);
+    QueryClient(SmartComponent* component);
 
     /** Constructor (wired with specified service provider).
      *  Connects to the denoted service and blocks until the connection
@@ -243,13 +243,13 @@ namespace SmartACE {
      * @param server     name of the server
      * @param service    name of the service
      */
-    QueryClient(SmartComponent* component, const std::string& server, const std::string& service) throw(SmartACE::SmartError);
+    QueryClient(SmartComponent* component, const std::string& server, const std::string& service);
 
     /** Destructor.
      *  The destructor calls remove() and disconnect() and therefore properly cleans up
      *  every pending query and removes the instance from the set of wireable ports.
      */
-    virtual ~QueryClient() throw();
+    virtual ~QueryClient();
 
     /** Add this instance to the set of ports wireable via the
      *  wiring pattern from outside the component. Already
@@ -270,7 +270,7 @@ namespace SmartACE {
      *                                 instance now not available as port
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode add(WiringSlave* slave, const std::string& port) throw();
+    Smart::StatusCode add(WiringSlave* slave, const std::string& port);
 
     /** Remove this service requestor from the set of ports wireable
      *  via the wiring pattern from outside the component. Already
@@ -285,7 +285,7 @@ namespace SmartACE {
      *                                 is removed from the set of ports in
      *                                 any case.
      */
-    Smart::StatusCode remove() throw();
+    Smart::StatusCode remove();
 
     /** Connect this service requestor to the denoted service provider. An
      *  already established connection is first disconnected. See disconnect()
@@ -312,7 +312,7 @@ namespace SmartACE {
      *   - SMART_ERROR               : something went wrong, service requestor is now not connected to any
      *                                 service provider.
      */
-    Smart::StatusCode connect(const std::string& server, const std::string& service) throw();
+    Smart::StatusCode connect(const std::string& server, const std::string& service);
 
     /** Disconnect the service requestor from the service provider.
      *
@@ -336,7 +336,7 @@ namespace SmartACE {
      *   - SMART_ERROR               : something went wrong. Again at least the service requestor
      *                                 is in the disconnected state.
      */
-    Smart::StatusCode disconnect() throw();
+    Smart::StatusCode disconnect();
 
     /** Allow or abort and reject blocking calls.
      *
@@ -349,7 +349,7 @@ namespace SmartACE {
      *   - SMART_OK                  : new mode set
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode blocking(const bool b) throw();
+    Smart::StatusCode blocking(const bool b);
 
     /** Blocking Query.
      *
@@ -371,7 +371,7 @@ namespace SmartACE {
      *    - SMART_ERROR_COMMUNICATION : communication problems, <I>answer</I> is not valid.
      *    - SMART_ERROR               : something went wrong, <I>answer</I> is not valid.
      */
-    Smart::StatusCode query(const R& request, A& answer) throw();
+    Smart::StatusCode query(const R& request, A& answer);
 
     /** Asynchronous Query.
      *
@@ -390,7 +390,7 @@ namespace SmartACE {
      *    - SMART_ERROR_COMMUNICATION : communication problems, <I>id</I> is not valid.
      *    - SMART_ERROR               : something went wrong, <I>id</I> is not valid.
      */
-    Smart::StatusCode queryRequest(const R& request, QueryId& id) throw();
+    Smart::StatusCode queryRequest(const R& request, QueryId& id);
 
     /** Check if answer is available.
      *
@@ -417,7 +417,7 @@ namespace SmartACE {
      *                           not valid any longer.
      *
      */
-    Smart::StatusCode queryReceive(const QueryId& id, A& answer) throw();
+    Smart::StatusCode queryReceive(const QueryId& id, A& answer);
 
     /** Wait for reply.
      *
@@ -448,7 +448,7 @@ namespace SmartACE {
      *                           not valid any longer.
      *
      */
-    Smart::StatusCode queryReceiveWait(const QueryId& id, A& answer, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero()) throw();
+    Smart::StatusCode queryReceiveWait(const QueryId& id, A& answer, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero());
 
     /** Discard the pending answer with the identifier <I>id</I>
      *
@@ -473,7 +473,7 @@ namespace SmartACE {
      *    - SMART_ERROR        : something went wrong, <I>id</I> not valid any longer.
      *
      */
-    Smart::StatusCode queryDiscard(const QueryId& id) throw();
+    Smart::StatusCode queryDiscard(const QueryId& id);
   };
 }
 
@@ -592,7 +592,7 @@ namespace SmartACE {
     ///
     /// throws exception if someone tries to use this constructor
     ///   SMART_ERROR : this constructor forbidden
-    QueryServer() throw(SmartACE::SmartError);
+    QueryServer();
 
   public:
     /** Constructor.
@@ -605,14 +605,14 @@ namespace SmartACE {
      *  @param component management class of the component
      *  @param service   name of the service
      */
-    QueryServer(SmartComponent* component, const std::string& service) throw(SmartACE::SmartError);
+    QueryServer(SmartComponent* component, const std::string& service);
 
     /** Destructor.
      *  Properly disconnects all service requestors in case of destruction
      *  such that all pending queries are handled correctly at client side
      *  even when the service provider disappears during pending queries.
      */
-    virtual ~QueryServer() throw();
+    virtual ~QueryServer();
 
     /** Provide answer to be sent back to the requestor.
      *
@@ -629,7 +629,7 @@ namespace SmartACE {
      *    - SMART_ERROR_COMMUNICATION : communication problems
      *    - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode answer(const QueryId& id, const A& answer) throw();
+    Smart::StatusCode answer(const QueryId& id, const A& answer);
 
   };
 }

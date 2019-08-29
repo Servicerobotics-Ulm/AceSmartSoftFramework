@@ -42,7 +42,7 @@
 //
 // default constructor
 //
-SmartACE::StateMaster::StateMaster(void) throw(SmartACE::SmartError)
+SmartACE::StateMaster::StateMaster(void) 
 :  state_proxy(NULL)
 {
   std::cerr << "CommPattern (state): ERROR: Entered default constructor StateMaster" << std::endl;
@@ -54,7 +54,7 @@ SmartACE::StateMaster::StateMaster(void) throw(SmartACE::SmartError)
 //
 // standard constructor
 //
-SmartACE::StateMaster::StateMaster(SmartComponent* m) throw(SmartACE::SmartError)
+SmartACE::StateMaster::StateMaster(SmartComponent* m) 
 :  state_proxy(m)
 {
   // set the configuration flags approriately
@@ -67,7 +67,7 @@ SmartACE::StateMaster::StateMaster(SmartComponent* m) throw(SmartACE::SmartError
 //
 // destructor
 //
-SmartACE::StateMaster::~StateMaster(void) throw()
+SmartACE::StateMaster::~StateMaster(void) 
 {
 
 }
@@ -81,7 +81,7 @@ SmartACE::StateMaster::~StateMaster(void) throw()
 //
 //
 //
-Smart::StatusCode SmartACE::StateMaster::blocking(const bool b) throw()
+Smart::StatusCode SmartACE::StateMaster::blocking(const bool b) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
 
@@ -93,7 +93,7 @@ Smart::StatusCode SmartACE::StateMaster::blocking(const bool b) throw()
 //
 //
 //
-Smart::StatusCode SmartACE::StateMaster::setWaitState(const std::string& mainstate, const std::string& server, const std::string& service) throw()
+Smart::StatusCode SmartACE::StateMaster::setWaitState(const std::string& mainstate, const std::string& server, const std::string& service) 
 {
    Smart::StatusCode status = Smart::SMART_ERROR;
 
@@ -126,7 +126,7 @@ Smart::StatusCode SmartACE::StateMaster::setWaitState(const std::string& mainsta
 }
 
 
-Smart::StatusCode SmartACE::StateMaster::getCurrentMainState(std::string& mainstate, const std::string& server, const std::string& service) throw()
+Smart::StatusCode SmartACE::StateMaster::getCurrentMainState(std::string& mainstate, const std::string& server, const std::string& service) 
 {
    Smart::StatusCode status = Smart::SMART_ERROR;
 
@@ -168,7 +168,7 @@ Smart::StatusCode SmartACE::StateMaster::getCurrentMainState(std::string& mainst
 }
 
 
-Smart::StatusCode SmartACE::StateMaster::getAllMainStates(std::list<std::string>& mainstates, const std::string& server, const std::string& service) throw()
+Smart::StatusCode SmartACE::StateMaster::getAllMainStates(std::list<std::string>& mainstates, const std::string& server, const std::string& service) 
 {
    Smart::StatusCode status = Smart::SMART_ERROR;
 
@@ -211,7 +211,7 @@ Smart::StatusCode SmartACE::StateMaster::getAllMainStates(std::list<std::string>
 }
 
 
-Smart::StatusCode SmartACE::StateMaster::getSubStates(const std::string& mainstate,std::list<std::string>& substates, const std::string& server, const std::string& service) throw()
+Smart::StatusCode SmartACE::StateMaster::getSubStates(const std::string& mainstate,std::list<std::string>& substates, const std::string& server, const std::string& service) 
 {
    Smart::StatusCode status = Smart::SMART_ERROR;
 
@@ -288,15 +288,15 @@ Smart::StatusCode SmartACE::StateMaster::getSubStates(const std::string& mainsta
 // avoid multiple representations of the same substate !
 //
 
-SmartACE::StateSlaveHandler::StateSlaveHandler(SmartACE::StateSlave *slave) throw()
+SmartACE::StateSlaveHandler::StateSlaveHandler(SmartACE::StateSlave *slave) 
 :  stateSlave(slave)
 ,  QueryServerHandler<SmartCommStateRequest, SmartCommStateResponse>(slave->query_server)
 {  }
 
-SmartACE::StateSlaveHandler::~StateSlaveHandler() throw()
+SmartACE::StateSlaveHandler::~StateSlaveHandler() 
 {  }
 
-void SmartACE::StateSlaveHandler::handleQuery(const QueryId &id, const SmartCommStateRequest& request) throw()
+void SmartACE::StateSlaveHandler::handleQuery(const QueryId &id, const SmartCommStateRequest& request) 
 {
    SmartCommStateResponse reply;
    std::vector<std::string> state_list;
@@ -598,7 +598,7 @@ Smart::StatusCode SmartACE::StateSlave::hndGetSubStates(void *ptr, const std::st
 //
 // default constructor
 //
-//SmartACE::StateSlave::StateSlave(void) throw(SmartACE::SmartError)
+//SmartACE::StateSlave::StateSlave(void) 
 //:  query_handler(this)
 //,  query_server(NULL, "", query_handler)
 //{
@@ -611,7 +611,7 @@ Smart::StatusCode SmartACE::StateSlave::hndGetSubStates(void *ptr, const std::st
 // standard constructor
 //
 /*
-SmartACE::StateSlave::StateSlave(SmartComponent* comp, SmartACE::StateChangeHandler & hnd) throw(SmartACE::SmartError)
+SmartACE::StateSlave::StateSlave(SmartComponent* comp, SmartACE::StateChangeHandler & hnd) 
   : running(false)
   , component(comp)
   , changeHandler(hnd)
@@ -646,7 +646,7 @@ SmartACE::StateSlave::StateSlave(SmartComponent* comp, SmartACE::StateChangeHand
 //
 // standard constructor
 //
-SmartACE::StateSlave::StateSlave(SmartComponent* comp, SmartACE::StateChangeHandler * hnd, const std::string& serviceName) throw(SmartACE::SmartError)
+SmartACE::StateSlave::StateSlave(SmartComponent* comp, SmartACE::StateChangeHandler * hnd, const std::string& serviceName) 
   : running(false)
   , component(comp)
   , changeHandler(hnd)
@@ -681,7 +681,7 @@ SmartACE::StateSlave::StateSlave(SmartComponent* comp, SmartACE::StateChangeHand
 //
 // default destructor
 //
-SmartACE::StateSlave::~StateSlave(void) throw()
+SmartACE::StateSlave::~StateSlave(void) 
 {
   //delete acceptor;
   delete query_handler;
@@ -1315,7 +1315,7 @@ Smart::StatusCode SmartACE::StateSlave::setWaitState(const std::string & MainSta
 //
 //
 
-Smart::StatusCode SmartACE::StateSlave::defineStates(const std::string& mainstate, const std::string& substate) throw()
+Smart::StatusCode SmartACE::StateSlave::defineStates(const std::string& mainstate, const std::string& substate) 
 {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator substatePtr;
@@ -1576,7 +1576,7 @@ std::string SmartACE::StateSlave::getCurrentMainState() const
 }
 
 
-Smart::StatusCode SmartACE::StateSlave::activate() throw()
+Smart::StatusCode SmartACE::StateSlave::activate() 
 {
   mutex.acquire();
   running = true;
@@ -1586,7 +1586,7 @@ Smart::StatusCode SmartACE::StateSlave::activate() throw()
 }
 
 
-Smart::StatusCode SmartACE::StateSlave::acquire(const std::string& substate) throw()
+Smart::StatusCode SmartACE::StateSlave::acquire(const std::string& substate) 
 {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator sIterator = stateList.end();
@@ -1707,7 +1707,7 @@ Smart::StatusCode SmartACE::StateSlave::acquire(const std::string& substate) thr
 }
 
 
-Smart::StatusCode SmartACE::StateSlave::tryAcquire(const std::string& substate) throw()
+Smart::StatusCode SmartACE::StateSlave::tryAcquire(const std::string& substate) 
 {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator sIterator = stateList.end();
@@ -1816,7 +1816,7 @@ Smart::StatusCode SmartACE::StateSlave::tryAcquire(const std::string& substate) 
     //        indicating the components inactivity.)
 
 
-Smart::StatusCode SmartACE::StateSlave::release(const std::string& substate) throw()
+Smart::StatusCode SmartACE::StateSlave::release(const std::string& substate) 
 {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator sIterator = stateList.end();

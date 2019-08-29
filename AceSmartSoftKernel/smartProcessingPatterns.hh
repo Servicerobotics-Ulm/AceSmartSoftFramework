@@ -158,7 +158,7 @@ namespace SmartACE {
 //      };
 //
 //    /** @internal method called by the pattern. */
-//    void handleSend( const C& cmd) throw()
+//    void handleSend( const C& cmd) 
 //      {
 //	    // defer query to thread.
 //	    msgQueue.enqueue(MsgQueueItem(cmd));
@@ -248,7 +248,7 @@ namespace SmartACE {
 //      };
 //
 //    /** @internal method called by the pattern. */
-//    void handlePushTimer(SmartACE::PushTimedServer<C> & server) throw()
+//    void handlePushTimer(SmartACE::PushTimedServer<C> & server) 
 //      {
 //	    // defer query to thread.
 //	    msgQueue.enqueue(MsgQueueItem(server));

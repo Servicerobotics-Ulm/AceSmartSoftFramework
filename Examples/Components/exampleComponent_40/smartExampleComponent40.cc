@@ -54,7 +54,7 @@ class MoreThanTestHandler :
   public SmartACE::EventTestHandler<SmartACE::CommExampleEvent1Parameter, SmartACE::CommExampleEvent1Result, SmartACE::ExampleEventState>
 {
 public:
-  bool testEvent(SmartACE::CommExampleEvent1Parameter& p, SmartACE::CommExampleEvent1Result& e, const SmartACE::ExampleEventState& s) throw()
+  bool testEvent(SmartACE::CommExampleEvent1Parameter& p, SmartACE::CommExampleEvent1Result& e, const SmartACE::ExampleEventState& s) 
   {
     //
     // fire if current counter value is greater or equal to the event parameter
@@ -77,7 +77,7 @@ class IntervalTestHandler :
   public SmartACE::EventTestHandler<SmartACE::CommExampleEvent2Parameter, SmartACE::CommExampleEvent2Result, SmartACE::ExampleEventState>
 {
 public:
-  bool testEvent(SmartACE::CommExampleEvent2Parameter& p, SmartACE::CommExampleEvent2Result& e, const SmartACE::ExampleEventState& s) throw()
+  bool testEvent(SmartACE::CommExampleEvent2Parameter& p, SmartACE::CommExampleEvent2Result& e, const SmartACE::ExampleEventState& s) 
     {
       //
       // report when current counter enters / leaves specified interval

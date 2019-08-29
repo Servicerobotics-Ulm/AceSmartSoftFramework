@@ -128,7 +128,7 @@ namespace SmartACE {
      *  If same entry already exists overwrite it with the new value.
      *  Throw exception if environment variable unknown.
      */
-    void addEnv(const std::string &prefix, const std::string &env) throw(SmartACE::IniParameterError);
+    void addEnv(const std::string &prefix, const std::string &env);
 
     /** Appends the contents of a ini-parameter file to the ini-parameter list.
      *  Entries which already exist are replaced by the new values.
@@ -181,7 +181,7 @@ namespace SmartACE {
      *    - true  :   yes | y | true  | t | + | 1 | on
      *    - false :   no  | n | false | f | - | 0 | off
      */
-    void addFile(const std::string &filename) throw(SmartACE::IniParameterError);
+    void addFile(const std::string &filename);
 
     /** This method searches for the file using different search strategies and if found returns the filestream.
      *
@@ -215,12 +215,12 @@ namespace SmartACE {
      *
      *  @author Boris Kluge <kluge@faw.uni-ulm.de>
      */
-    void addFile(int argc, char * const * argv, const std::string &argname, bool allow_stdin = true) throw(SmartACE::IniParameterError);
+    void addFile(int argc, char * const * argv, const std::string &argname, bool allow_stdin = true);
 
     /** Append the contents of an ini-parameter file to the ini-parameter list.
      *  The stream is assumed to be connected to a ini-parameter file.
      */
-    void addFile(std::istream &is) throw(SmartACE::IniParameterError);
+    void addFile(std::istream &is);
 
     //
     // helper methods
@@ -252,9 +252,9 @@ namespace SmartACE {
      *
      * throw "IniParameterError" if ini-parameter not known or conversion fails
      */
-    double getDouble(std::string prefix, std::string parameter) const throw(SmartACE::IniParameterError);
+    double getDouble(std::string prefix, std::string parameter) const;
 
-    std::list<double> getDoubleList(std::string prefix, std::string parameter) const throw(SmartACE::IniParameterError);
+    std::list<double> getDoubleList(std::string prefix, std::string parameter) const;
 
     /** Retrieve double casted value of ini-parameter name
      *
@@ -262,18 +262,18 @@ namespace SmartACE {
      * if ini-parameter not known or conversion fails
      */
     template<class Float>
-    inline bool getDouble(const std::string &prefix, const std::string &parameter, Float &d) const throw();
+    inline bool getDouble(const std::string &prefix, const std::string &parameter, Float &d) const;
 
     template<class Float>
-    inline bool getDoubleList(const std::string &prefix, const std::string &parameter, std::list<Float> &d) const throw();
+    inline bool getDoubleList(const std::string &prefix, const std::string &parameter, std::list<Float> &d) const;
 
     /** Retrieve int casted value of ini-parameter name
      *
      *  throw "IniParameterError" if ini-parameter not known or conversion fails
      */
-    int getInteger(std::string prefix, std::string parameter) const throw(SmartACE::IniParameterError);
+    int getInteger(std::string prefix, std::string parameter) const;
 
-    std::list<int> getIntegerList(std::string prefix, std::string parameter) const throw(SmartACE::IniParameterError);
+    std::list<int> getIntegerList(std::string prefix, std::string parameter) const;
 
     /** Retrieve int casted value of ini-parameter name
      *
@@ -281,43 +281,43 @@ namespace SmartACE {
      *  if ini-parameter not known or conversion fails
      */
     template<class Integer>
-    inline bool getInteger(const std::string &prefix, const std::string &parameter, Integer &i) const throw();
+    inline bool getInteger(const std::string &prefix, const std::string &parameter, Integer &i) const;
 
     template<class Integer>
-    inline bool getIntegerList(const std::string &prefix, const std::string &parameter, std::list<Integer> &i) const throw();
+    inline bool getIntegerList(const std::string &prefix, const std::string &parameter, std::list<Integer> &i) const;
 
     /** Retrieve truth value of ini-parameter name.
      *
      * throw "IniParameterError" if ini-parameter not known or conversion fails
      */
-    bool getBoolean(std::string prefix, std::string parameter) const throw(SmartACE::IniParameterError);
+    bool getBoolean(std::string prefix, std::string parameter) const;
 
-    std::list<bool> getBooleanList(std::string prefix, std::string parameter) const throw(SmartACE::IniParameterError);
+    std::list<bool> getBooleanList(std::string prefix, std::string parameter) const;
 
     /** Retrieve truth value of ini-parameter name.
      *
      * leave \a b alone and return false,
      * if ini-parameter not known or conversion fails
      */
-    bool getBoolean(const std::string &prefix, const std::string &parameter, bool &b) const throw();
+    bool getBoolean(const std::string &prefix, const std::string &parameter, bool &b) const;
 
-    bool getBooleanList(const std::string &prefix, const std::string &parameter, std::list<bool> &b) const throw();
+    bool getBooleanList(const std::string &prefix, const std::string &parameter, std::list<bool> &b) const;
 
     /** Retrieve string value of ini-parameter name
      *
      *  throw "IniParameterError" if parameter not known
      */
-    std::string getString(std::string prefix, std::string parameter) const throw(SmartACE::IniParameterError);
+    std::string getString(std::string prefix, std::string parameter) const;
     
-    std::list<std::string> getStringList(std::string prefix, std::string parameter) const throw(SmartACE::IniParameterError);
+    std::list<std::string> getStringList(std::string prefix, std::string parameter) const;
 
     /** Retrieve string value of ini-parameter name
      *
      *  leave \a s alone and return false if ini-parameter not known
      */
-    bool getString(const std::string &prefix, const std::string &parameter, std::string &s) const throw();
+    bool getString(const std::string &prefix, const std::string &parameter, std::string &s) const;
     
-    bool getStringList(const std::string &prefix, const std::string &parameter, std::list<std::string> &s) const throw();
+    bool getStringList(const std::string &prefix, const std::string &parameter, std::list<std::string> &s) const;
 
     /** @internal return the begin Iterator from our map.
      *
@@ -336,7 +336,7 @@ namespace SmartACE {
   };
 
   template<class Float>
-  inline bool SmartACE::SmartIniParameter::getDouble(const std::string &prefix, const std::string &param, Float &d) const throw()
+  inline bool SmartACE::SmartIniParameter::getDouble(const std::string &prefix, const std::string &param, Float &d) const 
   {
     try {
       const Float tmp = getDouble(prefix, param);
@@ -349,7 +349,7 @@ namespace SmartACE {
   }
 
   template<class Float>
-  inline bool SmartACE::SmartIniParameter::getDoubleList(const std::string &prefix, const std::string &param, std::list<Float> &d) const throw()
+  inline bool SmartACE::SmartIniParameter::getDoubleList(const std::string &prefix, const std::string &param, std::list<Float> &d) const 
   {
     try {
       std::list<double> tmp = getDoubleList(prefix, param);
@@ -366,7 +366,7 @@ namespace SmartACE {
   }
 
   template<class Integer>
-  inline bool SmartACE::SmartIniParameter::getInteger(const std::string &prefix, const std::string &param, Integer &i) const throw()
+  inline bool SmartACE::SmartIniParameter::getInteger(const std::string &prefix, const std::string &param, Integer &i) const 
   {
     try {
       const Integer tmp = getInteger(prefix, param);
@@ -379,7 +379,7 @@ namespace SmartACE {
   }
 
   template<class Integer>
-  inline bool SmartACE::SmartIniParameter::getIntegerList(const std::string &prefix, const std::string &param, std::list<Integer> &i) const throw()
+  inline bool SmartACE::SmartIniParameter::getIntegerList(const std::string &prefix, const std::string &param, std::list<Integer> &i) const 
   {
     try {
       std::list<int> tmp = getIntegerList(prefix, param);

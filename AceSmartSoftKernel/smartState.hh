@@ -113,7 +113,7 @@ namespace SmartACE {
     ///
     /// throws exception if someone tries to use this constructor
     ///   SMART_ERROR : this constructor is forbidden
-    StateMaster() throw(SmartACE::SmartError);
+    StateMaster();
 
   public:
     // Initialization
@@ -126,10 +126,10 @@ namespace SmartACE {
      *
      * @param component  management class of the component
      */
-    StateMaster(SmartComponent* component) throw(SmartACE::SmartError);
+    StateMaster(SmartComponent* component);
 
     /// Destructor
-    virtual ~StateMaster() throw();
+    virtual ~StateMaster();
 
     /** Allow or abort and reject blocking calls.
      *
@@ -142,7 +142,7 @@ namespace SmartACE {
      *   - SMART_OK                  : new mode set
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode blocking(const bool b) throw();
+    Smart::StatusCode blocking(const bool b);
 
     /** Blocking call to change the main state.
      *
@@ -169,7 +169,7 @@ namespace SmartACE {
      *   - SMART_ERROR_COMMUNICATION : communication problems
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode setWaitState(const std::string& state, const std::string& server, const std::string& service="state") throw();
+    Smart::StatusCode setWaitState(const std::string& state, const std::string& server, const std::string& service="state");
 
     /** Blocking call which returns the currently active main state.
      *
@@ -192,7 +192,7 @@ namespace SmartACE {
      *         Therefore there is no need to abort this method call when
      *         a request to reach the neutral state is pending)
      */
-    Smart::StatusCode getCurrentMainState(std::string& MainState, const std::string& server, const std::string& service="state") throw();
+    Smart::StatusCode getCurrentMainState(std::string& MainState, const std::string& server, const std::string& service="state");
 
     /** Blocking call which returns a list of valid main states.
      *
@@ -212,7 +212,7 @@ namespace SmartACE {
      *         Therefore there is no need to abort this method call when
      *         a request to reach the neutral state is pending)
      */
-    Smart::StatusCode getAllMainStates(std::list<std::string>& MainStates, const std::string& server, const std::string& service="state") throw();
+    Smart::StatusCode getAllMainStates(std::list<std::string>& MainStates, const std::string& server, const std::string& service="state");
 
     /** Blocking call which returns a list of substates assigned to the
      *  specified main state.
@@ -236,7 +236,7 @@ namespace SmartACE {
      *         Therefore there is no need to abort this method call when
      *         a request to reach the neutral state is pending)
      */
-    Smart::StatusCode getSubStates(const std::string& MainState, std::list<std::string>& SubStates, const std::string& server, const std::string& service="state") throw();
+    Smart::StatusCode getSubStates(const std::string& MainState, std::list<std::string>& SubStates, const std::string& server, const std::string& service="state");
   };
 }
 
@@ -302,13 +302,13 @@ namespace SmartACE {
      *
      *  @param SubState name of newly entered substate
      */
-    virtual void handleEnterState( const std::string& SubState ) throw() = 0;
+    virtual void handleEnterState( const std::string& SubState )  = 0;
 
     /** called when a substate is left
      *
      *  @param SubState name of deactivated substate
      */
-    virtual void handleQuitState( const std::string& SubState ) throw() = 0;
+    virtual void handleQuitState( const std::string& SubState )  = 0;
   };
 
   /** @internal
@@ -328,12 +328,12 @@ namespace SmartACE {
      *
      * @param state  <I>StateSlave</I> needed to access it from the handler
      */
-    StateSlaveHandler(StateSlave* state) throw();
+    StateSlaveHandler(StateSlave* state);
 
     /// Destructor
-    virtual ~StateSlaveHandler() throw();
+    virtual ~StateSlaveHandler();
 
-      virtual void handleQuery(const QueryId &id, const SmartCommStateRequest& request) throw();
+      virtual void handleQuery(const QueryId &id, const SmartCommStateRequest& request);
   };
 
   /** Slave part of state pattern.
@@ -444,7 +444,7 @@ namespace SmartACE {
     static Smart::StatusCode hndGetSubStates(void*, const std::string&, std::vector<std::string>&);
 
     /// Default constructor
-    StateSlave() throw(SmartError);
+    StateSlave() ;
 
   public:
     // internal use only
@@ -453,17 +453,17 @@ namespace SmartACE {
 
     // Initialization
 
-    //StateSlave(SmartComponent* component, StateChangeHandler & hnd) throw(SmartError);
+    //StateSlave(SmartComponent* component, StateChangeHandler & hnd) ;
 
     /** Constructor.
      *  @param component management class of the component
      *  @param hnd       optional callback interface which is called on each state-change
      *  @param serviceName the name for the internal communication-port (as will be visible on component hull)
      */
-    StateSlave(SmartComponent* component, StateChangeHandler * hnd = NULL, const std::string& serviceName = "state") throw(SmartError);
+    StateSlave(SmartComponent* component, StateChangeHandler * hnd = NULL, const std::string& serviceName = "state") ;
 
     /// Destructor
-    virtual ~StateSlave() throw();
+    virtual ~StateSlave();
 
     // User interface
 
@@ -512,7 +512,7 @@ namespace SmartACE {
      *   - SMART_ERROR_COMMUNICATION : communication problems
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode defineStates(const std::string& MainState, const std::string& SubState) throw();
+    Smart::StatusCode defineStates(const std::string& MainState, const std::string& SubState);
 
 
     /** Set the first MainState which is automatically entered after the pattern switched into Alive state. 
@@ -551,7 +551,7 @@ namespace SmartACE {
      *    - SMART_OK  : configuration has been activated and no more
      *                  state definitions possible
      */
-    Smart::StatusCode activate() throw();
+    Smart::StatusCode activate();
 
     /** Wait until specified substate is available and acquire it.
      *
@@ -568,7 +568,7 @@ namespace SmartACE {
      *   - SMART_ERROR_COMMUNICATION : communication problems
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode acquire(const std::string& SubState) throw();
+    Smart::StatusCode acquire(const std::string& SubState);
 
     /** Acquire specified substate if available, otherwise return immediately.
      *
@@ -588,7 +588,7 @@ namespace SmartACE {
      *   - SMART_ERROR_COMMUNICATION : communication problems
      *   - SMART_ERROR : something went wrong
      */
-    Smart::StatusCode tryAcquire(const std::string& SubState) throw();
+    Smart::StatusCode tryAcquire(const std::string& SubState);
 
     /** Release specified substate.
      *
@@ -603,7 +603,29 @@ namespace SmartACE {
      *   - SMART_ERROR_COMMUNICATION : communication problems
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode release(const std::string& SubState) throw();
+    Smart::StatusCode release(const std::string& SubState);
+  };
+
+  class ScopedStateLock {
+  private:
+	  StateSlave *state_slave;
+	  std::string sub_state;
+	  Smart::StatusCode status;
+  public:
+	  ScopedStateLock(StateSlave *state_slave, const std::string &sub_state)
+  	  :	state_slave(state_slave), sub_state(sub_state)
+  	  {
+		  status = state_slave->acquire(sub_state);
+  	  }
+	  ~ScopedStateLock()
+	  {
+		  if(status == Smart::SMART_OK) {
+			  state_slave->release(sub_state);
+		  }
+	  }
+	  operator Smart::StatusCode() const {
+		  return status;
+	  }
   };
 }
 

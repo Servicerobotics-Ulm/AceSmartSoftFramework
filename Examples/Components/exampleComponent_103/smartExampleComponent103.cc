@@ -55,7 +55,7 @@ public:
 	TimeQueryHandler(SmartACE::QueryServer<SmartACE::CommExampleTime,SmartACE::CommExampleTime> *server)
 	: SmartACE::QueryServerHandler<SmartACE::CommExampleTime,SmartACE::CommExampleTime>(server)
 	  { }
-  void handleQuery(const SmartACE::QueryId &id, const SmartACE::CommExampleTime& r) throw()
+  void handleQuery(const SmartACE::QueryId &id, const SmartACE::CommExampleTime& r) 
     {
       SmartACE::CommExampleTime a;
 
@@ -97,7 +97,7 @@ public:
 	SlowSumQueryHandler(SmartACE::QueryServer<SmartACE::CommExampleValues,SmartACE::CommExampleResult> *server)
 	: SmartACE::QueryServerHandler<SmartACE::CommExampleValues,SmartACE::CommExampleResult>(server)
 	  { }
-  void handleQuery(const SmartACE::QueryId &id, const SmartACE::CommExampleValues& r) throw()
+  void handleQuery(const SmartACE::QueryId &id, const SmartACE::CommExampleValues& r) 
 
     {
       SmartACE::CommExampleResult a;

@@ -113,7 +113,7 @@ void SmartACE::SendClient<C>::internalServerInitiatedDisconnect(void *ptr, int c
 //
 // default constructor
 //
-template<class C> inline SmartACE::SendClient<C>::SendClient(void) throw(SmartACE::SmartError)
+template<class C> inline SmartACE::SendClient<C>::SendClient(void) 
 :	Smart::ISendClientPattern<C>(0)
 {
   std::cerr << "CommPattern (sendClient): ERROR: Entered default constructor SendClient" << std::endl;
@@ -124,7 +124,7 @@ template<class C> inline SmartACE::SendClient<C>::SendClient(void) throw(SmartAC
 //
 // standard constructor port
 //
-template<class C> inline SmartACE::SendClient<C>::SendClient(SmartComponent *m,const std::string &port,SmartACE::WiringSlave *slave) throw(SmartACE::SmartError)
+template<class C> inline SmartACE::SendClient<C>::SendClient(SmartComponent *m,const std::string &port,SmartACE::WiringSlave *slave) 
 :	Smart::ISendClientPattern<C>(m)
 {
   Smart::StatusCode status;
@@ -172,7 +172,7 @@ template<class C> inline SmartACE::SendClient<C>::SendClient(SmartComponent *m,c
 //
 // standard constructor
 //
-template<class C> inline SmartACE::SendClient<C>::SendClient(SmartComponent *m) throw(SmartACE::SmartError)
+template<class C> inline SmartACE::SendClient<C>::SendClient(SmartComponent *m) 
 :	Smart::ISendClientPattern<C>(m)
 {
   // set the configuration flags approriately
@@ -205,7 +205,7 @@ template<class C> inline SmartACE::SendClient<C>::SendClient(SmartComponent *m) 
 //
 // standard constructor already wired
 //
-template<class C> inline SmartACE::SendClient<C>::SendClient(SmartComponent *m,const std::string &srv,const std::string &svc) throw(SmartACE::SmartError)
+template<class C> inline SmartACE::SendClient<C>::SendClient(SmartComponent *m,const std::string &srv,const std::string &svc) 
 :	Smart::ISendClientPattern<C>(m,srv,svc)
 {
   Smart::StatusCode status;
@@ -272,7 +272,7 @@ template<class C> inline SmartACE::SendClient<C>::SendClient(SmartComponent *m,c
 //
 // destructor
 //
-template<class C> inline SmartACE::SendClient<C>::~SendClient(void) throw()
+template<class C> inline SmartACE::SendClient<C>::~SendClient(void) 
 {
   //
   // remove port from managed set of ports and disconnect from server even if not
@@ -303,7 +303,7 @@ template<class C> inline SmartACE::SendClient<C>::~SendClient(void) throw()
 //
 //
 //
-template<class C> Smart::StatusCode SmartACE::SendClient<C>::add(SmartACE::WiringSlave *slave, const std::string &port) throw()
+template<class C> Smart::StatusCode SmartACE::SendClient<C>::add(SmartACE::WiringSlave *slave, const std::string &port) 
 {
   Smart::StatusCode status;
 
@@ -327,7 +327,7 @@ template<class C> Smart::StatusCode SmartACE::SendClient<C>::add(SmartACE::Wirin
 //
 //
 //
-template<class C> Smart::StatusCode SmartACE::SendClient<C>::remove() throw()
+template<class C> Smart::StatusCode SmartACE::SendClient<C>::remove() 
 {
   Smart::StatusCode status;
 
@@ -351,7 +351,7 @@ template<class C> Smart::StatusCode SmartACE::SendClient<C>::remove() throw()
 //
 //
 //
-template<class C> Smart::StatusCode SmartACE::SendClient<C>::connect(const std::string &srv, const std::string &svc) throw()
+template<class C> Smart::StatusCode SmartACE::SendClient<C>::connect(const std::string &srv, const std::string &svc) 
 {
    Smart::StatusCode result;
 
@@ -499,7 +499,7 @@ template<class C> Smart::StatusCode SmartACE::SendClient<C>::connect(const std::
 //
 //
 //
-template<class C> Smart::StatusCode SmartACE::SendClient<C>::disconnect() throw()
+template<class C> Smart::StatusCode SmartACE::SendClient<C>::disconnect() 
 {
   Smart::StatusCode result;
 
@@ -561,7 +561,7 @@ template<class C> Smart::StatusCode SmartACE::SendClient<C>::disconnect() throw(
 //
 //
 //
-template<class C> Smart::StatusCode SmartACE::SendClient<C>::blocking(const bool b) throw()
+template<class C> Smart::StatusCode SmartACE::SendClient<C>::blocking(const bool b) 
 {
   return Smart::SMART_OK;
 }
@@ -569,7 +569,7 @@ template<class C> Smart::StatusCode SmartACE::SendClient<C>::blocking(const bool
 //
 //
 //
-template<class C> Smart::StatusCode SmartACE::SendClient<C>::send(const C &c) throw()
+template<class C> Smart::StatusCode SmartACE::SendClient<C>::send(const C &c) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
 
@@ -820,7 +820,7 @@ template<class C> void SmartACE::SendServer<C>::hndDisconnect(void* ptr, const S
 //
 // default constructor
 //
-template<class C> inline SmartACE::SendServer<C>::SendServer(void) throw(SmartACE::SmartError)
+template<class C> inline SmartACE::SendServer<C>::SendServer(void) 
 {
   std::cerr << "CommPattern (sendServer): ERROR: Entered default constructor SendServer" << std::endl;
 
@@ -831,7 +831,7 @@ template<class C> inline SmartACE::SendServer<C>::SendServer(void) throw(SmartAC
 // standard constructor
 //
 template<class C> inline SmartACE::SendServer<C>::SendServer(SmartComponent *m,
-                                                        const std::string &svc) throw(SmartACE::SmartError)
+                                                        const std::string &svc) 
   : Smart::ISendServerPattern<C>(m,svc),
     uuid_genrator(),
     service_identifier(0),
@@ -928,7 +928,7 @@ template<class C> inline SmartACE::SendServer<C>::SendServer(SmartComponent *m,
 //
 // default destructor
 //
-template<class C> inline SmartACE::SendServer<C>::~SendServer(void) throw()
+template<class C> inline SmartACE::SendServer<C>::~SendServer(void) 
 {
 	this->serverInitiatedDisconnect();
 

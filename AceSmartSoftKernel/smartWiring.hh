@@ -82,7 +82,7 @@ namespace SmartACE {
     SmartComponent *component;
 
     /// Default constructor
-    WiringMaster() throw(SmartError);
+    WiringMaster() ;
 
 	//<alexej date="2009-06-17">
 	/// internal state variable detecting disabled NamingService
@@ -97,11 +97,11 @@ namespace SmartACE {
      *  (Currently exception not thrown)
      *
      */
-    WiringMaster(SmartComponent* component) throw(SmartACE::SmartError);
+    WiringMaster(SmartComponent* component);
 
     /** Destructor.
      */
-    virtual ~WiringMaster() throw();
+    virtual ~WiringMaster();
 
     /** Blocking call to connect port of the slave component to a service of a server component.
      *
@@ -144,7 +144,7 @@ namespace SmartACE {
      *                                  service provider.
      *    - SMART_ERROR               : something went completely wrong, see <I>SMART_ERROR_COMMUNICATION</I>
      */
-    Smart::StatusCode connect(const std::string & slavecmpt,const std::string & slaveprt, const std::string & servercmpt,const std::string & serversvc) throw();
+    Smart::StatusCode connect(const std::string & slavecmpt,const std::string & slaveprt, const std::string & servercmpt,const std::string & serversvc);
 
     /** Blocking call to disconnect port of a slave component from a service of a server.
      *
@@ -174,7 +174,7 @@ namespace SmartACE {
      *                                  disconnected.
      *    - SMART_ERROR               : something went completely wrong, see <I>SMART_ERROR_COMMUNICATION</I>
      */
-    Smart::StatusCode disconnect(const std::string & slavecmpt,const std::string & slaveprt) throw();
+    Smart::StatusCode disconnect(const std::string & slavecmpt,const std::string & slaveprt);
   };
 }
 
@@ -209,17 +209,17 @@ namespace SmartACE {
     WiringSlave * wiringslave;
 
     /// default constructor
-    WiringHandler() throw(SmartError);
+    WiringHandler() ;
 
   public:
     /** Constructor.
      *
      * @param slave  <I>WiringSlave</I> needed to access it from the handler
      */
-    WiringHandler(WiringSlave* slave) throw();
+    WiringHandler(WiringSlave* slave);
 
     /// Destructor
-    virtual ~WiringHandler() throw();
+    virtual ~WiringHandler();
 
     /// handle query method of query handler class
     virtual void handleQuery(const QueryId &id, const SmartCommWiring& request);
@@ -276,19 +276,19 @@ namespace SmartACE {
     QueryServer<SmartCommWiring,SmartCommWiring> * wiring;
 
     ///
-    WiringSlave() throw(SmartError);
+    WiringSlave() ;
 
   public:
     /** constructor.
      *
      *  (Currently exception not thrown)
      */
-	  WiringSlave(SmartComponent* component, std::string slaveaddress="") throw(SmartACE::SmartError);
+	  WiringSlave(SmartComponent* component, std::string slaveaddress="");
 
     /** destructor.
      *
      */
-    virtual ~WiringSlave() throw();
+    virtual ~WiringSlave();
 
     /**
      *

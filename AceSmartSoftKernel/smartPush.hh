@@ -191,7 +191,7 @@ namespace SmartACE {
     ///
     /// throws exception if someone tries to use this constructor
     ///   SMART_ERROR : this constructor is forbidden
-    PushClient() throw(SmartACE::SmartError);
+    PushClient();
 
     /** (Interface used by wiring service. Requires ordinary pointer since
      *   client patterns have different types and even have different template
@@ -235,7 +235,7 @@ namespace SmartACE {
      * @param port       name of the client-port (visible in <i>wiring-slave</i>)
      * @param slave      reference to wiring-slave
      */
-    PushClient(SmartComponent* component, const std::string& port, WiringSlave* slave) throw(SmartACE::SmartError);
+    PushClient(SmartComponent* component, const std::string& port, WiringSlave* slave);
 
     /** Constructor (not wired with service provider and not exposed as port).
      *  add()/remove() and connect()/disconnect() can always be used to change
@@ -246,7 +246,7 @@ namespace SmartACE {
      *
      * @param component  management class of the component
      */
-    PushClient(SmartComponent* component) throw(SmartACE::SmartError);
+    PushClient(SmartComponent* component);
 
     /** Constructor (wired with specified service provider).
      *  Connects to the denoted service and blocks until the connection
@@ -267,13 +267,13 @@ namespace SmartACE {
      * @param server     name of the server
      * @param service    name of the service
      */
-    PushClient(SmartComponent* component, const std::string& server, const std::string& service) throw(SmartACE::SmartError);
+    PushClient(SmartComponent* component, const std::string& server, const std::string& service);
 
     /** Destructor.
      *  The destructor calls remove() and disconnect() and therefore properly cleans up
      *  every pending data reception and removes the instance from the set of wireable ports.
      */
-    virtual ~PushClient() throw();
+    virtual ~PushClient();
 
     /** Add this instance to the set of ports wireable via the
      *  wiring pattern from outside the component. Already
@@ -294,7 +294,7 @@ namespace SmartACE {
      *                                 instance now not available as port
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode add(WiringSlave* slave, const std::string& port) throw();
+    Smart::StatusCode add(WiringSlave* slave, const std::string& port);
 
     /** Remove this service requestor from the set of ports wireable
      *  via the wiring pattern from outside the component. Already
@@ -309,7 +309,7 @@ namespace SmartACE {
      *                                 is removed from the set of ports in
      *                                 any case.
      */
-    Smart::StatusCode remove() throw();
+    Smart::StatusCode remove();
 
     /** Connect this service requestor to the denoted service provider. An
      *  already established connection is first disconnected. See disconnect()
@@ -335,7 +335,7 @@ namespace SmartACE {
      *   - SMART_ERROR               : something went wrong, service requestor is now not connected to any
      *                                 service provider.
      */
-    Smart::StatusCode connect(const std::string& server, const std::string& service) throw();
+    Smart::StatusCode connect(const std::string& server, const std::string& service);
 
     /** Disconnect the service requestor from the service provider.
      *
@@ -355,7 +355,7 @@ namespace SmartACE {
      *   - SMART_ERROR               : something went wrong. Again at least the service requestor
      *                                 is in the disconnected state.
      */
-    Smart::StatusCode disconnect() throw();
+    Smart::StatusCode disconnect();
 
     /** Subscribe at the server to periodically get every n-th update. A
      *  newly subscribed client gets the next available new data and is
@@ -371,7 +371,7 @@ namespace SmartACE {
      *    - SMART_ERROR_COMMUNICATION : communication problems, not subscribed
      *    - SMART_ERROR               : something went wrong, not subscribed
      */
-    Smart::StatusCode subscribe(const int &prescale = 1) throw();
+    Smart::StatusCode subscribe(const int &prescale = 1);
 
     /** Unsubscribe to get no more updates. All blocking calls are aborted with the appropriate
      *  status and yet received and still buffered data is deleted to avoid returning old data.
@@ -385,7 +385,7 @@ namespace SmartACE {
      * (can not return SMART_DISCONNECTED since then client is for sure also unsubscribed
      *  which results in SMART_OK)
      */
-    Smart::StatusCode unsubscribe() throw();
+    Smart::StatusCode unsubscribe();
 
     /** Allow or abort and reject blocking calls.
      *
@@ -398,7 +398,7 @@ namespace SmartACE {
      *   - SMART_OK                  : new mode set
      *   - SMART_ERROR               : something went wrong
      */
-     Smart::StatusCode blocking(const bool b) throw();
+     Smart::StatusCode blocking(const bool b);
 
     /** Non-blocking call to immediately return the latest available
      *  data buffered at the client side from the most recent update.
@@ -424,7 +424,7 @@ namespace SmartACE {
      *   - SMART_DISCONNECTED        : no data returned since client is even not connected to a server.
      *   - SMART_ERROR               : something went wrong
      */
-     Smart::StatusCode getUpdate(DataType& d) throw();
+     Smart::StatusCode getUpdate(DataType& d);
 
     /** Blocking call which waits until the next update is received.
      *
@@ -446,7 +446,7 @@ namespace SmartACE {
      *                                 to a server.
      *   - SMART_ERROR               : something went completely wrong and no valid data returned.
      */
-     Smart::StatusCode getUpdateWait(DataType& d, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero()) throw();
+     Smart::StatusCode getUpdateWait(DataType& d, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero());
 
     /** Get cycle time and server state.
      *
@@ -464,7 +464,7 @@ namespace SmartACE {
      *   - SMART_ERROR_COMMUNICATION : communication problems and returned server info is not valid.
      *   - SMART_ERROR               : something went completely wrong and no valid server info returned.
      */
-     Smart::StatusCode getServerInfo(SmartTimeValue& t,bool& r) throw();
+     Smart::StatusCode getServerInfo(SmartTimeValue& t,bool& r);
   };
 }
 
@@ -589,7 +589,7 @@ namespace SmartACE {
     ///
     /// throws exception if someone tries to use this constructor
     ///   SMART_ERROR : this constructor forbidden
-    PushServer() throw(SmartACE::SmartError);
+    PushServer();
 
   public:
     /** Constructor.
@@ -600,14 +600,14 @@ namespace SmartACE {
      *
      * (Currently exception not thrown)
      */
-    PushServer(SmartComponent* component, const std::string& svc, const SmartTimeValue &minCycleTime=SmartTimeValue::zero) throw(SmartACE::SmartError);
+    PushServer(SmartComponent* component, const std::string& svc, const SmartTimeValue &minCycleTime=SmartTimeValue::zero);
 
     /** Destructor.
      *  Properly disconnects all service requestors in case of destruction
      *  such that all connected and subscribed clients are unsubscribed and
      *  disconnected properly.
      */
-    virtual ~PushServer() throw();
+    virtual ~PushServer();
 
     /** Provide new data which is sent to all subscribed clients
      *  taking into account their individual update cycles. Update
@@ -638,7 +638,7 @@ namespace SmartACE {
      *                                  client. Some clients might still been
      *                                  updated correctly.
      */
-    Smart::StatusCode put(const DataType& d) throw();
+    Smart::StatusCode put(const DataType& d);
   };
 }
 

@@ -85,7 +85,11 @@ int SmartACE::CommParameterRequest::getList(const std::string &key, std::list<Va
 			Value value;
 			std::stringstream s(*sit);
 			s >> value;
-			if(s.fail()) result = -1;
+			if(s.fail()){
+				result = -1;
+			} else {
+				valueList.push_back(value);
+			}
 		}
 		return result;
 	}

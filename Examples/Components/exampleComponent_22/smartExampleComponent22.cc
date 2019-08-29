@@ -52,7 +52,7 @@ public:
 	TimeQueryHandler(SmartACE::QueryServer<SmartACE::CommExampleTime,SmartACE::CommExampleTime> *server)
 	: SmartACE::QueryServerHandler<SmartACE::CommExampleTime,SmartACE::CommExampleTime>(server)
 	  { }
-  void handleQuery(const SmartACE::QueryId &id, const SmartACE::CommExampleTime& r) throw()
+  void handleQuery(const SmartACE::QueryId &id, const SmartACE::CommExampleTime& r) 
     {
       SmartACE::CommExampleTime a;
 

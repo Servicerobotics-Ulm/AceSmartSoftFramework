@@ -205,7 +205,7 @@ void SmartACE::EventClient<P,E>::internalServerInitiatedDisconnect(void *ptr, in
 //
 // private helper method to clean up list of events
 //
-template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::removeActivationId(const SmartACE::EventId id) throw()
+template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::removeActivationId(const SmartACE::EventId id) 
 {
   EventClientList *lptr  = 0;
   EventClientList *hlptr = 0;
@@ -267,7 +267,7 @@ template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::removeAc
 //
 // default constructor
 //
-template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(void) throw(SmartACE::SmartError)
+template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(void) 
 : Smart::IEventClientPattern<P,E,EventId>(0)
 {
   std::cerr << "CommPattern (event): ERROR: Entered default constructor EventClient" << std::endl;
@@ -278,7 +278,7 @@ template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(void) 
 //
 // standard constructor port
 //
-template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m,const std::string& port, WiringSlave* slave) throw(SmartACE::SmartError)
+template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m,const std::string& port, WiringSlave* slave) 
 : Smart::IEventClientPattern<P,E,EventId>(m)
 {
   Smart::StatusCode status;
@@ -328,7 +328,7 @@ template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(SmartC
 //
 // standard constructor
 //
-template<class P,class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m) throw (SmartACE::SmartError)
+template<class P,class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m) 
 : Smart::IEventClientPattern<P,E,EventId>(m)
 {
   // set the configuration flags appropriately
@@ -362,7 +362,7 @@ template<class P,class E> inline SmartACE::EventClient<P,E>::EventClient(SmartCo
 //
 // standard constructor already wired
 //
-template<class P,class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m,const std::string& srv,const std::string& svc) throw (SmartACE::SmartError)
+template<class P,class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m,const std::string& srv,const std::string& svc) 
 : Smart::IEventClientPattern<P,E,EventId>(m,srv,svc)
 {
   Smart::StatusCode status;
@@ -428,7 +428,7 @@ template<class P,class E> inline SmartACE::EventClient<P,E>::EventClient(SmartCo
 //
 // destructor
 //
-template<class P,class E> inline SmartACE::EventClient<P,E>::~EventClient(void) throw()
+template<class P,class E> inline SmartACE::EventClient<P,E>::~EventClient(void) 
 {
   EventClientList *lptr = 0;
 
@@ -472,7 +472,7 @@ template<class P,class E> inline SmartACE::EventClient<P,E>::~EventClient(void) 
 //
 //
 //
-template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::add(WiringSlave* slave, const std::string& port) throw()
+template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::add(WiringSlave* slave, const std::string& port) 
 {
   Smart::StatusCode status;
 
@@ -496,7 +496,7 @@ template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::add(Wiri
 //
 //
 //
-template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::remove() throw()
+template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::remove() 
 {
   Smart::StatusCode status;
 
@@ -520,7 +520,7 @@ template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::remove()
 //
 //
 //
-template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::connect(const std::string& srv, const std::string& svc) throw()
+template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::connect(const std::string& srv, const std::string& svc) 
 {
   Smart::StatusCode result;
 
@@ -673,7 +673,7 @@ template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::connect(
 //
 //
 //
-template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::disconnect() throw()
+template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::disconnect() 
 {
   Smart::StatusCode result;
   Smart::StatusCode status;
@@ -759,7 +759,7 @@ template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::disconne
 //
 //
 //
-template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::blocking(const bool b) throw()
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::blocking(const bool b) 
 {
   Smart::StatusCode result = Smart::SMART_OK;
   EventClientList *lptr = 0;
@@ -785,7 +785,7 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::blockin
 //
 //
 //
-template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activate(const Smart::EventMode &m, const P& p, EventId& id) throw()
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activate(const Smart::EventMode &m, const P& p, EventId& id) 
 {
    EventClientList *lptr;
    Smart::StatusCode result;
@@ -881,7 +881,7 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activat
 //
 //
 //
-template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::deactivate(const EventId &id) throw()
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::deactivate(const EventId &id) 
 {
   Smart::StatusCode result;
   EventClientList *lptr;
@@ -950,7 +950,7 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::deactiv
 //
 //
 //
-template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::tryEvent(const EventId &id) throw()
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::tryEvent(const EventId &id) 
 {
   EventClientList *lptr;
   Smart::StatusCode  result;
@@ -1002,7 +1002,7 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::tryEven
 //
 //
 //
-template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getEvent(const EventId &id, E& e, const std::chrono::steady_clock::duration &timeout) throw()
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getEvent(const EventId &id, E& e, const std::chrono::steady_clock::duration &timeout) 
 {
   EventClientList *lptr;
   Smart::StatusCode result;
@@ -1158,7 +1158,7 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getEven
 //
 //
 //
-template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getNextEvent(const EventId &id, E& e, const std::chrono::steady_clock::duration &timeout) throw()
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getNextEvent(const EventId &id, E& e, const std::chrono::steady_clock::duration &timeout) 
 {
   EventClientList *lptr;
   Smart::StatusCode result;
@@ -1581,7 +1581,7 @@ template<class P,class E,class S> void SmartACE::EventServer<P,E,S>::hndDeactiva
 //
 // default constructor
 //
-template<class P, class E, class S> inline SmartACE::EventServer<P,E,S>::EventServer(void) throw(SmartACE::SmartError)
+template<class P, class E, class S> inline SmartACE::EventServer<P,E,S>::EventServer(void) 
 {
   std::cerr << "CommPattern (event): ERROR: Entered default constructor EventServer" << std::endl;
 
@@ -1594,7 +1594,7 @@ template<class P, class E, class S> inline SmartACE::EventServer<P,E,S>::EventSe
 template<class P, class E, class S>
 inline SmartACE::EventServer<P,E,S>::EventServer(SmartComponent* m,
                                             const std::string& svc,
-											Smart::IEventTestHandler<P,E,S> *handler) throw()
+											Smart::IEventTestHandler<P,E,S> *handler) 
   : Smart::IEventServerPattern<P,E,S,EventId>(m,svc,handler),
 	uuid_genrator(),
     service_identifier(0),
@@ -1696,7 +1696,7 @@ inline SmartACE::EventServer<P,E,S>::EventServer(SmartComponent* m,
 //
 // default destructor
 //
-template<class P, class E, class S> inline SmartACE::EventServer<P,E,S>::~EventServer(void) throw()
+template<class P, class E, class S> inline SmartACE::EventServer<P,E,S>::~EventServer(void) 
 {
 	this->serverInitiatedDisconnect();
 
@@ -1798,7 +1798,7 @@ template<class P, class E, class S> inline void SmartACE::EventServer<P,E,S>::se
 // puts the current state s into event server object and calls the testEvent methods
 // with this state and the specific parameters
 //
-template<class P, class E, class S> Smart::StatusCode SmartACE::EventServer<P,E,S>::put(const S& s) throw()
+template<class P, class E, class S> Smart::StatusCode SmartACE::EventServer<P,E,S>::put(const S& s) 
 {
   EventServerList *lptr;
   E               e;

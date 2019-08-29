@@ -41,7 +41,7 @@
 //
 // standard constructor
 //
-SmartACE::ParameterMaster::ParameterMaster(SmartComponent* m) throw(SmartACE::SmartError)
+SmartACE::ParameterMaster::ParameterMaster(SmartComponent* m) 
 : mutex()
 , component(m)
 , query_client(component)
@@ -56,7 +56,7 @@ SmartACE::ParameterMaster::ParameterMaster(SmartComponent* m) throw(SmartACE::Sm
 //
 // destructor
 //
-SmartACE::ParameterMaster::~ParameterMaster(void) throw()
+SmartACE::ParameterMaster::~ParameterMaster(void) 
 {
   // client does not bind object at naming service,
   // therefore no unbind of objects needed here
@@ -123,7 +123,7 @@ Smart::StatusCode SmartACE::ParameterMaster::sendParameterWait(
 //
 SmartACE::ParameterSlave::ParameterQueryHandler::ParameterQueryHandler(
 		QueryServer<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse>* server,
-		ParameterUpdateHandler *param_handler) throw()
+		ParameterUpdateHandler *param_handler) 
   : param_handler(param_handler)
   , QueryServerHandler<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse>(server)
 {
@@ -133,7 +133,7 @@ SmartACE::ParameterSlave::ParameterQueryHandler::ParameterQueryHandler(
 //
 // destructor
 //
-SmartACE::ParameterSlave::ParameterQueryHandler::~ParameterQueryHandler() throw()
+SmartACE::ParameterSlave::ParameterQueryHandler::~ParameterQueryHandler() 
 {
   //
 }
@@ -141,7 +141,7 @@ SmartACE::ParameterSlave::ParameterQueryHandler::~ParameterQueryHandler() throw(
 //
 //
 //
-void SmartACE::ParameterSlave::ParameterQueryHandler::handleQuery(const QueryId &id, const SmartACE::CommParameterRequest & request) throw()
+void SmartACE::ParameterSlave::ParameterQueryHandler::handleQuery(const QueryId &id, const SmartACE::CommParameterRequest & request) 
 {
   SmartACE::CommParameterResponse answer;
 
@@ -162,7 +162,7 @@ void SmartACE::ParameterSlave::ParameterQueryHandler::handleQuery(const QueryId 
 //
 //
 //
-SmartACE::ParameterSlave::ParameterSlave(SmartComponent* comp, ParameterUpdateHandler *hnd, std::string slave_address) throw(SmartACE::SmartError)
+SmartACE::ParameterSlave::ParameterSlave(SmartComponent* comp, ParameterUpdateHandler *hnd, std::string slave_address) 
 : component(comp)
 , query_server(comp, slave_address)
 , query_handler(&query_server,hnd)
@@ -172,7 +172,7 @@ SmartACE::ParameterSlave::ParameterSlave(SmartComponent* comp, ParameterUpdateHa
 //
 //
 //
-SmartACE::ParameterSlave::~ParameterSlave(void) throw()
+SmartACE::ParameterSlave::~ParameterSlave(void) 
 {  }
 
 

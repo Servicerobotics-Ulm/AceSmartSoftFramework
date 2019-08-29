@@ -279,7 +279,7 @@ public:
 	MoreThanEventHandler()
 	:	SmartACE::EventHandler<SmartACE::CommExampleEvent1Result>(eventClient3)
 	{ }
-  void handleEvent(const SmartACE::EventId &id, const SmartACE::CommExampleEvent1Result& e) throw()
+  void handleEvent(const SmartACE::EventId &id, const SmartACE::CommExampleEvent1Result& e) 
     {
       int a;
 

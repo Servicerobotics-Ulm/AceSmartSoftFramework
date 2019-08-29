@@ -102,7 +102,7 @@ template<class P, class E> class EventClient;
      *  @param event is the event answer class (Communication Object)
      *         received due to the firing of the activation with identifier id.
      */
-    virtual void handleEvent( const EventId &id, const E& event ) throw() = 0;
+    virtual void handleEvent( const EventId &id, const E& event )  = 0;
   };
 }
 
@@ -219,7 +219,7 @@ namespace SmartACE {
     ///
     /// throws exception if someone tries to use this constructor
     ///   SMART_ERROR : this constructor is forbidden
-    EventClient() throw(SmartACE::SmartError);
+    EventClient();
 
     /** (Interface used by wiring service. Requires ordinary pointer since
      *   client patterns have different types and even have different template
@@ -259,7 +259,7 @@ namespace SmartACE {
      *     - SMART_WRONGID  : id not found in list
      *     - SMART_ERROR    : something went wrong
      */
-    Smart::StatusCode removeActivationId(const SmartACE::EventId id) throw();
+    Smart::StatusCode removeActivationId(const SmartACE::EventId id);
 
   public:
     /** Constructor (exposed as port wireable from outside by other components and without handler).
@@ -278,7 +278,7 @@ namespace SmartACE {
      *  @param port       name of the wireable port
      *  @param slave      wiring slave of this component
      */
-     EventClient(SmartComponent* component, const std::string& port, WiringSlave* slave) throw(SmartACE::SmartError);
+     EventClient(SmartComponent* component, const std::string& port, WiringSlave* slave);
 
      /** Constructor (not wired with service provider, not exposed as port and without handler).
       *
@@ -293,7 +293,7 @@ namespace SmartACE {
       *
       *  @param component  management class of the component
       */
-     EventClient(SmartComponent* component) throw(SmartACE::SmartError);
+     EventClient(SmartComponent* component);
 
      /** Constructor (wired with specified service provider and without handler)
       *
@@ -318,7 +318,7 @@ namespace SmartACE {
       * @param server     name of the server
       * @param service    name of the service
       */
-     EventClient(SmartComponent* component, const std::string& server, const std::string& service) throw(SmartACE::SmartError);
+     EventClient(SmartComponent* component, const std::string& server, const std::string& service);
 
 
     /** Destructor.
@@ -326,7 +326,7 @@ namespace SmartACE {
      *  deactivates every still active event and removes the instance from the
      *  set of wireable ports.
      */
-    virtual ~EventClient() throw();
+    virtual ~EventClient();
 
     /** Add this instance to the set of ports wireable via the
      *  wiring pattern from outside the component. Already
@@ -347,7 +347,7 @@ namespace SmartACE {
      *                                 instance now not available as port
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode add(WiringSlave* slave, const std::string& port) throw();
+    Smart::StatusCode add(WiringSlave* slave, const std::string& port);
 
     /** Remove this service requestor from the set of ports wireable
      *  via the wiring pattern from outside the component. Already
@@ -362,7 +362,7 @@ namespace SmartACE {
      *                                 is removed from the set of ports in
      *                                 any case.
      */
-    Smart::StatusCode remove() throw();
+    Smart::StatusCode remove();
 
     /** Connect this service requestor to the denoted service provider. An
      *  already established connection is first disconnected. See disconnect()
@@ -389,7 +389,7 @@ namespace SmartACE {
      *   - SMART_ERROR               : something went wrong, service requestor is now not connected to any
      *                                 service provider.
      */
-    Smart::StatusCode connect(const std::string& server, const std::string& service) throw();
+    Smart::StatusCode connect(const std::string& server, const std::string& service);
 
     /** Disconnect the service requestor from the service provider.
      *
@@ -410,7 +410,7 @@ namespace SmartACE {
      *   - SMART_ERROR               : something went wrong. Again at least the service requestor
      *                                 is in the disconnected state.
      */
-    Smart::StatusCode disconnect() throw();
+    Smart::StatusCode disconnect();
 
     /** Allow or abort and reject blocking calls.
      *
@@ -423,7 +423,7 @@ namespace SmartACE {
      *   - SMART_OK                  : new mode set
      *   - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode blocking(const bool b) throw();
+    Smart::StatusCode blocking(const bool b);
 
     /** Activate an event with the provided parameters in either "single" or "continuous" mode.
      *
@@ -441,7 +441,7 @@ namespace SmartACE {
      *    - SMART_ERROR               : something went wrong, event not activated, <I>id</I> is not
      *                                  a valid activation identifier.
      */
-    Smart::StatusCode activate(const Smart::EventMode &mode , const P& parameter, EventId& id) throw();
+    Smart::StatusCode activate(const Smart::EventMode &mode , const P& parameter, EventId& id);
 
     /** Deactivate the event with the specified identifier.
      *
@@ -462,7 +462,7 @@ namespace SmartACE {
      * (Hint: can not return SMART_DISCONNECTED since then each event is for sure also
      *        deactivated resulting in SMART_WRONGID)
      */
-    Smart::StatusCode deactivate(const EventId &id) throw();
+    Smart::StatusCode deactivate(const EventId &id);
 
     /** Check whether event has already fired and return immediately
      *  with status information.
@@ -486,7 +486,7 @@ namespace SmartACE {
      *      - SMART_ACTIVE            : currently there is no unconsumed event available.
      *      - SMART_WRONGID           : there is no activation available with this <I>id</I>
      */
-    Smart::StatusCode tryEvent(const EventId &id) throw();
+    Smart::StatusCode tryEvent(const EventId &id);
 
     /** Blocking call which waits for the event to fire and then consumes the event.
      *
@@ -549,7 +549,7 @@ namespace SmartACE {
      *                                <I>event</I> not valid.
      *     </p>
      */
-    Smart::StatusCode getEvent(const EventId &id, E& event, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero()) throw();
+    Smart::StatusCode getEvent(const EventId &id, E& event, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero());
 
     /** Blocking call which waits for the next event.
      *
@@ -607,7 +607,7 @@ namespace SmartACE {
      *                              <I>event</I> not valid.
      *    </p>
      */
-    Smart::StatusCode getNextEvent(const EventId &id, E& event, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero()) throw();
+    Smart::StatusCode getNextEvent(const EventId &id, E& event, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero());
   };
 }
 
@@ -667,7 +667,7 @@ namespace SmartACE {
      *  @return status code
      *     - true: fire event (predicate true)
      *     - false: do not fire event (predicate false) */
-     virtual bool testEvent(P& p, E& e, const S& s) throw() = 0;
+     virtual bool testEvent(P& p, E& e, const S& s)  = 0;
 
      /** This is a hook which is called whenever an event gets activated.
       *
@@ -796,7 +796,7 @@ namespace SmartACE {
     ///
     /// throws exception if someone tries to use this constructor
     ///   SMART_ERROR : this constructor forbidden
-    EventServer() throw(SmartACE::SmartError);
+    EventServer();
 
   public:
     /** Constructor.
@@ -805,13 +805,13 @@ namespace SmartACE {
      *  @param service name of the service
      *  @param handler test handler decide if a event needs to fire
      */
-    EventServer(SmartComponent* component,const std::string& service, Smart::IEventTestHandler<P,E,S> *handler) throw();
+    EventServer(SmartComponent* component,const std::string& service, Smart::IEventTestHandler<P,E,S> *handler);
 
     /** Destructor.
      *  Properly disconnects all service requestors in case of destruction
      *  such that all activations are properly deactivated at client side.
      */
-    virtual ~EventServer() throw();
+    virtual ~EventServer();
 
     /** Initiate testing the event conditions for the activations.
      *
@@ -824,7 +824,7 @@ namespace SmartACE {
      *   - SMART_ERROR               : something went wrong
      *
      */
-    Smart::StatusCode put(const S& state) throw();
+    Smart::StatusCode put(const S& state);
 
   };
 }

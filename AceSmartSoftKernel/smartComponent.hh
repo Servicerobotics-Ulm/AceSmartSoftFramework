@@ -287,7 +287,7 @@ namespace SmartACE {
      *    - SMART_OK    : new mode set
      *    - SMART_ERROR : something went wrong
      */
-    Smart::StatusCode blocking(const bool b) throw();
+    Smart::StatusCode blocking(const bool b);
 
     /** @internal
      * Returns the reference for the StateSlave if one is started otherwise NULL is returned.
@@ -316,32 +316,32 @@ namespace SmartACE {
      *  a component by a single call to the blocking() member function of this class.
      *  This is for example used by the state pattern.
      */
-    Smart::StatusCode addCV(SmartCVwithMemory* cond) throw();
+    Smart::StatusCode addCV(SmartCVwithMemory* cond);
 
     /** @internal
      *  see above
      */
-    Smart::StatusCode removeCV(SmartCVwithMemory* cond) throw();
+    Smart::StatusCode removeCV(SmartCVwithMemory* cond);
 
     /** @internal
      *  see above
      */
-    Smart::StatusCode addCV(SmartCVwithoutMemory* cond) throw();
+    Smart::StatusCode addCV(SmartCVwithoutMemory* cond);
 
     /** @internal
      *  see above
      */
-    Smart::StatusCode removeCV(SmartCVwithoutMemory* cond) throw();
+    Smart::StatusCode removeCV(SmartCVwithoutMemory* cond);
 
     /** @internal
      *  see above
      */
-    Smart::StatusCode addSmartMonitor(SmartMonitor* monitor) throw();
+    Smart::StatusCode addSmartMonitor(SmartMonitor* monitor);
 
     /** @internal
      *  see above
      */
-    Smart::StatusCode removeSmartMonitor(SmartMonitor* monitor) throw();
+    Smart::StatusCode removeSmartMonitor(SmartMonitor* monitor);
 
     /** @internal
      *  provide interruptable wait on condition variable.

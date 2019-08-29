@@ -45,7 +45,7 @@ public:
 	PrintHandler(SmartACE::SendServer<SmartACE::CommExamplePrint> *server)
 	: SmartACE::SendServerHandler<SmartACE::CommExamplePrint>(server)
 	  { }
-  void handleSend(const SmartACE::CommExamplePrint& r) throw()
+  void handleSend(const SmartACE::CommExamplePrint& r) 
     {
       SmartACE::CommExamplePrint a;
       std::cout << "print service received time and message: ";
