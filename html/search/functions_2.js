@@ -3,7 +3,7 @@ var searchData=
   ['cancel_5ftimer',['cancel_timer',['../classSmartACE_1_1TimerHandlerHandleUpcall.html#a65201205b4c53213deb4b0ac0121f0ff',1,'SmartACE::TimerHandlerHandleUpcall']]],
   ['cancel_5ftype',['cancel_type',['../classSmartACE_1_1TimerHandlerHandleUpcall.html#a66a49cca2e81f3cfa8a2b42032ed26a0',1,'SmartACE::TimerHandlerHandleUpcall']]],
   ['cancelalltimers',['cancelAllTimers',['../classSmartACE_1_1TimerManagerThread.html#ad167952d9c89139b387fda10645ca05e',1,'SmartACE::TimerManagerThread']]],
-  ['canceltimer',['cancelTimer',['../classSmartACE_1_1TimerManagerThread.html#afec68801f76253527d7b91b894916569',1,'SmartACE::TimerManagerThread']]],
+  ['canceltimer',['cancelTimer',['../classSmartACE_1_1TimerManagerThread.html#a9e6b64a0178dc186ecc84bf383d6e867',1,'SmartACE::TimerManagerThread']]],
   ['canceltimersof',['cancelTimersOf',['../classSmartACE_1_1TimerManagerThread.html#abdf6df597abb6b5072c4367b9c1df0dc',1,'SmartACE::TimerManagerThread']]],
   ['checkforhelparg',['checkForHelpArg',['../classSmartACE_1_1NSAdapterACE.html#af253e89753444c0f3d0e150b651be88c',1,'SmartACE::NSAdapterACE']]],
   ['checkifparameterexists',['checkIfParameterExists',['../classSmartACE_1_1SmartIniParameter.html#ad9b0b32762fe68bc2c68a9fb38f3e696',1,'SmartACE::SmartIniParameter']]],

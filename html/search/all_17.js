@@ -28,6 +28,7 @@ var searchData=
   ['_7equeryserverhandler',['~QueryServerHandler',['../classSmartACE_1_1QueryServerHandler.html#aeb9ace7f9afe3e57e4d3899405f63560',1,'SmartACE::QueryServerHandler']]],
   ['_7equeryserverservicehandler',['~QueryServerServiceHandler',['../classSmartACE_1_1QueryServerServiceHandler.html#aa6ba2bbf774c7d6e7055dd655da5a27c',1,'SmartACE::QueryServerServiceHandler']]],
   ['_7ereactortask',['~ReactorTask',['../classSmartACE_1_1ReactorTask.html#a3cf81f8680677cbd63d3779feb6e2545',1,'SmartACE::ReactorTask']]],
+  ['_7escopedstatelock',['~ScopedStateLock',['../classSmartACE_1_1ScopedStateLock.html#a5c658bde674ae2c94ffefc1039a3ac48',1,'SmartACE::ScopedStateLock']]],
   ['_7esendclient',['~SendClient',['../classSmartACE_1_1SendClient.html#aa395c40ea594d1e5d27762c621aa3c22',1,'SmartACE::SendClient']]],
   ['_7esendclientservicehandler',['~SendClientServiceHandler',['../classSmartACE_1_1SendClientServiceHandler.html#a911496998beea501ffefb7220517ee28',1,'SmartACE::SendClientServiceHandler']]],
   ['_7esendserver',['~SendServer',['../classSmartACE_1_1SendServer.html#a85c0834b0493d4aef11ffebeb6061f26',1,'SmartACE::SendServer']]],

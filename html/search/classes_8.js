@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['scopedstatelock',['ScopedStateLock',['../classSmartACE_1_1ScopedStateLock.html',1,'SmartACE']]],
   ['sendclient',['SendClient',['../classSmartACE_1_1SendClient.html',1,'SmartACE']]],
   ['sendclientconnector',['SendClientConnector',['../classSmartACE_1_1SendClientConnector.html',1,'SmartACE']]],
   ['sendclientservicehandler',['SendClientServiceHandler',['../classSmartACE_1_1SendClientServiceHandler.html',1,'SmartACE']]],
@@ -12,10 +13,8 @@ var searchData=
   ['sidhandler',['SIDhandler',['../classSmartACE_1_1SIDhandler.html',1,'SmartACE']]],
   ['smartadministrativemonitor',['SmartAdministrativeMonitor',['../classSmartACE_1_1SmartAdministrativeMonitor.html',1,'SmartACE']]],
   ['smartcntcondclass',['SmartCntCondClass',['../classSmartACE_1_1SmartCntCondClass.html',1,'SmartACE']]],
-  ['smartcommstaterequest',['SmartCommStateRequest',['../classSmartACE_1_1SmartCommStateRequest.html',1,'SmartACE']]],
-  ['smartcommstaterequest',['SmartCommStateRequest',['../structCommStateIDL_1_1SmartCommStateRequest.html',1,'CommStateIDL']]],
-  ['smartcommstateresponse',['SmartCommStateResponse',['../classSmartACE_1_1SmartCommStateResponse.html',1,'SmartACE']]],
-  ['smartcommstateresponse',['SmartCommStateResponse',['../structCommStateIDL_1_1SmartCommStateResponse.html',1,'CommStateIDL']]],
+  ['smartcommstaterequest',['SmartCommStateRequest',['../structCommStateIDL_1_1SmartCommStateRequest.html',1,'CommStateIDL::SmartCommStateRequest'],['../classSmartACE_1_1SmartCommStateRequest.html',1,'SmartACE::SmartCommStateRequest']]],
+  ['smartcommstateresponse',['SmartCommStateResponse',['../structCommStateIDL_1_1SmartCommStateResponse.html',1,'CommStateIDL::SmartCommStateResponse'],['../classSmartACE_1_1SmartCommStateResponse.html',1,'SmartACE::SmartCommStateResponse']]],
   ['smartcommwiring',['SmartCommWiring',['../classSmartACE_1_1SmartCommWiring.html',1,'SmartACE']]],
   ['smartcomponent',['SmartComponent',['../classSmartACE_1_1SmartComponent.html',1,'SmartACE']]],
   ['smartcondclass',['SmartCondClass',['../classSmartACE_1_1SmartCondClass.html',1,'SmartACE']]],

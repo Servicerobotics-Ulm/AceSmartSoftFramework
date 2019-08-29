@@ -4,6 +4,6 @@ var searchData=
   ['iniparametererror',['IniParameterError',['../classSmartACE_1_1IniParameterError.html#a1741d7f02fb8f212807ada71d725008d',1,'SmartACE::IniParameterError']]],
   ['init',['init',['../classSmartACE_1_1NSAdapterACE.html#a89c922fcb73ab5d1e1de852c77e39406',1,'SmartACE::NSAdapterACE::init(const int &amp;argc, char **argv)'],['../classSmartACE_1_1NSAdapterACE.html#a42dad85e3b8a6788888ab4293b6aadb0',1,'SmartACE::NSAdapterACE::init(const std::map&lt; std::string, std::string &gt; &amp;parameters)'],['../classSmartACE_1_1StateUpdateThread.html#a4d53de3cb7454eb9219d249103eee60f',1,'SmartACE::StateUpdateThread::init()']]],
   ['initreactor',['initReactor',['../classSmartACE_1_1ReactorTask.html#a6b0ce5f11fc053fab6ff296f587e9339',1,'SmartACE::ReactorTask']]],
-  ['is_5fdisconnected',['is_disconnected',['../classSmartACE_1_1ServiceHandler.html#acdb5d70d531b8146cb0edcf272c12708',1,'SmartACE::ServiceHandler']]],
-  ['isreactorrunning',['isReactorRunning',['../classSmartACE_1_1ReactorTask.html#a0accacfc6b00db7a7b0a607947965a0d',1,'SmartACE::ReactorTask']]]
+  ['is_5fdisconnected',['is_disconnected',['../classSmartACE_1_1ServiceHandler.html#a25065a4f9e020f04df462ac00b4a84d8',1,'SmartACE::ServiceHandler']]],
+  ['isreactorrunning',['isReactorRunning',['../classSmartACE_1_1ReactorTask.html#ae3e4aa57a14736c0d8fc5b9a90626f34',1,'SmartACE::ReactorTask']]]
 ];

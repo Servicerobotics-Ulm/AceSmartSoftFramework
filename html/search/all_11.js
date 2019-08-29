@@ -2,8 +2,7 @@ var searchData=
 [
   ['reactor',['reactor',['../classSmartACE_1_1ReactorTask.html#a7794bb6c8d9f36f3e1b51a97acc7589c',1,'SmartACE::ReactorTask']]],
   ['reactoridletime',['reactorIdleTime',['../classSmartACE_1_1ReactorTask.html#a6a9ae21a792cf6930a3ad678029895e9',1,'SmartACE::ReactorTask']]],
-  ['reactortask',['ReactorTask',['../classSmartACE_1_1ReactorTask.html',1,'SmartACE']]],
-  ['reactortask',['ReactorTask',['../classSmartACE_1_1ReactorTask.html#a363cf681a4cb1f0c15f243735e2738b0',1,'SmartACE::ReactorTask::ReactorTask()'],['../classSmartACE_1_1SmartComponent.html#af7de3a810f50d29a2ba1ae48b7b3677b',1,'SmartACE::SmartComponent::reactorTask()']]],
+  ['reactortask',['ReactorTask',['../classSmartACE_1_1ReactorTask.html',1,'SmartACE::ReactorTask'],['../classSmartACE_1_1ReactorTask.html#a363cf681a4cb1f0c15f243735e2738b0',1,'SmartACE::ReactorTask::ReactorTask()'],['../classSmartACE_1_1SmartComponent.html#af7de3a810f50d29a2ba1ae48b7b3677b',1,'SmartACE::SmartComponent::reactorTask()']]],
   ['rebind',['rebind',['../classSmartACE_1_1NSAdapterACE.html#aaf3d1e7fbab89ac9f295a1322f39e968',1,'SmartACE::NSAdapterACE::rebind()'],['../classSmartACE_1_1NSProxy.html#a3024b72df2f78843009c24b491ce855b',1,'SmartACE::NSProxy::rebind()']]],
   ['registration',['registration',['../classSmartACE_1_1TimerHandlerHandleUpcall.html#a41aba973d3247af14f6244ef6ac3ee78',1,'SmartACE::TimerHandlerHandleUpcall']]],
   ['release',['release',['../classSmartACE_1_1SmartMonitor.html#af9c970a0b7f206acd433df0609d6271a',1,'SmartACE::SmartMonitor::release()'],['../classSmartACE_1_1StateSlave.html#a16b672458954ae6e5e224c18d97676fa',1,'SmartACE::StateSlave::release()']]],
@@ -18,7 +17,7 @@ var searchData=
   ['request',['request',['../classSmartACE_1_1QueryClientServiceHandler.html#ae44361888e90246f7adf4851402a49c0',1,'SmartACE::QueryClientServiceHandler::request()'],['../classSmartACE_1_1SmartQueryServerInterface.html#a39baa861ad07f59247ca4d09212f7354',1,'SmartACE::SmartQueryServerInterface::request()']]],
   ['reset',['reset',['../classSmartACE_1_1SmartMonitor.html#a80eb1f98987a8ca58fb1dd42d136b2cb',1,'SmartACE::SmartMonitor::reset()'],['../classSmartACE_1_1SmartCVwithMemory.html#acae0e69502967e6b8bd988be187eb991',1,'SmartACE::SmartCVwithMemory::reset()']]],
   ['reset_5fnames',['reset_names',['../classSmartACE_1_1NSKeyType.html#af475c81a964f27010127e09e9fc2ce9a',1,'SmartACE::NSKeyType']]],
-  ['resettimerinterval',['resetTimerInterval',['../classSmartACE_1_1TimerManagerThread.html#a8711c4e6dd30e54c574a50d63327d407',1,'SmartACE::TimerManagerThread']]],
+  ['resettimerinterval',['resetTimerInterval',['../classSmartACE_1_1TimerManagerThread.html#ab8a24cc014f60cbc84fd03e9c72b32cc',1,'SmartACE::TimerManagerThread']]],
   ['resolve',['resolve',['../classSmartACE_1_1NSAdapterACE.html#aa95841aac07358c2cd1b641cbe37c34f',1,'SmartACE::NSAdapterACE::resolve()'],['../classSmartACE_1_1NSProxy.html#a2cb265efd0b92fbd44bf6b0b09d13043',1,'SmartACE::NSProxy::resolve()']]],
   ['response',['response',['../structCommParameterIDL_1_1CommParameterResponse.html#a13103f54d7a67a932665a37e69d6f8c2',1,'CommParameterIDL::CommParameterResponse']]],
   ['restore_5fnested_5flevel',['restore_nested_level',['../classSmartACE_1_1SmartMonitor.html#a0fd2f041dc94328bbc5b5d8815e95f09',1,'SmartACE::SmartMonitor']]],

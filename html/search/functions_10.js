@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['get_3c_20std_3a_3astring_20_3e',['get&lt; std::string &gt;',['../namespaceSmartACE.html#a00dd63038a34fa825d6341384053f29d',1,'SmartACE']]],
-  ['getlist_3c_20std_3a_3astring_20_3e',['getList&lt; std::string &gt;',['../namespaceSmartACE.html#aaee38472ac9bb4312f67f022563bcfda',1,'SmartACE']]],
-  ['scheduletimer',['scheduleTimer',['../classSmartACE_1_1TimerManagerThread.html#a8c00f16b04993d70ae2288e4b4b09fa9',1,'SmartACE::TimerManagerThread']]],
+  ['get_3c_20std_3a_3astring_20_3e',['get&lt; std::string &gt;',['../namespaceSmartACE.html#a0dde808bb09cdc79ec85215f04ea553f',1,'SmartACE']]],
+  ['getlist_3c_20std_3a_3astring_20_3e',['getList&lt; std::string &gt;',['../namespaceSmartACE.html#a8da4cc95e0495e313cb11406dfe971ca',1,'SmartACE']]],
+  ['scheduletimer',['scheduleTimer',['../classSmartACE_1_1TimerManagerThread.html#a9d5ca330cdd1fc413833ec074eb43edd',1,'SmartACE::TimerManagerThread']]],
+  ['scopedstatelock',['ScopedStateLock',['../classSmartACE_1_1ScopedStateLock.html#ac527601e1d783dc4400ca0226245806d',1,'SmartACE::ScopedStateLock']]],
   ['searchfile',['searchFile',['../classSmartACE_1_1SmartIniParameter.html#a1fd590edf43e9328b805a98753679832',1,'SmartACE::SmartIniParameter']]],
   ['send',['send',['../classSmartACE_1_1SendClient.html#ae2d0275f7e1037a989f47b05085ed7ed',1,'SmartACE::SendClient']]],
   ['send_5fcommand_5fmessage',['send_command_message',['../classSmartACE_1_1ServiceHandler.html#acaf877904e63e4b598639d82ba4c3276',1,'SmartACE::ServiceHandler']]],
@@ -71,7 +72,7 @@ var searchData=
   ['stop',['stop',['../classSmartACE_1_1Task.html#a819403b02cea21958ffb3a3bc99df61f',1,'SmartACE::Task::stop()'],['../classSmartACE_1_1ShutdownTimer.html#ab1db1405d4f39c1f442cb30a8389fad4',1,'SmartACE::ShutdownTimer::stop()']]],
   ['stop_5fmqueue',['stop_mqueue',['../classSmartACE_1_1SIDhandler.html#a4e7415f454988f06788b7443d72797a9',1,'SmartACE::SIDhandler']]],
   ['stopreactor',['stopReactor',['../classSmartACE_1_1ReactorTask.html#afefb3414e57fd461583a3abd71ad6b33',1,'SmartACE::ReactorTask']]],
-  ['strtoaddr',['strToAddr',['../classSmartACE_1_1NSValueType.html#a3c0d845679dc8e1a2a0878e094d97c71',1,'SmartACE::NSValueType']]],
+  ['strtoaddr',['strToAddr',['../classSmartACE_1_1NSValueType.html#ac342d32fd7717cc6b25d78017584f10d',1,'SmartACE::NSValueType']]],
   ['subscribe',['subscribe',['../classSmartACE_1_1PushClient.html#ad50eb6a0838b37d251cc22417f78ee6f',1,'SmartACE::PushClient::subscribe()'],['../classSmartACE_1_1PushClientServiceHandler.html#a357b6d45283108970c21bf79fb630775',1,'SmartACE::PushClientServiceHandler::subscribe()'],['../classSmartPushServerInterface.html#af6c174aa65b0130ba27f56fd4006ac2e',1,'SmartPushServerInterface::subscribe()']]],
   ['svc',['svc',['../classSmartACE_1_1Task.html#ad8f9dd77f9027690c73cc67646335ea5',1,'SmartACE::Task::svc()'],['../classSmartACE_1_1TimerManagerThread.html#a0d2cf58743b4e22f888050af907a471c',1,'SmartACE::TimerManagerThread::svc()']]]
 ];

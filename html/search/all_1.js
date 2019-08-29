@@ -14,8 +14,8 @@ var searchData=
   ['addentry',['addEntry',['../classSmartACE_1_1SmartIniParameter.html#ad66502853b216cae7d058ca2f4f6d5a7',1,'SmartACE::SmartIniParameter']]],
   ['addenv',['addEnv',['../classSmartACE_1_1SmartIniParameter.html#a025b8134ba8cb0dcf1bdb9eec9487edf',1,'SmartACE::SmartIniParameter']]],
   ['addfile',['addFile',['../classSmartACE_1_1SmartIniParameter.html#a03ae40597262502e50ad92303f96c86a',1,'SmartACE::SmartIniParameter::addFile(const std::string &amp;filename)'],['../classSmartACE_1_1SmartIniParameter.html#af327833a3fc076b34bd96399f0a41946',1,'SmartACE::SmartIniParameter::addFile(int argc, char *const *argv, const std::string &amp;argname, bool allow_stdin=true)'],['../classSmartACE_1_1SmartIniParameter.html#a76bea97c98ba07d92c95ba45185a6370',1,'SmartACE::SmartIniParameter::addFile(std::istream &amp;is)']]],
-  ['addrtoportstr',['addrToPortStr',['../classSmartACE_1_1NSValueType.html#abec7b30ab7c006fbc4149cd791ebfd3e',1,'SmartACE::NSValueType']]],
-  ['addrtostr',['addrToStr',['../classSmartACE_1_1NSValueType.html#aadd3169c8909b3c492686dd7542c12a0',1,'SmartACE::NSValueType']]],
+  ['addrtoportstr',['addrToPortStr',['../classSmartACE_1_1NSValueType.html#a6aa6a49c5ad5827b68098e89073920a4',1,'SmartACE::NSValueType']]],
+  ['addrtostr',['addrToStr',['../classSmartACE_1_1NSValueType.html#a255abfc987eaae37eb6e7e8b8e7d7929',1,'SmartACE::NSValueType']]],
   ['addsmartmonitor',['addSmartMonitor',['../classSmartACE_1_1SmartComponent.html#a12ced353bfd92789f5287646369f23a5',1,'SmartACE::SmartComponent']]],
   ['answer',['answer',['../classSmartACE_1_1QueryServer.html#a2b429c2b472e78513cd956476a45f0d4',1,'SmartACE::QueryServer::answer()'],['../classSmartACE_1_1SmartQueryClientInterface.html#a2ad79edc88046e4cae835886e63af4fb',1,'SmartACE::SmartQueryClientInterface::answer()'],['../classSmartACE_1_1QueryServerServiceHandler.html#aecc3a956c7f3a4d7c4ae4508eaac579f',1,'SmartACE::QueryServerServiceHandler::answer()']]],
   ['acesmartsoft_20generated_20api_20documentation',['AceSmartSoft Generated API Documentation',['../index.html',1,'']]]
