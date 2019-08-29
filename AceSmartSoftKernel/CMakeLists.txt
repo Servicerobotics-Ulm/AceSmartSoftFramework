@@ -88,11 +88,11 @@ TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
 )
 
 
-IF(DEFINED SmartSoft_VERSION)
+IF(DEFINED AceSmartSoft_VERSION)
 # setup the version to be generated into the library name
-SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES VERSION ${SmartSoft_VERSION}
-                                          SOVERSION ${SmartSoft_VERSION_MAJOR})
-ENDIF(DEFINED SmartSoft_VERSION)
+SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES VERSION ${AceSmartSoft_VERSION}
+                                          SOVERSION ${AceSmartSoft_VERSION_MAJOR})
+ENDIF(DEFINED AceSmartSoft_VERSION)
 # ================================================================================
 
 # ================================================================================
