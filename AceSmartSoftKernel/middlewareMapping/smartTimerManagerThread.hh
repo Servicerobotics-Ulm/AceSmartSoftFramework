@@ -198,12 +198,12 @@ TimerHeap;
 
     /** Schedule a timer.
      *
-     *  @param  handler  The handler that will be called when the timer
-     *                   expires.
-     *  @param  act      a value that will be passed to the handler.
-     *  @param  time     relative time for the first timer expiration
-     *  @param  interval Interval for periodic timers. A single shot timer
-     *                   is scheduled by default.
+     *  @param  handler    The handler that will be called when the timer
+     *                     expires.
+     *  @param  act        a value that will be passed to the handler.
+     *  @param  first_time relative time for the first timer expiration
+     *  @param  interval   Interval for periodic timers. A single shot timer
+     *                     is scheduled by default.
      *
      * @return timer_id: -1 on failure. Unique time id else. This id
      *                     can be used to cancel a timer before it
@@ -229,13 +229,10 @@ TimerHeap;
      *  @param  act        pointer to retrive the act that was given on
      *                     scheduleTimer(). Can be used to release ressources
      *                     owned by act. If act == 0, nothing is retrieved.
-     *  @param notifyHandler
-     *                     true: calls timerCancelled() hook on the associated handler
-     *                     false: do not call timerCancelled() hook
      *  @return 0 on success
      *  @return -1 on error
      */
-	virtual int cancelTimer(const TimerId& id, const void **act=0);
+	virtual int cancelTimer(const TimerId& timer_id, const void **act=0);
 //    int cancelTimer(long timer_id,
 //			   const void **act=0,
 //			   bool notifyHandler=true);
@@ -243,9 +240,6 @@ TimerHeap;
     /** Cancel all timers associated with a handler
      *
      *  @param handler     cancel timers associated with this handler
-     *  @param notifyHandler
-     *                     true: calls timerCancelled() hook on the associated handler
-     *                     false: do not call timerCancelled() hook
      *
      *  @return number of timers canceled.
      */
@@ -262,7 +256,7 @@ TimerHeap;
      *  @return -1 on error
      */
 	virtual int resetTimerInterval(
-			const TimerId& id,
+			const TimerId& timer_id,
 			const std::chrono::steady_clock::duration &interval
 		);
 //    int resetTimerInterval(long timer_id,

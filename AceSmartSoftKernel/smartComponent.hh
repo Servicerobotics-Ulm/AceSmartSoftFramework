@@ -236,6 +236,7 @@ namespace SmartACE {
      *   @param argc         # of command line arguments
      *   @param argv         array of command line arguments
      *   @param reactor      optionally a customized implementation of the Reactor can be used (otherwise component automatically initializes an own reactor)
+     *   @param sched_params optional scheduling parameters used for the related internal reactor thread
      *   @param compileDate  compile date, just for debugging, don't touch
      *   @param compileTime  compile time, just for debugging, don't touch
      *
@@ -244,7 +245,7 @@ namespace SmartACE {
                     int argc,
                     char ** argv,
                     SmartACE::ReactorTask* reactor = NULL,
-					const ACE_Sched_Params &sched_params = ACE_Sched_Params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF),
+                    const ACE_Sched_Params &sched_params = ACE_Sched_Params(ACE_SCHED_OTHER, ACE_THR_PRI_OTHER_DEF),
                     const char *compileDate = __DATE__ ,
                     const char *compileTime = __TIME__  );
 

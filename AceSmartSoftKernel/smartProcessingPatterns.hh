@@ -75,11 +75,10 @@ namespace SmartACE {
 
     /** Create a new threaded QueryServerHandler Decorator.
      *
-     *  the handling thread can be started automatically, or with a
-     *  separate open();
+     *  The internal handling thread is started/stopped automatically.
      *
-     *  @param handler which will be called in a separate thread.
-     *  @param start   start the handler thread (default)
+     *  @param component the pointer to the surrounding component
+     *  @param handler   which will be called in a separate thread.
      */
     ThreadQueueQueryHandler(Smart::IComponent *component, QueryServerHandler<R,A>* handler)
       : Smart::IActiveQueueQueryServerHandlerDecorator<R,A,QueryId>(component, handler)
