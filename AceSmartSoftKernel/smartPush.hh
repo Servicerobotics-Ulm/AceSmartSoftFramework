@@ -371,7 +371,7 @@ namespace SmartACE {
      *    - SMART_ERROR_COMMUNICATION : communication problems, not subscribed
      *    - SMART_ERROR               : something went wrong, not subscribed
      */
-    Smart::StatusCode subscribe(const int &prescale = 1);
+    Smart::StatusCode subscribe(const unsigned int &prescale = 1);
 
     /** Unsubscribe to get no more updates. All blocking calls are aborted with the appropriate
      *  status and yet received and still buffered data is deleted to avoid returning old data.
@@ -433,7 +433,7 @@ namespace SmartACE {
      *  or if blocking is not allowed any more at the client.
      *
      *  @param d is set to the newest currently available data
-     *  @param timeout allows to release the blocking wait after a given timeout time (the default max_time means infinite blocking)
+     *  @param timeout allows to release the blocking wait after a given timeout time (the default max time means infinite blocking)
      *
      *  @return status code
      *   - SMART_OK                  : everything is ok and just received data is returned.
@@ -446,7 +446,7 @@ namespace SmartACE {
      *                                 to a server.
      *   - SMART_ERROR               : something went completely wrong and no valid data returned.
      */
-     Smart::StatusCode getUpdateWait(DataType& d, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero());
+     Smart::StatusCode getUpdateWait(DataType& d, const Smart::Duration &timeout=Smart::Duration::max());
 
     /** Get cycle time and server state.
      *

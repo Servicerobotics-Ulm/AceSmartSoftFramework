@@ -361,19 +361,7 @@ namespace SmartACE {
   template <class C>
   class SendServerHandler : public Smart::ISendServerHandler<C> {
   public:
-    /** Default constructor
-     *
-     * This constructor expects a pointer to the related SendServer as the main argument.
-     * A SendServer uses this handler to process server-side send-requests.
-     * A user needs to implement the handleSend method.
-     *
-     * @param server a pointer to the related SendServer
-     */
-    SendServerHandler(SendServer<C> *server)
-    : Smart::ISendServerHandler<C>(server)
-    { }
-    virtual ~SendServerHandler()
-    { }
+    virtual ~SendServerHandler() = default;
 
     /** Handler method for an incoming command.
      *
@@ -480,6 +468,9 @@ namespace SmartACE {
     SendServer();
 
   public:
+	using ISendServerBase = Smart::ISendServerPattern<C>;
+	using typename ISendServerBase::ISendServerHandlerPtr;
+
     /** constructor.
      *
      *  Note that a handler has to be supplied. Without a handler, the
@@ -490,7 +481,7 @@ namespace SmartACE {
      *  @param component management class of the component
      *  @param service   name of the service
      */
-    SendServer(SmartComponent* component, const std::string& service);
+    SendServer(SmartComponent* component, const std::string& service, ISendServerHandlerPtr handler = nullptr);
 
     /** Destructor.
      *  Properly disconnects all service requestors in case of destruction.

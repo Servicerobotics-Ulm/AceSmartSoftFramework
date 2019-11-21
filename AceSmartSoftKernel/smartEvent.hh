@@ -56,10 +56,6 @@ namespace SmartACE {
   class WiringSlave;
 }
 
-namespace SmartACE {
-  typedef int EventId;
-}
-
 /////////////////////////////////////////////////////////////////////////
 //
 // client part
@@ -83,12 +79,12 @@ template<class P, class E> class EventClient;
    *
    *  Demonstrated in <a href="/drupal/?q=node/51#fifth-example">fifth example</a>
    */
-  template<class E> class EventHandler : public Smart::IEventHandler<E,EventId> {
+  template<class E> class EventHandler : public Smart::IEventHandler<E> {
   public:
     // User interface
 	  template<class P>
 	 EventHandler(EventClient<P,E> *client)
-     :	Smart::IEventHandler<E,EventId>(client)
+     :	Smart::IEventHandler<E>(client)
      { }
      virtual ~EventHandler() { }
 
@@ -102,7 +98,7 @@ template<class P, class E> class EventClient;
      *  @param event is the event answer class (Communication Object)
      *         received due to the firing of the activation with identifier id.
      */
-    virtual void handleEvent( const EventId &id, const E& event )  = 0;
+    virtual void handleEvent( const Smart::EventIdPtr &id, const E& event )  = 0;
   };
 }
 
@@ -120,10 +116,10 @@ namespace SmartACE {
    *
    *  Demonstrated in <a href="/drupal/?q=node/51#fifth-example">fifth example</a>
    */
-  template<class P, class E> class EventClient : public Smart::IEventClientPattern<P,E,EventId> {
+  template<class P, class E> class EventClient : public Smart::IEventClientPattern<P,E> {
   private:
     typedef struct EventClientList {
-      EventId              id;
+      Smart::EventIdPtr    id;
       Smart::EventMode     mode;
       SmartCVwithMemory    condW;           /// see comments in getEvent() / getNextEvent()
       SmartCVwithoutMemory condWO;
@@ -144,7 +140,7 @@ namespace SmartACE {
     EventClientList     *events;
     SmartRecursiveMutex mutexEventList;
     SmartRecursiveMutex mutexConnection;
-    int                 eventCnt;
+    Smart::NumericCorrelationId eventCnt;
 
     //<alexej date="2010-03-18">
     /// Administrative monitor for handling connects
@@ -202,7 +198,7 @@ namespace SmartACE {
 
     //<alexej date="2009-10-26">
     /// private static functions to be accessed from the ACE layer
-    static void hndEvent(void*, const SmartMessageBlock *, int);
+    static void hndEvent(void*, const SmartMessageBlock *, size_t);
     //</alexej>
 
     /// private static functions to be accessed from the ACE layer
@@ -211,7 +207,7 @@ namespace SmartACE {
     static void hndServDisc(void*, int cid);
 	 static void hndAckDisc(void*);
 
-    static void hndAckActivate(void*,const int&);
+    static void hndAckActivate(void*,const size_t&);
     //</alexej>
 
 
@@ -259,7 +255,7 @@ namespace SmartACE {
      *     - SMART_WRONGID  : id not found in list
      *     - SMART_ERROR    : something went wrong
      */
-    Smart::StatusCode removeActivationId(const SmartACE::EventId id);
+    Smart::StatusCode removeActivationId(const Smart::EventIdPtr id);
 
   public:
     /** Constructor (exposed as port wireable from outside by other components and without handler).
@@ -441,7 +437,7 @@ namespace SmartACE {
      *    - SMART_ERROR               : something went wrong, event not activated, <I>id</I> is not
      *                                  a valid activation identifier.
      */
-    Smart::StatusCode activate(const Smart::EventMode &mode , const P& parameter, EventId& id);
+    Smart::StatusCode activate(const Smart::EventMode &mode , const P& parameter, Smart::EventIdPtr& id);
 
     /** Deactivate the event with the specified identifier.
      *
@@ -462,7 +458,7 @@ namespace SmartACE {
      * (Hint: can not return SMART_DISCONNECTED since then each event is for sure also
      *        deactivated resulting in SMART_WRONGID)
      */
-    Smart::StatusCode deactivate(const EventId &id);
+    Smart::StatusCode deactivate(const Smart::EventIdPtr id);
 
     /** Check whether event has already fired and return immediately
      *  with status information.
@@ -486,7 +482,7 @@ namespace SmartACE {
      *      - SMART_ACTIVE            : currently there is no unconsumed event available.
      *      - SMART_WRONGID           : there is no activation available with this <I>id</I>
      */
-    Smart::StatusCode tryEvent(const EventId &id);
+    Smart::StatusCode tryEvent(const Smart::EventIdPtr id);
 
     /** Blocking call which waits for the event to fire and then consumes the event.
      *
@@ -499,7 +495,7 @@ namespace SmartACE {
      *
      *  @param id of the event activation
      *  @param event is set to the returned event if fired (Communication Object)
-     *  @param timeout the optional maximum waiting time for an event (default value zero: method blocks indefinitelly)
+     *  @param timeout the optional maximum waiting time for an event (default value max: method blocks indefinitely)
      *
      *  - <b>single mode</b>:
      *      <p>
@@ -549,7 +545,7 @@ namespace SmartACE {
      *                                <I>event</I> not valid.
      *     </p>
      */
-    Smart::StatusCode getEvent(const EventId &id, E& event, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero());
+    Smart::StatusCode getEvent(const Smart::EventIdPtr id, E& event, const Smart::Duration &timeout=Smart::Duration::max());
 
     /** Blocking call which waits for the next event.
      *
@@ -561,7 +557,7 @@ namespace SmartACE {
      *
      *  @param id of the event activation
      *  @param event is set to the returned event if fired (Communication Object)
-     *  @param timeout the optional maximum waiting time for an event (default value zero: method blocks indefinitelly)
+     *  @param timeout the optional maximum waiting time for an event (default value max: method blocks indefinitely)
      *
      *  - <b>single mode</b>:
      *    <p>
@@ -607,7 +603,7 @@ namespace SmartACE {
      *                              <I>event</I> not valid.
      *    </p>
      */
-    Smart::StatusCode getNextEvent(const EventId &id, E& event, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero());
+    Smart::StatusCode getNextEvent(const Smart::EventIdPtr id, E& event, const Smart::Duration &timeout=Smart::Duration::max());
   };
 }
 
@@ -628,10 +624,10 @@ namespace SmartACE {
   /** Condition Test Handler (decides at server whether event fires or not).
    *
    */
-  template<class P, class E, class S> class EventTestHandler : public Smart::IEventTestHandler<P,E,S>
+  template<class P, class E, class S = E> class EventTestHandler : public Smart::IEventTestHandler<P,E,S>
   {
   public:
-    virtual ~EventTestHandler() {  }
+    virtual ~EventTestHandler() = default;
 
     /** This is the test method which decides whether the event fires or
      *  not.
@@ -695,13 +691,13 @@ namespace SmartACE {
    *  Demonstrated in <a href="/drupal/?q=node/51#fifth-example">fifth example</a>
    *
    */
-  template<class P, class E, class S> class EventServer : public Smart::IEventServerPattern<P,E,S,EventId> {
+  template<class P, class E, class S = E> class EventServer : public Smart::IEventServerPattern<P,E,S> {
   private:
     //
     // element of list of activations
     //
     typedef struct EventServerList {
-      EventId                     clientId;
+      Smart::NumericCorrelationId eventId;
       Smart::EventMode            eventMode;
       //<alexej date="2009-10-26">
         //SmartEventClientPattern_ptr client;
@@ -783,10 +779,10 @@ namespace SmartACE {
     static void hndDisconnect(void*, const EventServerServiceHandler *);
 
     /// private functions
-    static void hndActivate(void*, const EventServerServiceHandler*,const int&, const int&, const SmartMessageBlock *);
+    static void hndActivate(void*, const EventServerServiceHandler*,const int&, const size_t&, const SmartMessageBlock *);
 
     /// private functions
-    static void hndDeactivate(void*, const EventServerServiceHandler*, const int&);
+    static void hndDeactivate(void*, const EventServerServiceHandler*, const size_t&);
     //</alexej>
     
     // method implementing the server-initiated-disconnect (SID) procedure
@@ -799,13 +795,17 @@ namespace SmartACE {
     EventServer();
 
   public:
+	// creating typed aliases, see: https://isocpp.org/wiki/faq/templates#nondependent-name-lookup-types
+	using IEventServerBase = Smart::IEventServerPattern<P,E,S>;
+	using typename IEventServerBase::IEventTestHandlerPtr;
+
     /** Constructor.
      *
      *  @param component management class of the component
      *  @param service name of the service
      *  @param handler test handler decide if a event needs to fire
      */
-    EventServer(SmartComponent* component,const std::string& service, Smart::IEventTestHandler<P,E,S> *handler);
+    EventServer(SmartComponent* component,const std::string& service, IEventTestHandlerPtr handler);
 
     /** Destructor.
      *  Properly disconnects all service requestors in case of destruction

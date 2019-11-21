@@ -631,7 +631,7 @@ template<class C> void SmartACE::SendServer<C>::hndCmd(void *ptr, const SmartMes
   //
   // now call user provided handle method
   //
-  lthis->notify_input(c);
+  lthis->handleSend(c);
 }
 
 //
@@ -830,12 +830,12 @@ template<class C> inline SmartACE::SendServer<C>::SendServer(void)
 //
 // standard constructor
 //
-template<class C> inline SmartACE::SendServer<C>::SendServer(SmartComponent *m,
-                                                        const std::string &svc) 
-  : Smart::ISendServerPattern<C>(m,svc),
+template<class C> inline SmartACE::SendServer<C>::SendServer(SmartComponent *component,
+                                                        const std::string &svc, ISendServerHandlerPtr handler) 
+  : ISendServerBase(component,svc,handler),
     uuid_genrator(),
     service_identifier(0),
-    component(m),
+    component(component),
     service(svc),
     serverReady(0)
 {

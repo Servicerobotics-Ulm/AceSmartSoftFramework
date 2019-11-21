@@ -695,7 +695,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::disconnect()
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::subscribe(const int &n) 
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::subscribe(const unsigned int &n) 
 {
    Smart::StatusCode result;
    int             state = 0;
@@ -896,7 +896,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdate(T& d)
 //
 //
 //
-template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdateWait(T& d, const std::chrono::steady_clock::duration &timeout) 
+template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdateWait(T& d, const Smart::Duration &timeout) 
 {
   Smart::StatusCode status;
   Smart::StatusCode result;
@@ -909,7 +909,7 @@ template<class T> Smart::StatusCode SmartACE::PushClient<T>::getUpdateWait(T& d,
   // methods are applied within subscribe/unsubscribe and within the state change
   // handler.
   //
-  if(timeout == std::chrono::steady_clock::duration::zero()) {
+  if(timeout == Smart::Duration::max()) {
 	  // max_time means infinite blocking until released (no timeout value needs to be passed to cond-var)
 	  status = cond.wait();
   } else {

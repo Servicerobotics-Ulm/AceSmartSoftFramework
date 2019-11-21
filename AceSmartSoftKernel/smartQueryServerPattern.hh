@@ -67,7 +67,7 @@ namespace SmartACE {
 
       virtual int open(void *handler = 0);
 
-      Smart::StatusCode answer(const SmartMessageBlock *any, int qid);
+      Smart::StatusCode answer(const SmartMessageBlock *any, size_t qid);
       Smart::StatusCode acknowledgmentConnect(int cid, int status);
       Smart::StatusCode serverInitiatedDisconnect(int cid);
       Smart::StatusCode acknowledgmentDisconnect();
@@ -85,7 +85,7 @@ namespace SmartACE {
    protected:
       /** Callback function pointers
       */
-      void (*hndRqstPtr)(void *, const SmartACE::SmartMessageBlock *, const QueryServerServiceHandler*, int);
+      void (*hndRqstPtr)(void *, const SmartACE::SmartMessageBlock *, const QueryServerServiceHandler*, size_t);
 
       void (*hndCnctPtr)(void *, const QueryServerServiceHandler*,int,const ACE_Utils::UUID&);
       void (*hndDiscrdPtr)(void *, const QueryServerServiceHandler*);
@@ -96,7 +96,7 @@ namespace SmartACE {
 
    public:
       QueryServerAcceptor(void *,
-         void (*)(void *, const SmartACE::SmartMessageBlock*,const QueryServerServiceHandler*,int),
+         void (*)(void *, const SmartACE::SmartMessageBlock*,const QueryServerServiceHandler*,size_t),
          void (*)(void *, const QueryServerServiceHandler*,int,const ACE_Utils::UUID&),	// connect handler
          void (*)(void *, const QueryServerServiceHandler*),                        // discard handler
          void (*)(void *, const QueryServerServiceHandler*),                        // disconnect handler
@@ -105,7 +105,7 @@ namespace SmartACE {
 
       virtual ~QueryServerAcceptor();
 
-      inline void handleRequest(const SmartACE::SmartMessageBlock *message, const QueryServerServiceHandler *sh, int qid)
+      inline void handleRequest(const SmartACE::SmartMessageBlock *message, const QueryServerServiceHandler *sh, size_t qid)
       {
     	  this->hndRqstPtr(lthis, message, sh, qid);
       }

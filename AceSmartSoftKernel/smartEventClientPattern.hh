@@ -54,11 +54,11 @@ namespace SmartACE
       public SmartEventServerInterface
    {
    private:
-      void (*hndEvent)(void*, const SmartMessageBlock *,int);
+      void (*hndEvent)(void*, const SmartMessageBlock *,size_t);
       void (*hndAckConn)(void*, int cid, int status);
       void (*hndServDisc)(void*,int cid);
       void (*hndAckDisc)(void*);
-      void (*hndAckActivate)(void*,const int&);
+      void (*hndAckActivate)(void*,const size_t&);
 
       void *lthis;
 
@@ -69,16 +69,16 @@ namespace SmartACE
       virtual ~EventClientServiceHandler();
 
       void setCallbackFkts(void *,
-         void (*)(void *, const SmartACE::SmartMessageBlock*,int),  // event handler
+         void (*)(void *, const SmartACE::SmartMessageBlock*,size_t),  // event handler
          void (*)(void *, int, int),                           // acknowledge connect handler
          void (*)(void *, int),                                // server initiated disconnect handler
          void (*)(void *),                                     // acknowledge disconnect handler
-         void (*)(void*,const int&));                          // acknowledgement activate handler
+         void (*)(void*,const size_t&));                          // acknowledgement activate handler
 
       // R4
-      Smart::StatusCode activate(int mode, int aid, const SmartACE::SmartMessageBlock *parameter);
+      Smart::StatusCode activate(int mode, size_t aid, const SmartACE::SmartMessageBlock *parameter);
       // R5
-      Smart::StatusCode deactivate(int aid);
+      Smart::StatusCode deactivate(size_t aid);
 
       // R0
       Smart::StatusCode connect(int cid, const ACE_Utils::UUID &serviceID);

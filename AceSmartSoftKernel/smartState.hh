@@ -331,9 +331,9 @@ namespace SmartACE {
     StateSlaveHandler(StateSlave* state);
 
     /// Destructor
-    virtual ~StateSlaveHandler();
+    virtual ~StateSlaveHandler() = default;
 
-      virtual void handleQuery(const QueryId &id, const SmartCommStateRequest& request);
+      virtual void handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id, const SmartCommStateRequest& request);
   };
 
   /** Slave part of state pattern.
@@ -353,10 +353,10 @@ namespace SmartACE {
 
     typedef struct SmartStateEntry {
       StateSlaveAction      action;
-      std::string                 state;
+      std::string           state;
       //<alexej date="2010-09-22">
       QueryServer<SmartCommStateRequest,SmartCommStateResponse> *server_proxy;
-      QueryId                     qid;
+      Smart::QueryIdPtr             qid;
       SmartConditionRecursiveMutex *cond;
       //</alexej>
     }SmartStateEntry;
@@ -429,7 +429,7 @@ namespace SmartACE {
     StateChangeHandler * changeHandler;
 
     /// QueryHandler handles incomming state-requests from StateClient
-    StateSlaveHandler *query_handler;
+    std::shared_ptr<StateSlaveHandler> query_handler;
 
     /// QueryServer as main port of StateServer
     QueryServer<SmartCommStateRequest, SmartCommStateResponse> *query_server;
@@ -438,7 +438,7 @@ namespace SmartACE {
     void shutdown();
 
     /// private handler functions
-    static void hndSetMainState(void*, QueryServer<SmartCommStateRequest,SmartCommStateResponse> *server, const QueryId &qid, const std::string&);
+    static void hndSetMainState(void*, QueryServer<SmartCommStateRequest,SmartCommStateResponse> *server, const Smart::QueryIdPtr &qid, const std::string&);
     static Smart::StatusCode hndGetCurrentState(void*, std::string &);
     static Smart::StatusCode hndGetMainStates(void*, std::vector<std::string>&);
     static Smart::StatusCode hndGetSubStates(void*, const std::string&, std::vector<std::string>&);

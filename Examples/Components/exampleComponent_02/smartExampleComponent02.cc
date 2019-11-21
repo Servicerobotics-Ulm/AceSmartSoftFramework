@@ -57,7 +57,7 @@ SmartACE::QueryClient<SmartACE::CommExampleValues,SmartACE::CommExampleResult> *
 class UserThreadA : public SmartACE::ManagedTask
 {
 private:
-  SmartACE::QueryId    id1, id2;
+  Smart::QueryIdPtr    id1, id2;
   SmartACE::CommExampleTime q1,q2;
   SmartACE::CommExampleTime a1,a2;
 
@@ -129,7 +129,7 @@ private:
   SmartACE::CommExampleValues q;
   SmartACE::CommExampleResult r;
 
-  SmartACE::QueryId    id;
+  Smart::QueryIdPtr    id;
   Smart::StatusCode status;
 
 public:

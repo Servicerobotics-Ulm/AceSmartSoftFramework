@@ -43,6 +43,7 @@
 #include <cstring>
 #include <cmath>
 
+#include <memory>
 #include <string>
 
 #include "smartComponent.hh"
@@ -211,28 +212,25 @@ namespace SmartACE {
     public:
       /** Constructor.
        *
-       * @param slave  <I>ParameterSlave</I> needed to access it from the handler
+       * @param param_handler
        */
-      ParameterQueryHandler(
-    		  QueryServer<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse>* server,
-    		  ParameterUpdateHandler *param_handler);
+      ParameterQueryHandler(ParameterUpdateHandler *param_handler);
 
       /// Destructor
-      virtual ~ParameterQueryHandler();
+      virtual ~ParameterQueryHandler() = default;
 
       /// handle query method of query handler class
-      void handleQuery(const QueryId &id, const SmartACE::CommParameterRequest & request);
+      virtual void handleQuery(IQueryServer& server, const Smart::QueryIdPtr &id, const SmartACE::CommParameterRequest & request) override;
     };
 
+    ///
+    std::shared_ptr<ParameterQueryHandler> query_handler;
+
+    /// Decorator for ParameterHandler (important with ACE implementation)
+    std::shared_ptr<ThreadQueueQueryHandler<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse>> thread_handler;
 
     /// query server part
     QueryServer<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse> query_server;
-
-    ///
-    ParameterQueryHandler query_handler;
-
-    /// Decorator for ParameterHandler (important with ACE implementation)
-    ThreadQueueQueryHandler<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse> thread_handler;
 
   public:
     /** constructor.

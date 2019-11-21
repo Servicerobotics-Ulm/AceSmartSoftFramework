@@ -207,8 +207,8 @@ int TimerManagerThread::svc (void)
 Smart::ITimerManager::TimerId TimerManagerThread::scheduleTimer(
 			Smart::ITimerHandler *handler,
 			const void *act,
-			const std::chrono::steady_clock::duration &first_time,
-			const std::chrono::steady_clock::duration &interval
+			const Smart::Duration &first_time,
+			const Smart::Duration &interval
 		)
 {
   // absolute time.
@@ -274,7 +274,7 @@ int TimerManagerThread::cancelTimersOf(Smart::ITimerHandler *handler)
 //			     !notifyHandler ? 0 : 1);
 }
 
-void TimerManagerThread::cancelAllTimers()
+void TimerManagerThread::deleteAllTimers()
 {
   for(std::set<Smart::ITimerHandler*>::iterator it=handlers.begin(); it!=handlers.end(); it++) {
     this->cancelTimersOf(*it);
@@ -285,7 +285,7 @@ void TimerManagerThread::cancelAllTimers()
 //						const ACE_Time_Value &interval)
 int TimerManagerThread::resetTimerInterval(
 		const TimerId& id,
-		const std::chrono::steady_clock::duration &interval
+		const Smart::Duration &interval
 	)
 {
   ACE_Time_Value next_wakeup = timer_queue.earliest_time();

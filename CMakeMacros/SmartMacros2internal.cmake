@@ -72,8 +72,8 @@ ENDMACRO(INTERNAL_CMAKE_CONFIGURE PACKAGE_ROOT)
 ## internal API (do not use in SmartSoft projects directly)
 ############################################################
 MACRO(INTERNAL_ADD_ALL_DEPENDENCIES PACKAGE_NAME PACKAGE_ROOT)
-  #try to include the dependencies file (if one is available)
-  INCLUDE(${PACKAGE_ROOT}/build/${PACKAGE_NAME}Dependencies.cmake OPTIONAL)
+  # configure and (optionally) include the dependencies file
+  INTERNAL_CONFIGURE_DEPENDENCIES_FILE(${PACKAGE_NAME} ${PACKAGE_ROOT})
 
   # if loaded, then the ${PACKAGE_NAME}_DEPENDENCIES variable should become available
   IF(DEFINED ${PACKAGE_NAME}_DEPENDENCIES)

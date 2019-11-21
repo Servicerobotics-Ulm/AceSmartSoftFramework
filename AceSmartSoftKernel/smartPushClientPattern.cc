@@ -179,7 +179,7 @@ namespace SmartACE
       return 0;
    }
 
-   Smart::StatusCode PushClientServiceHandler::subscribe(int cycle, int sid)
+   Smart::StatusCode PushClientServiceHandler::subscribe(unsigned int cycle, int sid)
    {
       Smart::StatusCode result = Smart::SMART_OK;
 

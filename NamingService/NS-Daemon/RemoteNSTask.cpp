@@ -70,8 +70,11 @@ int RemoteNSTask::init(const int &argc, char** argv)
 		// else load standard paramfile
 		else
 		{
-			std::cout << "load ns_config.ini parameter file\n";
-			parameter.addFile("ns_config.ini");
+			std::ifstream ifs;
+			if(parameter.searchFile("ns_config.ini", ifs) == true) {
+				std::cout << "load ns_config.ini parameter file\n";
+				parameter.addFile(ifs);
+			}
 		}
 
 		// add command line arguments to allow overwriting of parameters
@@ -228,8 +231,8 @@ void RemoteNSTask::propagateRemoteCommand(const int &cmdId, const std::string &n
 int RemoteNSTask::task_execution()
 {
 	// first get the list with IP addresses for remote naming services from the ini-file and try to connect to each of them
-	std::list<std::string> ips;
-	if(parameter.getStringList("RemoteNS", "ip", ips)) {
+	if(parameter.checkIfParameterExists("RemoteNS", "ip")) {
+		std::list<std::string> ips = parameter.getStringList("RemoteNS", "ip");
 		std::list<std::string>::const_iterator it;
 		for(it=ips.begin(); it!=ips.end(); ++it)
 		{
@@ -267,7 +270,7 @@ int RemoteNSTask::task_execution()
 			}
 		}
 	} else {
-		std::cerr << "Info: No ip entries found in ini file" << std::endl;
+		std::cerr << "Info: No optional ip entries found in ini file" << std::endl;
 	}
 
 	finish_postponed_rebinds();

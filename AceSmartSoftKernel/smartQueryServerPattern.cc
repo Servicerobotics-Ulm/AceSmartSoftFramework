@@ -72,7 +72,7 @@ int QueryServerServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
 	ACE_CString uuid_str;
 	//</alexej>
 
-	ACE_CDR::Long queryID = 0;
+	ACE_CDR::ULongLong queryID = 0;
 
 	if (acceptor == 0) {
 		// well, this case is quite unlikely, but just in case...
@@ -125,12 +125,12 @@ int QueryServerServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
 	return 0;
 }
 
-Smart::StatusCode QueryServerServiceHandler::answer(const SmartMessageBlock *message, int cid)
+Smart::StatusCode QueryServerServiceHandler::answer(const SmartMessageBlock *message, size_t qid)
 {
 	Smart::StatusCode result = Smart::SMART_OK;
 
-	ACE_OutputCDR cdr(ACE_CDR::LONG_SIZE);
-	cdr << ACE_Utils::truncate_cast<ACE_CDR::Long>(cid);
+	ACE_OutputCDR cdr(ACE_CDR::LONGLONG_SIZE);
+	cdr << ACE_Utils::truncate_cast<ACE_CDR::ULongLong>(qid);
 
 	if ( this->send_command_message(SmartACE::CMD_ANSWER, cdr.current(), message) != 0 ) {
 		if(this->is_disconnected()) {
@@ -203,7 +203,7 @@ Smart::StatusCode QueryServerServiceHandler::acknowledgmentDisconnect()
 /////////////////////////////////////////////////////////////////////////
 
 QueryServerAcceptor::QueryServerAcceptor(void            *ptr,
-   void (*callbackRqst)   (void *, const SmartACE::SmartMessageBlock*, const QueryServerServiceHandler*, int),
+   void (*callbackRqst)   (void *, const SmartACE::SmartMessageBlock*, const QueryServerServiceHandler*, size_t),
    void (*callbackCnct)   (void *, const QueryServerServiceHandler*,int,const ACE_Utils::UUID&),
    void (*callbackDiscrd) (void *, const QueryServerServiceHandler*),
    void (*callbackDiscon) (void *, const QueryServerServiceHandler*),

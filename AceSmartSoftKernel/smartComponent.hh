@@ -93,13 +93,13 @@ namespace SmartACE {
        virtual ~ShutdownTimer() {  }
        
        // start the timer
-       void start(const std::chrono::steady_clock::duration &timeout=std::chrono::seconds(2));
+       void start(const Smart::Duration &timeout=std::chrono::seconds(2));
 
        // stop timer
        void stop();
        
        // function called after a timeout occures
-       virtual void timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg);
+       virtual void timerExpired(const Smart::TimePoint &abs_time, const void * act) override;
     };
 }
 
@@ -218,13 +218,13 @@ namespace SmartACE {
     // if one of the tasks do not cooperate within the watchdogTime,
     // the internal watchdog task gets active, cleans up as much component's
     // resources as possible and stops process with "exit(0)"
-    virtual void signalSmartTasksToStop(const std::chrono::steady_clock::duration &watchdogTime=std::chrono::seconds(2));
+    virtual void signalSmartTasksToStop(const Smart::Duration &watchdogTime=std::chrono::seconds(2));
 
     // clean up component's internal resources
     virtual void cleanUpInternalResources();
 
     // set timed mode for all registered administrative monitors (used for shutdown procedure)
-    virtual void setTimedModeForAllSmartMonitors(const std::chrono::steady_clock::duration &timeout);
+    virtual void setTimedModeForAllSmartMonitors(const Smart::Duration &timeout);
 
   public:
     // = Initialization
@@ -263,6 +263,8 @@ namespace SmartACE {
      *    - SMART_OK: gracefully terminated
      */
     virtual Smart::StatusCode run(void);
+
+    virtual void signal_shutdown(void);
 
 	/** get timer-manager for registering timer-handlers
 	 *

@@ -44,7 +44,7 @@ public:
 
   //void event(in any user,in long id);
    // D:
-   virtual Smart::StatusCode event(const SmartACE::SmartMessageBlock *user, int id) = 0;
+   virtual Smart::StatusCode event(const SmartACE::SmartMessageBlock *user, size_t id) = 0;
   // event fires and therefore transmit event object to client
   // user : user event data
   // id   : activation id from client
@@ -70,7 +70,7 @@ public:
    virtual Smart::StatusCode acknowledgmentDisconnect() = 0;
 
    // A4:
-   virtual Smart::StatusCode acknowledgmentActivate(int status) = 0;
+   virtual Smart::StatusCode acknowledgmentActivate(size_t event_id) = 0;
 };
 
 class SmartEventServerInterface
@@ -80,7 +80,7 @@ public:
 
   //void activate(in SmartEventClientPattern client,in long mode,in long id,in any parameter);
   // R4:
-  virtual Smart::StatusCode activate(int mode, int aid, const SmartACE::SmartMessageBlock *parameter) = 0;
+  virtual Smart::StatusCode activate(int mode, size_t aid, const SmartACE::SmartMessageBlock *parameter) = 0;
   // activate an event
   // client    : reference to the client object
   // mode      : activation mode single or continuous
@@ -89,7 +89,7 @@ public:
 
   //void deactivate(in SmartEventClientPattern client,in long id);
   // R5:
-  virtual Smart::StatusCode deactivate(int aid) = 0;
+  virtual Smart::StatusCode deactivate(size_t aid) = 0;
   // deactivate an event
   // client : reference to the client object
   // id     : activation id from the client

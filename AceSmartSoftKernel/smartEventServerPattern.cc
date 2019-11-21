@@ -77,8 +77,8 @@ int EventServerServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
 		return 0;
 	}
 
-	ACE_CDR::Long i_temp1 = 0;
-	ACE_CDR::Long i_temp2 = 0;
+	ACE_CDR::Long mode = 0;
+	ACE_CDR::ULongLong event_id = 0;
 
 	//
 	// command - switch case
@@ -88,12 +88,12 @@ int EventServerServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
          if(cmd_is.length() > 0 && msg_is.length() > 0)
          {
             // get mode value
-            cmd_is >> i_temp1;
+            cmd_is >> mode;
             // get aid value
-            cmd_is >> i_temp2;
+            cmd_is >> event_id;
 
             // call activation handler
-            acceptor->handleActivate(this, i_temp1, i_temp2, msg_is.start());
+            acceptor->handleActivate(this, mode, event_id, msg_is.start());
          }
          break;
 
@@ -101,10 +101,10 @@ int EventServerServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
          if(cmd_is.length() > 0)
          {
             // get aid value
-            cmd_is >> i_temp1;
+            cmd_is >> event_id;
 
             // call deactivation handler
-            acceptor->handleDeactivate(this, i_temp1);
+            acceptor->handleDeactivate(this, event_id);
          }
          break;
 
@@ -140,12 +140,12 @@ int EventServerServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
 	return 0;
 }
 
-Smart::StatusCode EventServerServiceHandler::event(const SmartACE::SmartMessageBlock *user, int id)
+Smart::StatusCode EventServerServiceHandler::event(const SmartACE::SmartMessageBlock *user, size_t id)
 {
 	Smart::StatusCode result = Smart::SMART_OK;
 
-	ACE_OutputCDR cmd_cdr(ACE_CDR::LONG_SIZE);
-	cmd_cdr << ACE_Utils::truncate_cast<ACE_CDR::Long>(id);
+	ACE_OutputCDR cmd_cdr(ACE_CDR::LONGLONG_SIZE);
+	cmd_cdr << ACE_Utils::truncate_cast<ACE_CDR::ULongLong>(id);
 
 	if ( this->send_command_message(SmartACE::CMD_EVENT, cmd_cdr.current(), user) != 0 ) {
 		if(this->is_disconnected()) {
@@ -210,12 +210,12 @@ Smart::StatusCode EventServerServiceHandler::acknowledgmentDisconnect()
 	return result;
 }
 
-Smart::StatusCode EventServerServiceHandler::acknowledgmentActivate(int status)
+Smart::StatusCode EventServerServiceHandler::acknowledgmentActivate(size_t id)
 {
 	Smart::StatusCode result = Smart::SMART_OK;
 
-	ACE_OutputCDR cdr(ACE_CDR::LONG_SIZE);
-	cdr << ACE_Utils::truncate_cast<ACE_CDR::Long>(status);
+	ACE_OutputCDR cdr(ACE_CDR::LONGLONG_SIZE);
+	cdr << ACE_Utils::truncate_cast<ACE_CDR::ULongLong>(id);
 
 	if( this->send_command_message(SmartACE::CMD_ACK_ACTIVATE, cdr.current()) != 0 ) {
 		if(this->is_disconnected()) {
@@ -238,8 +238,8 @@ EventServerAcceptor::EventServerAcceptor(void    *ptr,
    void (*callbackCnct)      (void *, const EventServerServiceHandler*,int,const ACE_Utils::UUID&),
    void (*callbackDiscrd)    (void *, const EventServerServiceHandler*),
    void (*callbackDiscon)    (void *, const EventServerServiceHandler*),
-   void (*callbackActivate)  (void *, const EventServerServiceHandler*, const int&, const int&, const SmartMessageBlock *), // activation handler
-   void (*callbackDeactivate)(void *, const EventServerServiceHandler*, const int&),      // deactivation handler
+   void (*callbackActivate)  (void *, const EventServerServiceHandler*, const int&, const size_t&, const SmartMessageBlock *), // activation handler
+   void (*callbackDeactivate)(void *, const EventServerServiceHandler*, const size_t&),      // deactivation handler
    ACE_Reactor *reactor)
 :  ACE_Acceptor<EventServerServiceHandler, ACE_SOCK_ACCEPTOR>(reactor)
 ,  _reactor(reactor)

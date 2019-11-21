@@ -69,18 +69,12 @@ class CommParameterRequest
 public:
 	CommParameterIDL::CommParameterRequest data;
 
-	CommParameterRequest()
-	{
-	}
+	CommParameterRequest() = default;
+	virtual ~CommParameterRequest() = default;
 
 	CommParameterRequest(const CommParameterIDL::CommParameterRequest &obj) :
 		data(obj)
-	{
-	}
-
-	virtual ~CommParameterRequest()
-	{
-	}
+	{  }
 
 	operator CommParameterIDL::CommParameterRequest() const
 	{

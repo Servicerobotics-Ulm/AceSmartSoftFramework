@@ -37,11 +37,6 @@
 
 namespace SmartACE {
 
-  typedef int QueryId;
-
-  // forward declaration
-  template<class R, class A> class QueryServer;
-
   /** Handler Class for QueryServer for incoming requests.
    *
    *  Used by the QueryServer to handle incoming queries.
@@ -50,21 +45,12 @@ namespace SmartACE {
    *  class with the QueryServer.
    */
   template<class R, class A>
-  class QueryServerHandler : public Smart::IQueryServerHandler<R,A,QueryId>
+  class QueryServerHandler : public Smart::IQueryServerHandler<R,A>
   {
   public:
-	/** Default constructor
-	 *
-	 * This constructor expects a pointer to the related QueryServer as the main argument.
-	 * A QueryServer uses this handler to process server-side query-requests.
-	 * A user needs to implement the handleQuery method.
-	 *
-	 * @param server a pointer to the related QueryServer
-	 */
-	QueryServerHandler(QueryServer<R,A>* server)
-	:	Smart::IQueryServerHandler<R,A,QueryId>(server)
-	{  }
-    virtual ~QueryServerHandler() {}
+    virtual ~QueryServerHandler() = default;
+
+    using IQueryServer = Smart::IQueryServerPattern<R,A>;
 
     /** Handler method for an incoming query request.
      *
@@ -81,7 +67,7 @@ namespace SmartACE {
      *
      *  @param id       id of new query
      *  @param request the request itself */
-    virtual void handleQuery(const QueryId &id, const R& request) = 0;
+    virtual void handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id, const R& request) = 0;
   };
 
 

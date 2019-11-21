@@ -290,18 +290,15 @@ Smart::StatusCode SmartACE::StateMaster::getSubStates(const std::string& mainsta
 
 SmartACE::StateSlaveHandler::StateSlaveHandler(SmartACE::StateSlave *slave) 
 :  stateSlave(slave)
-,  QueryServerHandler<SmartCommStateRequest, SmartCommStateResponse>(slave->query_server)
 {  }
 
-SmartACE::StateSlaveHandler::~StateSlaveHandler() 
-{  }
-
-void SmartACE::StateSlaveHandler::handleQuery(const QueryId &id, const SmartCommStateRequest& request) 
+void SmartACE::StateSlaveHandler::handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id, const SmartCommStateRequest& request)
 {
    SmartCommStateResponse reply;
    std::vector<std::string> state_list;
    std::string mainstate;
    Smart::StatusCode ret_val;
+   auto server_ptr = dynamic_cast<QueryServer<SmartCommStateRequest, SmartCommStateResponse>*>(&server);
 
    // call appropriate command depending on command-id
    switch(request.getCommand())
@@ -311,7 +308,7 @@ void SmartACE::StateSlaveHandler::handleQuery(const QueryId &id, const SmartComm
       mainstate = request.getStateName();
 
       // call handler for setMainState
-      StateSlave::hndSetMainState((void*)stateSlave, (QueryServer<SmartCommStateRequest, SmartCommStateResponse>*)server, id, mainstate);
+      StateSlave::hndSetMainState((void*)stateSlave, server_ptr, id, mainstate);
       break;
 
    case STATE_CMD_GET_CURRENT_STATE:
@@ -324,7 +321,7 @@ void SmartACE::StateSlaveHandler::handleQuery(const QueryId &id, const SmartComm
       reply.setStatus(static_cast<int>(ret_val));
 
       // reply to client
-      server->answer(id, reply);
+      server.answer(id, reply);
       break;
 
    case STATE_CMD_GET_MAIN_STATES:
@@ -336,7 +333,7 @@ void SmartACE::StateSlaveHandler::handleQuery(const QueryId &id, const SmartComm
       reply.setStatus(static_cast<int>(ret_val));
 
       // reply to client
-      server->answer(id, reply);
+      server.answer(id, reply);
       break;
 
 
@@ -351,7 +348,7 @@ void SmartACE::StateSlaveHandler::handleQuery(const QueryId &id, const SmartComm
       reply.setStatus(static_cast<int>(ret_val));
 
       // reply to client
-      server->answer(id, reply);
+      server.answer(id, reply);
       break;
 
    default:
@@ -364,7 +361,7 @@ void SmartACE::StateSlaveHandler::handleQuery(const QueryId &id, const SmartComm
 
 
 
-void SmartACE::StateSlave::hndSetMainState(void *ptr, QueryServer<SmartCommStateRequest,SmartCommStateResponse> *server, const QueryId &qid, const std::string &mainstate)
+void SmartACE::StateSlave::hndSetMainState(void *ptr, QueryServer<SmartCommStateRequest,SmartCommStateResponse> *server, const Smart::QueryIdPtr &qid, const std::string &mainstate)
 {
   StateSlave* lthis = (StateSlave *)ptr;
   SmartStateEntry entry;
@@ -668,8 +665,8 @@ SmartACE::StateSlave::StateSlave(SmartComponent* comp, SmartACE::StateChangeHand
   setUpInitialStateList();
 
   component->setStateSlave(this);
-  query_server = new QueryServer<SmartCommStateRequest, SmartCommStateResponse>(component, serviceName);
-  query_handler = new StateSlaveHandler(this);
+  query_handler = std::make_shared<StateSlaveHandler>(this);
+  query_server = new QueryServer<SmartCommStateRequest, SmartCommStateResponse>(component, serviceName, query_handler);
   //</alexej>
 
   stateUpdateThread.init(this,stateQueueSemaphore);
@@ -684,7 +681,6 @@ SmartACE::StateSlave::StateSlave(SmartComponent* comp, SmartACE::StateChangeHand
 SmartACE::StateSlave::~StateSlave(void) 
 {
   //delete acceptor;
-  delete query_handler;
   delete query_server;
   delete stateQueueSemaphore;
 

@@ -219,10 +219,10 @@ namespace SmartACE {
     WiringHandler(WiringSlave* slave);
 
     /// Destructor
-    virtual ~WiringHandler();
+    virtual ~WiringHandler() = default;
 
     /// handle query method of query handler class
-    virtual void handleQuery(const QueryId &id, const SmartCommWiring& request);
+    virtual void handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id, const SmartCommWiring& request);
   };
 
 
@@ -267,12 +267,12 @@ namespace SmartACE {
     SmartComponent *component;
 
     ///
-    WiringHandler * handler;
+    std::shared_ptr<WiringHandler> handler;
 
-	/// Decorator for WiringHandler (important with ACE implementation)
-	ThreadQueueQueryHandler<SmartCommWiring,SmartCommWiring> * threadHandler;
+    /// Decorator for WiringHandler (important with ACE implementation)
+    std::shared_ptr<ThreadQueueQueryHandler<SmartCommWiring,SmartCommWiring>> threadHandler;
 
-	/// query server part
+    /// query server part
     QueryServer<SmartCommWiring,SmartCommWiring> * wiring;
 
     ///

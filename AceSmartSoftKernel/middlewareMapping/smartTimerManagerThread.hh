@@ -56,16 +56,12 @@ public:
   TimerHandler();
   virtual ~TimerHandler();
 
-  /** hook called on timer expiration
-   */
-  virtual void timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg) = 0;
-
   /// This method is called when the timer is cancelled
-  virtual void timerCancelled() {  }
+  virtual void timerCancelled() override {  }
 
   /// This method is called when the timer queue is destroyed and
   /// the timer is still contained in it
-  virtual void timerDeleted(const void * arg) override {  }
+  virtual void timerDeleted(const void * act) override {  }
 };
 
 /** Functor for Timer_Queues.
@@ -99,7 +95,7 @@ public:
 		 const ACE_Time_Value &cur_time)
     {
 	// Upcall to the <handler>s handle_timeout method.
-	handler->timerExpired (std::chrono::system_clock::now(), arg);
+	handler->timerExpired (Smart::Clock::now(), arg);
 	return 0;
     };
 
@@ -191,7 +187,7 @@ TimerHeap;
   {
   public:
     /// Constructor.
-	  TimerManagerThread();
+    TimerManagerThread();
 
     /// Destructor. Properly shuts down the timer thread
     virtual ~TimerManagerThread ();
@@ -214,9 +210,9 @@ TimerHeap;
 	virtual TimerId scheduleTimer(
 			Smart::ITimerHandler *handler,
 			const void *act,
-			const std::chrono::steady_clock::duration &first_time,
-			const std::chrono::steady_clock::duration &interval=std::chrono::steady_clock::duration::zero()
-		);
+			const Smart::Duration &first_time,
+			const Smart::Duration &interval=Smart::Duration::zero()
+		) override;
 //    long scheduleTimer(Smart::ITimerHandler *handler,
 //		       const void *act,
 //		       const ACE_Time_Value &time,
@@ -232,7 +228,7 @@ TimerHeap;
      *  @return 0 on success
      *  @return -1 on error
      */
-	virtual int cancelTimer(const TimerId& timer_id, const void **act=0);
+	virtual int cancelTimer(const TimerId& timer_id, const void **act=0) override;
 //    int cancelTimer(long timer_id,
 //			   const void **act=0,
 //			   bool notifyHandler=true);
@@ -243,10 +239,10 @@ TimerHeap;
      *
      *  @return number of timers canceled.
      */
-	virtual int cancelTimersOf(Smart::ITimerHandler *handler);
+	virtual int cancelTimersOf(Smart::ITimerHandler *handler) override;
 //    int cancelTimers(Smart::ITimerHandler *handler,
 //		     bool notifyHandler=true);
-	virtual void cancelAllTimers();
+	virtual void deleteAllTimers() override;
 
     /** Resets the interval of a timer.
      *
@@ -257,8 +253,8 @@ TimerHeap;
      */
 	virtual int resetTimerInterval(
 			const TimerId& timer_id,
-			const std::chrono::steady_clock::duration &interval
-		);
+			const Smart::Duration &interval
+		) override;
 //    int resetTimerInterval(long timer_id,
 //				  const ACE_Time_Value &interval);
 

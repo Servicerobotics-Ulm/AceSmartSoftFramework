@@ -42,6 +42,7 @@
 
 #include <smartIQueryClientPattern_T.h>
 #include <smartIQueryServerPattern_T.h>
+#include <smartNumericCorrelationId.h>
 
 #include "smartComponent.hh"
 #include "smartQueryServerPattern.hh"
@@ -70,10 +71,10 @@ namespace SmartACE {
    *
    *  Demonstrated in <a href="/drupal/?q=node/51#first-example">first example</a> and <a href="/drupal/?q=node/51#third-example">third example</a>
    */
-  template<class R, class A> class QueryClient : public Smart::IQueryClientPattern<R,A,QueryId> {
+  template<class R, class A> class QueryClient : public Smart::IQueryClientPattern<R,A> {
   private:
     typedef struct QueryClientList {
-      QueryId            id;
+      Smart::QueryIdPtr  id;
       SmartCVwithMemory  cond;
       A                  a;
       Smart::QueryStatus querystatus;
@@ -93,7 +94,7 @@ namespace SmartACE {
     QueryClientList     *queries;
     SmartRecursiveMutex mutexQueryList;
     SmartRecursiveMutex mutexConnection;
-    int                 queryCnt;
+    Smart::NumericCorrelationId queryCnt;
 
     //<alexej date="2010-03-18">
     /// Administrative monitor for handling connects
@@ -153,7 +154,7 @@ namespace SmartACE {
     //<alexej date="2009-08-27">
 		/// private static functions to be accessed from the CORBA layer
 		//static void hndAnsw(void*, const CORBA::Any &, const CORBA::Long);
-		static void hndAnsw(void*, const SmartACE::SmartMessageBlock*, int);
+		static void hndAnsw(void*, const SmartACE::SmartMessageBlock*, size_t);
     //</alexej>
 
     /// private static functions to be accessed from the ACE layer
@@ -390,7 +391,7 @@ namespace SmartACE {
      *    - SMART_ERROR_COMMUNICATION : communication problems, <I>id</I> is not valid.
      *    - SMART_ERROR               : something went wrong, <I>id</I> is not valid.
      */
-    Smart::StatusCode queryRequest(const R& request, QueryId& id);
+    Smart::StatusCode queryRequest(const R& request, Smart::QueryIdPtr& id);
 
     /** Check if answer is available.
      *
@@ -417,7 +418,7 @@ namespace SmartACE {
      *                           not valid any longer.
      *
      */
-    Smart::StatusCode queryReceive(const QueryId& id, A& answer);
+    Smart::StatusCode queryReceive(const Smart::QueryIdPtr id, A& answer);
 
     /** Wait for reply.
      *
@@ -430,7 +431,7 @@ namespace SmartACE {
      *
      *  @param id       provides the identifier of the query
      *  @param answer   is set to the answer returned from the server if it was available
-     *  @param timeout  the optional maximum waiting time for a query answer (default value zero: method blocks indefinitelly)
+     *  @param timeout  the optional maximum waiting time for a query answer (default value max: method blocks indefinitely)
      *
      *  @return status code:
      *    - SMART_OK           : everything is ok and <I>answer</I> contains the answer
@@ -448,7 +449,7 @@ namespace SmartACE {
      *                           not valid any longer.
      *
      */
-    Smart::StatusCode queryReceiveWait(const QueryId& id, A& answer, const std::chrono::steady_clock::duration &timeout=std::chrono::steady_clock::duration::zero());
+    Smart::StatusCode queryReceiveWait(const Smart::QueryIdPtr id, A& answer, const Smart::Duration &timeout=Smart::Duration::max());
 
     /** Discard the pending answer with the identifier <I>id</I>
      *
@@ -473,7 +474,7 @@ namespace SmartACE {
      *    - SMART_ERROR        : something went wrong, <I>id</I> not valid any longer.
      *
      */
-    Smart::StatusCode queryDiscard(const QueryId& id);
+    Smart::StatusCode queryDiscard(const Smart::QueryIdPtr id);
   };
 }
 
@@ -494,14 +495,14 @@ namespace SmartACE {
    *
    *  Demonstrated in <a href="/drupal/?q=node/51#first-example">first example</a> and <a href="/drupal/?q=node/51#third-example">third example</a>
    */
-  template<class R, class A> class QueryServer : public Smart::IQueryServerPattern<R,A,QueryId> {
+  template<class R, class A> class QueryServer : public Smart::IQueryServerPattern<R,A> {
   private:
     //
     // element of list of not yet answered queries
     //
     typedef struct QueryServerList {
-      QueryId          id;
-      QueryId          cltId;
+      Smart::NumericCorrelationId id;
+      Smart::NumericCorrelationId cltId;
       R                r;
       //<alexej date="26.11.2008">
 	    //SmartQueryClientPattern_ptr client;
@@ -527,7 +528,7 @@ namespace SmartACE {
     QueryClientList     *clients;
     SmartRecursiveMutex mutexQueryList;
     SmartRecursiveMutex mutexClientList;
-    int                 queryCnt;
+    Smart::NumericCorrelationId queryCnt;
 
     //<alexej date="2010-03-18">
     /// Administrative Monitor for handling server-initiated-disconnect
@@ -572,7 +573,7 @@ namespace SmartACE {
     QueryServerAcceptor *acceptor;
 
 	/// private handler function
-	static void hndRqst(void*, const SmartMessageBlock*, const QueryServerServiceHandler*, int);
+	static void hndRqst(void*, const SmartMessageBlock*, const QueryServerServiceHandler*, size_t);
 
     //<alexej date="2010-03-18">
     /// private handler function
@@ -595,6 +596,9 @@ namespace SmartACE {
     QueryServer();
 
   public:
+	using IQueryServerBase = Smart::IQueryServerPattern<R,A>;
+	using typename IQueryServerBase::IQueryServerHandlerPtr;
+
     /** Constructor.
      *
      *  Note that a handler has to be supplied. Without a handler, the
@@ -605,7 +609,7 @@ namespace SmartACE {
      *  @param component management class of the component
      *  @param service   name of the service
      */
-    QueryServer(SmartComponent* component, const std::string& service);
+    QueryServer(SmartComponent* component, const std::string& service, IQueryServerHandlerPtr query_handler = nullptr);
 
     /** Destructor.
      *  Properly disconnects all service requestors in case of destruction
@@ -629,7 +633,7 @@ namespace SmartACE {
      *    - SMART_ERROR_COMMUNICATION : communication problems
      *    - SMART_ERROR               : something went wrong
      */
-    Smart::StatusCode answer(const QueryId& id, const A& answer);
+    Smart::StatusCode answer(const Smart::QueryIdPtr id, const A& answer);
 
   };
 }

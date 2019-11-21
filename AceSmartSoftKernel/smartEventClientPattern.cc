@@ -60,11 +60,11 @@ namespace SmartACE
    }
 
    void EventClientServiceHandler::setCallbackFkts(void *ptr,
-      void (*callbackEvent)(void *, const SmartACE::SmartMessageBlock*,int),
+      void (*callbackEvent)(void *, const SmartACE::SmartMessageBlock*,size_t),
       void (*callbackAckConn)(void *, int, int),
       void (*callbackSrvDisc)(void *, int),
       void (*callbackAckDisc)(void *),
-      void (*callbackAckActivate)(void*,const int&))
+      void (*callbackAckActivate)(void*,const size_t&))
    {
       lthis = ptr;
 
@@ -79,7 +79,8 @@ namespace SmartACE
    {
       //<alexej date="2010-03-09">
       ACE_CDR::Long cid = 0;
-      ACE_CDR::Long i_temp = 0;
+      ACE_CDR::Long status = 0;
+      ACE_CDR::ULongLong event_id = 0;
       //</alexej>
 
       //
@@ -91,10 +92,10 @@ namespace SmartACE
       if(cmd_is.length() > 0 && msg_is.length() > 0)
       {
          // get session id
-         cmd_is >> i_temp;
+         cmd_is >> event_id;
 
          // call event handler function of pattern object (lthis)
-         this->hndEvent(lthis, msg_is.start(), i_temp);
+         this->hndEvent(lthis, msg_is.start(), event_id);
       }
       break;
 
@@ -107,9 +108,9 @@ namespace SmartACE
          cmd_is >> cid;
 
          // read the status value
-         cmd_is >> i_temp;
+         cmd_is >> status;
 
-         this->hndAckConn(lthis, cid, i_temp);
+         this->hndAckConn(lthis, cid, status);
          //</alexej>
       }
       break;
@@ -136,9 +137,9 @@ namespace SmartACE
    case SmartACE::CMD_ACK_ACTIVATE:
       if(cmd_is.length() > 0)
       {
-         cmd_is >> i_temp;
+         cmd_is >> event_id;
 
-         this->hndAckActivate(lthis, i_temp);
+         this->hndAckActivate(lthis, event_id);
       }
       break;
       };
@@ -146,15 +147,15 @@ namespace SmartACE
       return 0;
    }
 
-   Smart::StatusCode EventClientServiceHandler::activate(int mode, int aid, const SmartACE::SmartMessageBlock *parameter)
+   Smart::StatusCode EventClientServiceHandler::activate(int mode, size_t aid, const SmartACE::SmartMessageBlock *parameter)
    {
       Smart::StatusCode result = Smart::SMART_OK;
 
-      size_t length = ACE_CDR::LONG_SIZE+ACE_CDR::LONG_SIZE;
+      size_t length = ACE_CDR::LONG_SIZE+ACE_CDR::LONGLONG_SIZE;
 
       ACE_OutputCDR cdr(length);
       cdr << ACE_CDR::Long(ACE_Utils::truncate_cast<ACE_CDR::Long>(mode));;
-      cdr << ACE_CDR::Long(ACE_Utils::truncate_cast<ACE_CDR::Long>(aid));
+      cdr << ACE_CDR::ULongLong(ACE_Utils::truncate_cast<ACE_CDR::ULongLong>(aid));
 
       if( this->send_command_message(SmartACE::CMD_ACTIVATE, cdr.current(), parameter) != 0 ) {
          if(this->is_disconnected()) {
@@ -167,14 +168,14 @@ namespace SmartACE
       return result;
    }
 
-   Smart::StatusCode EventClientServiceHandler::deactivate(int aid)
+   Smart::StatusCode EventClientServiceHandler::deactivate(size_t aid)
    {
       Smart::StatusCode result = Smart::SMART_OK;
 
-      size_t length = ACE_CDR::LONG_SIZE;
+      size_t length = ACE_CDR::LONGLONG_SIZE;
 
       ACE_OutputCDR cdr(length);
-      cdr << ACE_CDR::Long(ACE_Utils::truncate_cast<ACE_CDR::Long>(aid));;
+      cdr << ACE_CDR::ULongLong(ACE_Utils::truncate_cast<ACE_CDR::ULongLong>(aid));;
 
       if( this->send_command_message(SmartACE::CMD_DEACTIVATE, cdr.current()) != 0 ) {
          if(this->is_disconnected()) {

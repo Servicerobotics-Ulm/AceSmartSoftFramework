@@ -30,6 +30,8 @@
 //
 // --------------------------------------------------------------------------
 
+#include <memory>
+
 #include "aceSmartSoft.hh"
 #include "commExamplePrint.hh"
 
@@ -42,9 +44,6 @@
 class PrintHandler : public SmartACE::SendServerHandler<SmartACE::CommExamplePrint>
 {
 public:
-	PrintHandler(SmartACE::SendServer<SmartACE::CommExamplePrint> *server)
-	: SmartACE::SendServerHandler<SmartACE::CommExamplePrint>(server)
-	  { }
   void handleSend(const SmartACE::CommExamplePrint& r) 
     {
       SmartACE::CommExamplePrint a;
@@ -52,19 +51,6 @@ public:
       r.print();
     }
 };
-
-// -------------------------------------------------------------------
-//
-// global variables
-//
-// -------------------------------------------------------------------
-
-
-SmartACE::SmartComponent *component;
-
-SmartACE::SendServer<SmartACE::CommExamplePrint> *printServant;
-PrintHandler *sendHandler;
-
 
 
 // -------------------------------------------------------------------
@@ -74,32 +60,21 @@ PrintHandler *sendHandler;
 // -------------------------------------------------------------------
 int main (int argc, char *argv[])
 {
-	  try {
-	   component = new SmartACE::SmartComponent("exampleComponent50",argc,argv);
+	try {
+		SmartACE::SmartComponent component("exampleComponent50", argc, argv);
 
-
-      printServant = new SmartACE::SendServer<SmartACE::CommExamplePrint>(component,"PrintServer");
-      sendHandler = new PrintHandler(printServant);
-
-
-		//<alexej description="Test2: Timeout (comment out Test1 and uncomment following lines to test the delete fkt."/>
-		//Test *test = new Test();
-		//test->open();
-
-	    component->run();
-
-	    delete sendHandler;
-	    delete printServant;
-
-     } catch (std::exception &e) {
-       std::cerr << e.what() << std::endl;
-       return 1;
-	  } catch (...) {
-	    std::cerr << "Uncaught exception..." << std::endl;
-	    return 1;
-	  }
-
-	delete component;
+		auto sendHandler = std::make_shared<PrintHandler>();
+		auto printServant = std::make_shared<
+				SmartACE::SendServer<SmartACE::CommExamplePrint>>(&component,
+				"PrintServer", sendHandler);
+		component.run();
+	} catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
+		return 1;
+	} catch (...) {
+		std::cerr << "Uncaught exception..." << std::endl;
+		return 1;
+	}
 
   return 0;
 }

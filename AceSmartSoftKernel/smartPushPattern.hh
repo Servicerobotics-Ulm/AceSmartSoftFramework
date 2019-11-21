@@ -71,7 +71,7 @@ class SmartPushServerInterface
    virtual ~SmartPushServerInterface() {  }
 
    //void subscribe(in SmartPushClientPattern client,in long cycle,out long active);
-	virtual Smart::StatusCode subscribe(int cycle, int sid) = 0;
+	virtual Smart::StatusCode subscribe(unsigned int cycle, int sid) = 0;
    // subscribe the push service
    // client : reference to the client object
    // cycle  : whole-numbered multiple of the server cycle to specify the individual update cycle

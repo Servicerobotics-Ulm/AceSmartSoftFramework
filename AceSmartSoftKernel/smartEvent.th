@@ -39,7 +39,7 @@
 //
 // static handle method called by ACE object
 //
-template<class P, class E> void SmartACE::EventClient<P,E>::hndEvent(void* ptr, const SmartMessageBlock *user, const int cltId)
+template<class P, class E> void SmartACE::EventClient<P,E>::hndEvent(void* ptr, const SmartMessageBlock *user, const size_t cltId)
 {
   EventClient<P,E> *lthis = (EventClient<P,E> *)ptr;
   EventClientList  *lptr;
@@ -59,9 +59,11 @@ template<class P, class E> void SmartACE::EventClient<P,E>::hndEvent(void* ptr, 
   //
   lthis->mutexEventList.acquire();
 
-  for( lptr = lthis->events; lptr != 0; lptr = lptr->next )
-    if( lptr->id == cltId )
+  for( lptr = lthis->events; lptr != 0; lptr = lptr->next ) {
+    auto eid_ptr = std::dynamic_pointer_cast<Smart::NumericCorrelationId>(lptr->id);
+    if(eid_ptr && *eid_ptr == cltId )
       break;
+  }
 
   if( lptr != 0 ) {
     if (lptr->mode == Smart::single) {
@@ -80,7 +82,7 @@ template<class P, class E> void SmartACE::EventClient<P,E>::hndEvent(void* ptr, 
         lptr->condW.signal();
         lptr->condWO.signal();
 
-        Smart::EventInputType<E,EventId> input;
+        Smart::EventInputType<E> input;
         input.event = lptr->e;
         input.event_id = lptr->id;
         lthis->notify_input(input);
@@ -104,7 +106,7 @@ template<class P, class E> void SmartACE::EventClient<P,E>::hndEvent(void* ptr, 
       lptr->condW.signal();
       lptr->condWO.signal();
 
-      Smart::EventInputType<E,EventId> input;
+      Smart::EventInputType<E> input;
       input.event_id = lptr->id;
       input.event = lptr->e;
       lthis->notify_input(input);
@@ -125,11 +127,11 @@ template<class P, class E> void SmartACE::EventClient<P,E>::hndEvent(void* ptr, 
 //
 // static handle method called by ACE
 //
-template<class P, class E> void SmartACE::EventClient<P,E>::hndAckActivate(void *ptr, const int &cltId)
+template<class P, class E> void SmartACE::EventClient<P,E>::hndAckActivate(void *ptr, const size_t &cltId)
 {
    EventClient<P,E> *lthis = (EventClient<P,E> *)ptr;
 
-   lthis->monitorActivation.signal(cltId); 
+   lthis->monitorActivation.signal(); 
 }
 
 //
@@ -205,7 +207,7 @@ void SmartACE::EventClient<P,E>::internalServerInitiatedDisconnect(void *ptr, in
 //
 // private helper method to clean up list of events
 //
-template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::removeActivationId(const SmartACE::EventId id) 
+template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::removeActivationId(const Smart::EventIdPtr id) 
 {
   EventClientList *lptr  = 0;
   EventClientList *hlptr = 0;
@@ -268,7 +270,7 @@ template<class P,class E> Smart::StatusCode SmartACE::EventClient<P,E>::removeAc
 // default constructor
 //
 template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(void) 
-: Smart::IEventClientPattern<P,E,EventId>(0)
+: Smart::IEventClientPattern<P,E>(0)
 {
   std::cerr << "CommPattern (event): ERROR: Entered default constructor EventClient" << std::endl;
 
@@ -279,7 +281,7 @@ template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(void)
 // standard constructor port
 //
 template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m,const std::string& port, WiringSlave* slave) 
-: Smart::IEventClientPattern<P,E,EventId>(m)
+: Smart::IEventClientPattern<P,E>(m)
 {
   Smart::StatusCode status;
 
@@ -329,7 +331,7 @@ template<class P, class E> inline SmartACE::EventClient<P,E>::EventClient(SmartC
 // standard constructor
 //
 template<class P,class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m) 
-: Smart::IEventClientPattern<P,E,EventId>(m)
+: Smart::IEventClientPattern<P,E>(m)
 {
   // set the configuration flags appropriately
   statusConnected    = 0;
@@ -363,7 +365,7 @@ template<class P,class E> inline SmartACE::EventClient<P,E>::EventClient(SmartCo
 // standard constructor already wired
 //
 template<class P,class E> inline SmartACE::EventClient<P,E>::EventClient(SmartComponent* m,const std::string& srv,const std::string& svc) 
-: Smart::IEventClientPattern<P,E,EventId>(m,srv,svc)
+: Smart::IEventClientPattern<P,E>(m,srv,svc)
 {
   Smart::StatusCode status;
   int flag;
@@ -785,7 +787,7 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::blockin
 //
 //
 //
-template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activate(const Smart::EventMode &m, const P& p, EventId& id) 
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activate(const Smart::EventMode &m, const P& p, Smart::EventIdPtr& id) 
 {
    EventClientList *lptr;
    Smart::StatusCode result;
@@ -808,7 +810,7 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activat
 
    eventCnt++;
    lptr                 = new EventClientList;
-   lptr->id             = eventCnt;
+   lptr->id             = std::make_shared<Smart::NumericCorrelationId>(eventCnt);
    lptr->mode           = m;
    lptr->eventFired     = 0;
    lptr->eventAvailable = 0;
@@ -820,7 +822,7 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activat
    component->addCV(&(lptr->condW));
    component->addCV(&(lptr->condWO));
 
-   id = eventCnt;
+   id = lptr->id;
 
    mutexEventList.release();
 
@@ -845,12 +847,12 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activat
    //
    //
    //
-   monitorActivation.prepare(id);
+   monitorActivation.prepare();
 
    //
    // call activate message
    //
-   result = serverProxy->activate(m, id, cdr.begin());
+   result = serverProxy->activate(m, eventCnt, cdr.begin());
 
    //
    // wait on aknowledge activate up to a second
@@ -881,7 +883,7 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::activat
 //
 //
 //
-template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::deactivate(const EventId &id) 
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::deactivate(const Smart::EventIdPtr id) 
 {
   Smart::StatusCode result;
   EventClientList *lptr;
@@ -937,7 +939,10 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::deactiv
     //
     // call deactivate message (oneway)
     //
-    result = serverProxy->deactivate(id);
+    auto eid_ptr = std::dynamic_pointer_cast<Smart::NumericCorrelationId>(id);
+    if(eid_ptr) {
+      result = serverProxy->deactivate(*eid_ptr);
+    }
     //</alexej>
 
   }
@@ -950,12 +955,16 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::deactiv
 //
 //
 //
-template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::tryEvent(const EventId &id) 
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::tryEvent(const Smart::EventIdPtr id) 
 {
   EventClientList *lptr;
   Smart::StatusCode  result;
 
   result = Smart::SMART_ERROR;
+  
+  if (statusConnected == 0) {
+      return Smart::SMART_DISCONNECTED;
+  }
 
   mutexEventList.acquire();
 
@@ -1002,12 +1011,16 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::tryEven
 //
 //
 //
-template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getEvent(const EventId &id, E& e, const std::chrono::steady_clock::duration &timeout) 
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getEvent(const Smart::EventIdPtr id, E& e, const Smart::Duration &timeout) 
 {
   EventClientList *lptr;
   Smart::StatusCode result;
 
   result = Smart::SMART_ERROR;
+  
+  if (statusConnected == 0) {
+      return Smart::SMART_DISCONNECTED;
+  }
 
   mutexEventList.acquire();
 
@@ -1035,8 +1048,12 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getEven
       // I use a CV with memory in the single mode to make sure that the event is not missed when it
       // fires just between the above mutexEventList.release() and the following call to wait() ...
       //
-      result = lptr->condW.wait(convertToAceTimeFrom(timeout));
-
+      if(timeout == Smart::Duration::max()) {
+         result = lptr->condW.wait();
+      } else {
+         result = lptr->condW.wait(convertToAceTimeFrom(timeout));
+      }
+      
       mutexEventList.acquire();
       if(result == Smart::SMART_OK) {
           //
@@ -1158,10 +1175,14 @@ template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getEven
 //
 //
 //
-template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getNextEvent(const EventId &id, E& e, const std::chrono::steady_clock::duration &timeout) 
+template<class P, class E> Smart::StatusCode SmartACE::EventClient<P,E>::getNextEvent(const Smart::EventIdPtr id, E& e, const Smart::Duration &timeout) 
 {
   EventClientList *lptr;
   Smart::StatusCode result;
+  
+  if (statusConnected == 0) {
+      return Smart::SMART_DISCONNECTED;
+  }
 
   mutexEventList.acquire();
 
@@ -1492,7 +1513,7 @@ void SmartACE::EventServer<P,E,S>::hndDisconnect(void* ptr, const EventServerSer
 // static handle method called by ACE object
 //
 template<class P,class E,class S>
-void SmartACE::EventServer<P,E,S>::hndActivate(void *ptr, const EventServerServiceHandler *client, const int &mode, const int &cltId, const SmartMessageBlock *user)
+void SmartACE::EventServer<P,E,S>::hndActivate(void *ptr, const EventServerServiceHandler *client, const int &mode, const size_t &cltId, const SmartMessageBlock *user)
 {
   EventServer<P,E,S>* lthis = (EventServer<P,E,S> *)ptr;
   EventServerList* lptr;
@@ -1505,7 +1526,7 @@ void SmartACE::EventServer<P,E,S>::hndActivate(void *ptr, const EventServerServi
   cdr >> lptr->p;
 
   lptr->eventMode = static_cast<Smart::EventMode>(mode);
-  lptr->clientId  = cltId;
+  lptr->eventId  = cltId;
   //<alexej date="2009-10-26">
    lptr->clientProxy   = const_cast<EventServerServiceHandler*>(client);
   //</alexej>
@@ -1518,13 +1539,13 @@ void SmartACE::EventServer<P,E,S>::hndActivate(void *ptr, const EventServerServi
 
   //<alexej date="2015-01-20">
   // this is a new hook to detect whenever a new event activation occurs
-  lthis->testHandler->onActivation(lptr->p);
+  lthis->onActivation(lptr->p);
   //</alexej>  
 
   lthis->mutexEventList.release();
 }
 
-template<class P,class E,class S> void SmartACE::EventServer<P,E,S>::hndDeactivate(void *ptr, const EventServerServiceHandler *client, const int &cltId)
+template<class P,class E,class S> void SmartACE::EventServer<P,E,S>::hndDeactivate(void *ptr, const EventServerServiceHandler *client, const size_t &eventId)
 {
   EventServer<P,E,S>* lthis = (EventServer<P,E,S> *)ptr;
   EventServerList* cptr;
@@ -1536,7 +1557,7 @@ template<class P,class E,class S> void SmartACE::EventServer<P,E,S>::hndDeactiva
   // first remove entries from head as long as they match the client object and the id
   //
   //<alexej date="2009-10-26">
-  while ((lthis->events != 0) && (client == lthis->events->clientProxy) && (cltId == lthis->events->clientId))
+  while ((lthis->events != 0) && (client == lthis->events->clientProxy) && (eventId == lthis->events->eventId))
   //</alexej>
   {
     cptr = lthis->events;
@@ -1560,7 +1581,7 @@ template<class P,class E,class S> void SmartACE::EventServer<P,E,S>::hndDeactiva
     while (cptr->next != 0) {
       //<alexej date="2009-10-26">
       //if ((client->_is_equivalent(cptr->next->client)) && (cltId == cptr->next->clientId)) {
-      if ((client == cptr->next->clientProxy) && (cltId == cptr->next->clientId)) {
+      if ((client == cptr->next->clientProxy) && (eventId == cptr->next->eventId)) {
         hcptr      = cptr->next;
         cptr->next = cptr->next->next;
         //<alexej date="2009-10-26">
@@ -1592,13 +1613,13 @@ template<class P, class E, class S> inline SmartACE::EventServer<P,E,S>::EventSe
 // standard constructor
 //
 template<class P, class E, class S>
-inline SmartACE::EventServer<P,E,S>::EventServer(SmartComponent* m,
+inline SmartACE::EventServer<P,E,S>::EventServer(SmartComponent* component,
                                             const std::string& svc,
-											Smart::IEventTestHandler<P,E,S> *handler) 
-  : Smart::IEventServerPattern<P,E,S,EventId>(m,svc,handler),
+                                            IEventTestHandlerPtr handler) 
+  : IEventServerBase(component, svc, handler),
 	uuid_genrator(),
     service_identifier(0),
-    component(m),
+    component(component),
     service(svc),
     serverReady(0)
 {
@@ -1811,7 +1832,7 @@ template<class P, class E, class S> Smart::StatusCode SmartACE::EventServer<P,E,
 
   for (lptr = events; lptr != 0; lptr = lptr->next) {
 	  //FIXME: call the notification method
-    if (this->testHandler->testEvent(lptr->p, e, s)) {
+    if (IEventServerBase::testEvent(lptr->p, e, s)) {
       if ((lptr->eventMode == Smart::single) && (lptr->eventCnt != 0)) {
         //
         // this a single activation which already fired, therefore
@@ -1830,7 +1851,7 @@ template<class P, class E, class S> Smart::StatusCode SmartACE::EventServer<P,E,
         //
         // send Message to client
         //
-        status = lptr->clientProxy->event(cdr.begin(), lptr->clientId);
+        status = lptr->clientProxy->event(cdr.begin(), lptr->eventId);
         //ACE_DEBUG((LM_DEBUG, ACE_TEXT("event()\n") ));
 
         //</alexej>

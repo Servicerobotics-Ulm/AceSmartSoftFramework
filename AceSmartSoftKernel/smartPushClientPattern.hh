@@ -76,7 +76,7 @@ namespace SmartACE
          void (*)(void*,unsigned long,int),                           // server info handler
          void (*)(void *,int&));                               // activation state handler
 
-      Smart::StatusCode subscribe(int cycle, int sid);
+      Smart::StatusCode subscribe(unsigned int cycle, int sid);
       Smart::StatusCode unsubscribe();
 
       Smart::StatusCode connect(int cid, const ACE_Utils::UUID &serviceID);

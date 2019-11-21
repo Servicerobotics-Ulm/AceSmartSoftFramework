@@ -59,7 +59,7 @@ QueryClientServiceHandler::~QueryClientServiceHandler()
 }
 
 void QueryClientServiceHandler::setCallbackFkts(void *ptr,
-                     void (*callbackAnswer)(void *, const SmartACE::SmartMessageBlock*,int),
+                     void (*callbackAnswer)(void *, const SmartACE::SmartMessageBlock*,size_t),
                      void (*callbackAckConn)(void *, int, int),
                      void (*callbackSrvDisc)(void *, int),
                      void (*callbackAckDisc)(void *))
@@ -76,7 +76,7 @@ int QueryClientServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
 {
    //<alexej date="2010-03-09">
    ACE_CDR::Long cid = 0;
-   ACE_CDR::Long i_temp = 0;
+   ACE_CDR::ULongLong qid = 0;
    //</alexej>
 
    //
@@ -88,10 +88,10 @@ int QueryClientServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
       if(cmd_is.length() > 0 && msg_is.length() > 0)
       {
          // get query id
-		   cmd_is >> i_temp;
+		   cmd_is >> qid;
 
 //printf("client->handle_incomming_message->CMD_ANSWER\n");
-         this->hndAnsw(lthis, msg_is.start(), i_temp);
+         this->hndAnsw(lthis, msg_is.start(), qid);
       }
 		break;
 
@@ -105,9 +105,9 @@ int QueryClientServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
          cmd_is >> cid;
 
          // read the status value
-         cmd_is >> i_temp;
+         cmd_is >> qid;
 
-         this->hndAckConn(lthis, cid, i_temp);
+         this->hndAckConn(lthis, cid, qid);
          //</alexej>
       }
       break;
@@ -136,14 +136,14 @@ int QueryClientServiceHandler::handle_incomming_message(ACE_CDR::Long command, A
 	return 0;
 }
 
-Smart::StatusCode QueryClientServiceHandler::request(const SmartACE::SmartMessageBlock *message, int id)
+Smart::StatusCode QueryClientServiceHandler::request(const SmartACE::SmartMessageBlock *message, size_t id)
 {
 	Smart::StatusCode result = Smart::SMART_OK;
 
-	size_t length = 4 + message->size();
+	size_t length = ACE_CDR::LONGLONG_SIZE + message->size();
 
 	ACE_OutputCDR cdr(length);
-	cdr << ACE_Utils::truncate_cast<ACE_CDR::Long>(id);
+	cdr << ACE_Utils::truncate_cast<ACE_CDR::ULongLong>(id);
 
 	if ( this->send_command_message(SmartACE::CMD_REQUEST, cdr.current(), message) != 0 ) {
 		if(this->is_disconnected()) {

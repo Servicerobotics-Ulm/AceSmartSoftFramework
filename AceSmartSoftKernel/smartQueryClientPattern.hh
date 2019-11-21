@@ -53,7 +53,7 @@ namespace SmartACE
       public SmartQueryServerInterface
    {
    private:
-      void (*hndAnsw)(void *,const SmartACE::SmartMessageBlock *, int);
+      void (*hndAnsw)(void *,const SmartACE::SmartMessageBlock *, size_t);
       void (*hndAckConn)(void *, int, int);
       void (*hndServDisc)(void *, int);
       void (*hndAckDisc)(void *);
@@ -66,12 +66,12 @@ namespace SmartACE
       virtual ~QueryClientServiceHandler();
 
       void setCallbackFkts(void *,
-         void (*)(void *, const SmartACE::SmartMessageBlock*, int),
+         void (*)(void *, const SmartACE::SmartMessageBlock*, size_t),
          void (*)(void *, int, int),
          void (*)(void *, int),
          void (*)(void *));
 
-      Smart::StatusCode request(const SmartACE::SmartMessageBlock *message, int id);
+      Smart::StatusCode request(const SmartACE::SmartMessageBlock *message, size_t qid);
 
       Smart::StatusCode connect(int cid, const ACE_Utils::UUID &serviceID);
       Smart::StatusCode discard();

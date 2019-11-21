@@ -39,7 +39,7 @@
 //
 /////////////////////////////////////////////////////////////////////////
 
-template<class R, class A> void SmartACE::QueryClient<R,A>::hndAnsw(void* ptr, const SmartACE::SmartMessageBlock *user, int cltId)
+template<class R, class A> void SmartACE::QueryClient<R,A>::hndAnsw(void* ptr, const SmartACE::SmartMessageBlock *user, size_t qid)
 {
   QueryClient<R,A> *lthis = (QueryClient<R,A> *)ptr;
   QueryClientList  *lptr = 0;
@@ -59,10 +59,12 @@ template<class R, class A> void SmartACE::QueryClient<R,A>::hndAnsw(void* ptr, c
   //
   lthis->mutexQueryList.acquire();
 
-  for( lptr = lthis->queries; lptr != 0; lptr = lptr->next )
-    if( lptr->id == cltId )
+  for( lptr = lthis->queries; lptr != 0; lptr = lptr->next ) {
+    auto curr_id = std::dynamic_pointer_cast<Smart::NumericCorrelationId>(lptr->id);
+    if(curr_id && *curr_id == qid )
       break;
-
+  }
+  
   if( lptr != 0 ) {
     if (lptr->querystatus == Smart::QUERY_PENDING) {
       //
@@ -197,7 +199,7 @@ template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(void)
 // standard constructor port
 //
 template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m,const std::string& port, SmartACE::WiringSlave* slave) 
-:	Smart::IQueryClientPattern<R,A,QueryId>(m)
+:	Smart::IQueryClientPattern<R,A>(m)
 {
   Smart::StatusCode status;
 
@@ -250,7 +252,7 @@ template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartC
 // standard constructor
 //
 template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m) 
-:	Smart::IQueryClientPattern<R,A,QueryId>(m)
+:	Smart::IQueryClientPattern<R,A>(m)
 {
   // set the configuration flags approriately
   statusConnected    = 0;
@@ -285,7 +287,7 @@ template<class R, class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartC
 // standard constructor already wired
 //
 template<class R,class A> inline SmartACE::QueryClient<R,A>::QueryClient(SmartComponent* m,const std::string& srv,const std::string& svc) 
-:	Smart::IQueryClientPattern<R,A,QueryId>(m, srv, svc)
+:	Smart::IQueryClientPattern<R,A>(m, srv, svc)
 {
   Smart::StatusCode status;
   int flag;
@@ -687,6 +689,7 @@ template<class R,class A> Smart::StatusCode SmartACE::QueryClient<R,A>::disconne
       if( lptr->querystatus == Smart::QUERY_PENDING ) {
         lptr->querystatus = Smart::QUERY_DISCONNECTED;
         lptr->disconnect  = 1;
+        lptr->cond.signal();
       } else if (lptr->querystatus == Smart::QUERY_VALIDANSWER) {
         // do nothing since answer already available
         lptr->disconnect  = 0;
@@ -777,7 +780,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::blockin
 template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::query(const R& r, A& a) 
 {
   Smart::StatusCode result;
-  SmartACE::QueryId    id;
+  Smart::QueryIdPtr    id;
 
   result = this->queryRequest(r,id);
   if (result != Smart::SMART_OK) return result;
@@ -793,7 +796,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::query(c
 //
 //
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRequest(const R& r, QueryId& id) 
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRequest(const R& r, Smart::QueryIdPtr& id) 
 {
   QueryClientList *lptr = 0;
   Smart::StatusCode result;
@@ -816,7 +819,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
 
   queryCnt++;
   lptr              = new QueryClientList;
-  lptr->id          = queryCnt;
+  lptr->id          = std::make_shared<Smart::NumericCorrelationId>(queryCnt);
   lptr->querystatus = Smart::QUERY_PENDING;
   lptr->disconnect  = 0;
   lptr->next        = queries;
@@ -840,7 +843,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
   //
   // send message content to server
   //
-  result = serverProxy->request(cdr.begin(), id);
+  result = serverProxy->request(cdr.begin(), queryCnt);
 
   //</alexej>
 
@@ -860,7 +863,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
 //
 //
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryReceive(const QueryId& id,A& a) 
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryReceive(const Smart::QueryIdPtr id, A& a) 
 {
   QueryClientList *lptr  = 0;
   QueryClientList *hlptr = 0;
@@ -876,7 +879,8 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
       break;
 
   if( lptr == 0 ) {
-    result = Smart::SMART_WRONGID;
+    mutexQueryList.release();
+    return Smart::SMART_WRONGID;
   }
 
   if (lptr->querystatus == Smart::QUERY_PENDING) {
@@ -903,7 +907,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
 //
 //
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryReceiveWait(const QueryId& id,A& a, const std::chrono::steady_clock::duration &timeout) 
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryReceiveWait(const Smart::QueryIdPtr id, A& a, const Smart::Duration &timeout) 
 {
   QueryClientList *lptr  = 0;
   Smart::StatusCode result;
@@ -933,7 +937,11 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
     return Smart::SMART_WRONGID;
   }
 
-  result = lptr->cond.wait(convertToAceTimeFrom(timeout));
+  if(timeout == Smart::Duration::max()) {
+    result = lptr->cond.wait();
+  } else {
+    result = lptr->cond.wait(convertToAceTimeFrom(timeout));
+  }
 
   mutexQueryList.acquire();
   if( result != Smart::SMART_OK ) {
@@ -973,14 +981,14 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
 //
 //
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryDiscard(const QueryId& id) 
+template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryDiscard(const Smart::QueryIdPtr id) 
 {
 
   QueryClientList *lptr  = 0;
   QueryClientList *hlptr = 0;
   Smart::StatusCode  result;
 
-  result = Smart::SMART_ERROR;
+  result = Smart::SMART_OK;
 
   mutexQueryList.acquire();
 
@@ -1041,7 +1049,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryDi
 //
 // static handle method called by SmartServiceHandler object
 //
-template<class R,class A> void SmartACE::QueryServer<R,A>::hndRqst(void* ptr, const SmartMessageBlock *user, const QueryServerServiceHandler *client, int cltId)
+template<class R,class A> void SmartACE::QueryServer<R,A>::hndRqst(void* ptr, const SmartMessageBlock *user, const QueryServerServiceHandler *client, size_t cltId)
 {
   QueryServer<R,A>* lthis = (QueryServer<R,A> *)ptr;
   QueryServerList* lptr = 0;
@@ -1061,6 +1069,8 @@ template<class R,class A> void SmartACE::QueryServer<R,A>::hndRqst(void* ptr, co
   lptr->next        = lthis->queries;
   lthis->queries    = lptr;
 
+  auto qid = std::make_shared<Smart::NumericCorrelationId>(lptr->id);
+
   lthis->mutexQueryList.release();
 
   //
@@ -1071,21 +1081,7 @@ template<class R,class A> void SmartACE::QueryServer<R,A>::hndRqst(void* ptr, co
   // lptr can't be used anymore here AFTER calling handleQuery, since
   // a passive handler returns the answer before it leaves "handleQuery(...)"
   //
-
-	// create request communication object
-	Smart::QueryServerInputType<R,QueryId> input;
-	// fill request object with the payload content
-	input.request = lptr->r;
-	input.query_id = lptr->id;
-
-
-		// call the user-provided query-handler (assuming that it is either implemented without
-		// blocking calls or that it uses an own thread of execution that is defined by the user)
-		if(lthis->notify_input(input) == false) {
-			//FIXME: reject request because there are no handlers registered
-
-		}
-//  lthis->handler.handleQuery(lptr->id,lptr->r);
+  lthis->handleQuery(qid,lptr->r);
 }
 
 
@@ -1321,12 +1317,11 @@ template<class R, class A> inline SmartACE::QueryServer<R,A>::QueryServer(void)
 // standard constructor
 //
 template<class R, class A>
-inline SmartACE::QueryServer<R,A>::QueryServer(SmartComponent* m,
-					  const std::string & svc) 
-  : Smart::IQueryServerPattern<R,A,QueryId>(m,svc),
+inline SmartACE::QueryServer<R,A>::QueryServer(SmartComponent* component, const std::string & svc, IQueryServerHandlerPtr query_handler) 
+  : IQueryServerBase(component, svc, query_handler),
 	uuid_genrator(),
     service_identifier(0),
-    component(m),
+    component(component),
     service(svc),
     serverReady(0)
 {
@@ -1523,7 +1518,7 @@ template<class R, class A> void SmartACE::QueryServer<R,A>::serverInitiatedDisco
 //
 // function called by the user for returning the answer to a specific request (see id)
 //
-template<class R, class A> Smart::StatusCode SmartACE::QueryServer<R,A>::answer(const QueryId& id, const A& a) 
+template<class R, class A> Smart::StatusCode SmartACE::QueryServer<R,A>::answer(const Smart::QueryIdPtr id, const A& a) 
 {
   QueryServerList* lptr  = 0;
   QueryServerList* hlptr = 0;
@@ -1539,9 +1534,10 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryServer<R,A>::answer(
   mutexClientList.acquire();
 
   mutexQueryList.acquire();
-  for( lptr = queries; lptr != 0; lptr = lptr->next )
-    if( lptr->id == id )
+  for( lptr = queries; lptr != 0; lptr = lptr->next ) {
+    if( lptr->id == *id )
       break;
+  }
   mutexQueryList.release();
 
   if( lptr != 0 ) {
@@ -1574,7 +1570,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryServer<R,A>::answer(
     // that the entry is still in the list ... each id also occurs only
     // once in the list
     //
-    if ( id == queries->id ) {
+    if ( *id == queries->id ) {
       //
       // first entry in list therefore remove head of list ...
       //
@@ -1587,7 +1583,7 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryServer<R,A>::answer(
       //
       lptr = queries;
       while (lptr->next != 0) {
-        if (lptr->next->id == id) {
+        if (lptr->next->id == *id) {
           hlptr      = lptr->next;
           lptr->next = lptr->next->next;
           delete hlptr;

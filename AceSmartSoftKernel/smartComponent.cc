@@ -220,13 +220,18 @@ Smart::StatusCode SmartACE::SmartComponent::run( void )
    return result;
 }
 
+void SmartACE::SmartComponent::signal_shutdown(void)
+{
+	this->handle_signal(SIGINT, nullptr, nullptr);
+}
+
 void SmartACE::SmartComponent::waitOnRuntimeCondVar() 
 {
    SmartGuard guard(mutex);
    runtimeCondVar.wait();
 }
 
-void SmartACE::SmartComponent::signalSmartTasksToStop(const std::chrono::steady_clock::duration &watchdogTime) {
+void SmartACE::SmartComponent::signalSmartTasksToStop(const Smart::Duration &watchdogTime) {
    // 1) start the shutdown watchdog
    shutdownWatchdog.start(watchdogTime);
 
@@ -337,7 +342,7 @@ Smart::StatusCode SmartACE::SmartComponent::blocking(const bool b)
   return result;
 }
 
-void SmartACE::SmartComponent::setTimedModeForAllSmartMonitors(const std::chrono::steady_clock::duration &timeout)
+void SmartACE::SmartComponent::setTimedModeForAllSmartMonitors(const Smart::Duration &timeout)
 {
    SmartMonitorStruct *ptr;
 
@@ -678,14 +683,14 @@ SmartACE::ShutdownTimer::ShutdownTimer(SmartACE::SmartComponent *comp)
    //lthis = NULL;
 }
 
-void SmartACE::ShutdownTimer::start(const std::chrono::steady_clock::duration &timeout)
+void SmartACE::ShutdownTimer::start(const Smart::Duration &timeout)
 {
    SmartGuard guard(mutex);
    timer_id = component->getTimerManager()->scheduleTimer(this, (void*)0, timeout);
    timer_started = true;
 }
 
-void SmartACE::ShutdownTimer::timerExpired(const std::chrono::system_clock::time_point &abs_time, const void * arg)
+void SmartACE::ShutdownTimer::timerExpired(const Smart::TimePoint &abs_time, const void * arg)
 {
    {  // begin guard scope 
       SmartGuard guard(mutex);

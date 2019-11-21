@@ -32,7 +32,7 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
-PROJECT(AceSmartSoft VERSION 3.1.0)
+PROJECT(AceSmartSoft VERSION 3.2.0)
 
 SET(PARENT_NAME ${PROJECT_NAME})
 
@@ -89,6 +89,7 @@ ADD_SUBDIRECTORY(AceSmartSoftKernel)
 ADD_SUBDIRECTORY(NamingService)
 ADD_SUBDIRECTORY(Examples)
 ADD_SUBDIRECTORY(APIDocu)
+ADD_SUBDIRECTORY(GTests)
 ##################################################################
 
 # ===============================================================

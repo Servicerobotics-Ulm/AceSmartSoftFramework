@@ -67,7 +67,7 @@ namespace SmartACE {
       virtual int open(void *handler = 0);
 
       // D
-      Smart::StatusCode event(const SmartACE::SmartMessageBlock *user, int id);
+      Smart::StatusCode event(const SmartACE::SmartMessageBlock *user, size_t id);
 
       // R3:
       Smart::StatusCode serverInitiatedDisconnect(int cid);
@@ -76,7 +76,7 @@ namespace SmartACE {
       // A2:
       Smart::StatusCode acknowledgmentDisconnect();
       // A4:
-      Smart::StatusCode acknowledgmentActivate(int status);
+      Smart::StatusCode acknowledgmentActivate(size_t id);
    };
 
 
@@ -94,8 +94,8 @@ namespace SmartACE {
       void (*hndCnctPtr)(void *, const EventServerServiceHandler*,int,const ACE_Utils::UUID&);
       void (*hndDiscrdPtr)(void *, const EventServerServiceHandler*);
       void (*hndDisconPtr)(void *, const EventServerServiceHandler*);
-      void (*hndActivatePtr)(void *, const EventServerServiceHandler*, const int&, const int&, const SmartMessageBlock *);
-      void (*hndDeactivatePtr)(void *, const EventServerServiceHandler*, const int&);
+      void (*hndActivatePtr)(void *, const EventServerServiceHandler*, const int&, const size_t&, const SmartMessageBlock *);
+      void (*hndDeactivatePtr)(void *, const EventServerServiceHandler*, const size_t&);
       void *lthis;
 
       ACE_Reactor *_reactor;
@@ -105,8 +105,8 @@ namespace SmartACE {
          void (*)(void *, const EventServerServiceHandler*,int,const ACE_Utils::UUID&), // connect handler
          void (*)(void *, const EventServerServiceHandler*),                      // discard handler
          void (*)(void *, const EventServerServiceHandler*),                      // disconnect handler
-         void (*)(void *, const EventServerServiceHandler*, const int&, const int&, const SmartMessageBlock *), // activation handler
-         void (*)(void *, const EventServerServiceHandler*, const int&),          // deactivation handler
+         void (*)(void *, const EventServerServiceHandler*, const int&, const size_t&, const SmartMessageBlock *), // activation handler
+         void (*)(void *, const EventServerServiceHandler*, const size_t&),          // deactivation handler
          ACE_Reactor *reactor
       );
 
@@ -124,11 +124,11 @@ namespace SmartACE {
       {
     	  this->hndDisconPtr(lthis, sh);
       }
-      inline void handleActivate(const EventServerServiceHandler *sh, const int &mode, const int &aid, const SmartMessageBlock *param)
+      inline void handleActivate(const EventServerServiceHandler *sh, const int &mode, const size_t &aid, const SmartMessageBlock *param)
       {
     	  this->hndActivatePtr(lthis, sh, mode, aid, param);
       }
-      inline void handleDeactivate(const EventServerServiceHandler *sh, const int &aid)
+      inline void handleDeactivate(const EventServerServiceHandler *sh, const size_t &aid)
       {
     	  this->hndDeactivatePtr(lthis, sh, aid);
       }

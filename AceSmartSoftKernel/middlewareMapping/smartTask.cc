@@ -114,7 +114,7 @@ bool SmartACE::Task::test_canceled()
 	return ACE_Thread_Manager::instance()->testcancel(ACE_Thread::self());
 }
 
-void SmartACE::Task::sleep_for(const std::chrono::steady_clock::duration &rel_time)
+void SmartACE::Task::sleep_for(const Smart::Duration &rel_time)
 {
 	ACE_OS::sleep(convertToAceTimeFrom(rel_time));
 }

@@ -121,19 +121,8 @@ Smart::StatusCode SmartACE::ParameterMaster::sendParameterWait(
 //
 // standard constructor
 //
-SmartACE::ParameterSlave::ParameterQueryHandler::ParameterQueryHandler(
-		QueryServer<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse>* server,
-		ParameterUpdateHandler *param_handler) 
+SmartACE::ParameterSlave::ParameterQueryHandler::ParameterQueryHandler(ParameterUpdateHandler *param_handler)
   : param_handler(param_handler)
-  , QueryServerHandler<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse>(server)
-{
-  //
-}
-
-//
-// destructor
-//
-SmartACE::ParameterSlave::ParameterQueryHandler::~ParameterQueryHandler() 
 {
   //
 }
@@ -141,13 +130,13 @@ SmartACE::ParameterSlave::ParameterQueryHandler::~ParameterQueryHandler()
 //
 //
 //
-void SmartACE::ParameterSlave::ParameterQueryHandler::handleQuery(const QueryId &id, const SmartACE::CommParameterRequest & request) 
+void SmartACE::ParameterSlave::ParameterQueryHandler::handleQuery(IQueryServer& server, const Smart::QueryIdPtr &id, const SmartACE::CommParameterRequest & request)
 {
   SmartACE::CommParameterResponse answer;
 
   answer = param_handler->handleParameter(request);
 
-  this->server->answer(id,answer);
+  server.answer(id,answer);
 }
 
 
@@ -164,9 +153,9 @@ void SmartACE::ParameterSlave::ParameterQueryHandler::handleQuery(const QueryId 
 //
 SmartACE::ParameterSlave::ParameterSlave(SmartComponent* comp, ParameterUpdateHandler *hnd, std::string slave_address) 
 : component(comp)
-, query_server(comp, slave_address)
-, query_handler(&query_server,hnd)
-, thread_handler(comp,&query_handler)
+, query_handler(std::make_shared<ParameterQueryHandler>(hnd))
+, thread_handler(std::make_shared<ThreadQueueQueryHandler<SmartACE::CommParameterRequest,SmartACE::CommParameterResponse>>(comp,query_handler))
+, query_server(comp, slave_address, thread_handler)
 {  }
 
 //

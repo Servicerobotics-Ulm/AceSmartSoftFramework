@@ -181,7 +181,6 @@ Smart::StatusCode SmartACE::WiringMaster::connect(const std::string& slavecmpt,c
 // default constructor
 //
 SmartACE::WiringHandler::WiringHandler(void) 
-:	QueryServerHandler<SmartCommWiring,SmartCommWiring>(0)
 {
   std::cerr << "CommPattern (WiringHandler): ERROR: Entered default constructor WiringHandler" << std::endl;
   wiringslave=0;
@@ -192,16 +191,7 @@ SmartACE::WiringHandler::WiringHandler(void)
 // standard constructor
 //
 SmartACE::WiringHandler::WiringHandler(SmartACE::WiringSlave *s) 
-:	QueryServerHandler<SmartCommWiring,SmartCommWiring>(s->wiring)
-,	wiringslave(s)
-{
-  //
-}
-
-//
-// destructor
-//
-SmartACE::WiringHandler::~WiringHandler() 
+:	wiringslave(s)
 {
   //
 }
@@ -209,13 +199,13 @@ SmartACE::WiringHandler::~WiringHandler()
 //
 //
 //
-void SmartACE::WiringHandler::handleQuery(const QueryId &id, const SmartCommWiring& request)
+void SmartACE::WiringHandler::handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id, const SmartCommWiring& request)
 {
   SmartCommWiring answer;
 
   answer = wiringslave->handleWiring(request);
 
-  this->server->answer(id,answer);
+  server.answer(id,answer);
 }
 
 
@@ -249,6 +239,12 @@ SmartACE::WiringSlave::WiringSlave(SmartComponent* m, std::string slaveaddress) 
   // reset port list
   ports = 0;
 
+  handler = std::make_shared<WiringHandler>(this);
+
+  //<alexej date="2009-06-17">
+  // Handling is done in separate thread, otherwise blocking of main thread occures!
+  threadHandler = std::make_shared<ThreadQueueQueryHandler<SmartCommWiring,SmartCommWiring>>(component,handler);
+
   // added functionality to work without NamingService
   if(component->getName().compare(SMART_NONS) == 0) {
 	  if(slaveaddress == "") {
@@ -257,18 +253,11 @@ SmartACE::WiringSlave::WiringSlave(SmartComponent* m, std::string slaveaddress) 
 	  }else{
 		  // Slaveaddress has to contain a propper "ip:portnr" string for WiringSlave.
 		  // This "ip:portnr" will be used by WiringMaster to connect to WiringSlave!
-		  wiring = new QueryServer<SmartCommWiring,SmartCommWiring>(component,slaveaddress);
+		  wiring = new QueryServer<SmartCommWiring,SmartCommWiring>(component,slaveaddress,threadHandler);
 	  }
   }else{
-	wiring  = new QueryServer<SmartCommWiring,SmartCommWiring>(component,"wiring");
+	wiring  = new QueryServer<SmartCommWiring,SmartCommWiring>(component,"wiring",threadHandler);
   }
-
-  handler = new WiringHandler(this);
-
-  //<alexej date="2009-06-17">
-  // Handling is done in separate thread, otherwise blocking of main thread occures!
-  threadHandler = new ThreadQueueQueryHandler<SmartCommWiring,SmartCommWiring>(component,handler);
-
   //</alexej>
 }
 
@@ -287,9 +276,6 @@ SmartACE::WiringSlave::~WiringSlave(void)
     ports = ports->next;
     delete lptr;
   }
-
-  delete handler;
-  delete threadHandler;
 
   mutex.release();
 }

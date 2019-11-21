@@ -208,11 +208,11 @@ int main (int argc, char *argv[])
 
     EventThread  userThread(component);
     
-    MoreThanTestHandler moreThanTester;
-    exampleEvent1 = new SmartACE::EventServer<SmartACE::CommExampleEvent1Parameter,SmartACE::CommExampleEvent1Result,SmartACE::ExampleEventState>(component,"eventMoreThan",&moreThanTester);
+    auto moreThanTester = std::make_shared<MoreThanTestHandler>();
+    exampleEvent1 = new SmartACE::EventServer<SmartACE::CommExampleEvent1Parameter,SmartACE::CommExampleEvent1Result,SmartACE::ExampleEventState>(component,"eventMoreThan",moreThanTester);
 
-    IntervalTestHandler intervallTester;
-    exampleEvent2 = new SmartACE::EventServer<SmartACE::CommExampleEvent2Parameter,SmartACE::CommExampleEvent2Result,SmartACE::ExampleEventState>(component,"eventInterval",&intervallTester);
+    auto intervallTester = std::make_shared<IntervalTestHandler>();
+    exampleEvent2 = new SmartACE::EventServer<SmartACE::CommExampleEvent2Parameter,SmartACE::CommExampleEvent2Result,SmartACE::ExampleEventState>(component,"eventInterval",intervallTester);
 
     userThread.start();
 

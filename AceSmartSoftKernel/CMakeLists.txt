@@ -39,7 +39,7 @@ IF(NOT TARGET ACE)
 ENDIF(NOT TARGET ACE)
 
 # find the SmartSoft Component-Developer API package
-FIND_PACKAGE(SmartSoft_CD_API 1.0 PATHS $ENV{SMART_ROOT_ACE}/modules)
+FIND_PACKAGE(SmartSoft_CD_API 1.1 PATHS $ENV{SMART_ROOT_ACE}/modules)
 
 # create a ConfigFile including the current SmartSoft version
 CONFIGURE_FILE(

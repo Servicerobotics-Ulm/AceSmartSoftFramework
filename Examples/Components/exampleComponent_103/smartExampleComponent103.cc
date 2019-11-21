@@ -52,10 +52,7 @@ SmartACE::SmartComponent *component;
 class TimeQueryHandler : public SmartACE::QueryServerHandler<SmartACE::CommExampleTime,SmartACE::CommExampleTime>
 {
 public:
-	TimeQueryHandler(SmartACE::QueryServer<SmartACE::CommExampleTime,SmartACE::CommExampleTime> *server)
-	: SmartACE::QueryServerHandler<SmartACE::CommExampleTime,SmartACE::CommExampleTime>(server)
-	  { }
-  void handleQuery(const SmartACE::QueryId &id, const SmartACE::CommExampleTime& r) 
+  void handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id, const SmartACE::CommExampleTime& r)
     {
       SmartACE::CommExampleTime a;
 
@@ -67,7 +64,7 @@ public:
       std::cout << "time service " << id << " sent answer time: ";
       a.print();
 
-      server->answer(id,a);
+      server.answer(id,a);
     }
 };
 
@@ -94,10 +91,7 @@ public:
 class SlowSumQueryHandler :  public SmartACE::QueryServerHandler<SmartACE::CommExampleValues,SmartACE::CommExampleResult>
 {
 public:
-	SlowSumQueryHandler(SmartACE::QueryServer<SmartACE::CommExampleValues,SmartACE::CommExampleResult> *server)
-	: SmartACE::QueryServerHandler<SmartACE::CommExampleValues,SmartACE::CommExampleResult>(server)
-	  { }
-  void handleQuery(const SmartACE::QueryId &id, const SmartACE::CommExampleValues& r) 
+  void handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id, const SmartACE::CommExampleValues& r)
 
     {
       SmartACE::CommExampleResult a;
@@ -119,7 +113,7 @@ public:
 
       std::cout << "calc service " << id << " sent answer " << result << std::endl;
 
-      server->answer(id,a);
+      server.answer(id,a);
     }
 };
 
@@ -136,20 +130,20 @@ int main (int argc, char *argv[])
     component = new SmartACE::SmartComponent("exampleComponent103",argc,argv);
 
     // Create time query and its handler
-    SmartACE::QueryServer<SmartACE::CommExampleTime,SmartACE::CommExampleTime> timeServant(component,"time");
-    TimeQueryHandler timeHandler(&timeServant);
+    auto timeHandler = std::make_shared<TimeQueryHandler>();
+    SmartACE::QueryServer<SmartACE::CommExampleTime,SmartACE::CommExampleTime> timeServant(component,"time", timeHandler);
 
-    // register the threaded calc handler
-    SmartACE::QueryServer<SmartACE::CommExampleValues,SmartACE::CommExampleResult> calcServant(component,"calc");
 
     // Create sum servant and its handler
-    SlowSumQueryHandler calcHandler(&calcServant);
+    auto calcHandler = std::make_shared<SlowSumQueryHandler>();
     // create the decorator to defer calcHandler::handleQuery() to its
     // own thread.
     // The SlowSumQueryHandler itself doesn't need to know if it will
     // run in its own thread or not.
-    SmartACE::ThreadQueueQueryHandler<SmartACE::CommExampleValues,SmartACE::CommExampleResult>
-      threadCalcHandler(component,&calcHandler);
+    auto threadCalcHandler = std::make_shared<SmartACE::ThreadQueueQueryHandler<SmartACE::CommExampleValues,SmartACE::CommExampleResult>>(component,calcHandler);
+
+    // register the threaded calc handler
+    SmartACE::QueryServer<SmartACE::CommExampleValues,SmartACE::CommExampleResult> calcServant(component,"calc", threadCalcHandler);
 
     component->run();
   } catch (std::exception &e) {

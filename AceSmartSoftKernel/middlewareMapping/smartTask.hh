@@ -80,7 +80,7 @@ namespace SmartACE {
      *
      *  @param rel_time relative time duration for the thread to sleep
      */
-    virtual void sleep_for(const std::chrono::steady_clock::duration &rel_time);
+    virtual void sleep_for(const Smart::Duration &rel_time);
 
     /// implements ACE_Task<ACE_MT_SYNCH>
     virtual int svc (void);

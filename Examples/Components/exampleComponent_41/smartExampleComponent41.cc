@@ -60,7 +60,7 @@ class UserThreadA : public SmartACE::ManagedTask
 private:
   SmartACE::CommExampleEvent1Parameter parameter;
   SmartACE::CommExampleEvent1Result    result;
-  SmartACE::EventId               id;
+  Smart::EventIdPtr  id;
 
   Smart::StatusCode status;
   int a;
@@ -127,7 +127,7 @@ class UserThreadB : public SmartACE::ManagedTask
   private:
     SmartACE::CommExampleEvent1Parameter parameter;
     SmartACE::CommExampleEvent1Result    result;
-    SmartACE::EventId               id;
+    Smart::EventIdPtr               id;
 
     Smart::StatusCode status;
     int a, b;
@@ -195,8 +195,8 @@ class UserThreadC : public SmartACE::ManagedTask
     SmartACE::CommExampleEvent1Parameter parameter1;
     SmartACE::CommExampleEvent2Parameter parameter2;
     SmartACE::CommExampleEvent2Result    result;
-    SmartACE::EventId               id1;
-    SmartACE::EventId               id2;
+    Smart::EventIdPtr               id1;
+    Smart::EventIdPtr               id2;
 
     Smart::StatusCode status;
     int l, u;
@@ -279,7 +279,7 @@ public:
 	MoreThanEventHandler()
 	:	SmartACE::EventHandler<SmartACE::CommExampleEvent1Result>(eventClient3)
 	{ }
-  void handleEvent(const SmartACE::EventId &id, const SmartACE::CommExampleEvent1Result& e) 
+  void handleEvent(const Smart::EventIdPtr &id, const SmartACE::CommExampleEvent1Result& e)
     {
       int a;
 
