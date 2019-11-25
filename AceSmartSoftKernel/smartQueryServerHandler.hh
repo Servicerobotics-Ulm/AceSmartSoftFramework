@@ -50,6 +50,8 @@ namespace SmartACE {
   public:
     virtual ~QueryServerHandler() = default;
 
+    /// this Alias simplifies usage in the handleQuery method
+    /// @sa handleQuery
     using IQueryServer = Smart::IQueryServerPattern<R,A>;
 
     /** Handler method for an incoming query request.
@@ -65,8 +67,12 @@ namespace SmartACE {
      *  the result. The ThreadedQueryHandler decorator provides such
      *  a processing pattern.
      *
-     *  @param id       id of new query
-     *  @param request the request itself */
+     *  @param server   a reference to the "parent" query-server that triggers this handler callback; can be used to provide the query-answer
+     *  @param id       the query-id can be used to provide the query answer
+     *  @param request  the request itself
+     *
+     *  @sa IQueryServer
+     */
     virtual void handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id, const R& request) = 0;
   };
 

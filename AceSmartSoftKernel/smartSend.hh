@@ -480,6 +480,7 @@ namespace SmartACE {
      *
      *  @param component management class of the component
      *  @param service   name of the service
+     *  @param handler   an optional pointer to the send-handler
      */
     SendServer(SmartComponent* component, const std::string& service, ISendServerHandlerPtr handler = nullptr);
 

@@ -40,7 +40,6 @@ namespace SmartACE {
     /** @internal
      *  Class SIDhandler(ServerInitiatedDisconnect-Handler)
      *
-     *<alexej date="21.11.2008"/>
      *  This class is used for handling various ServerIniated disconnect requests.
      *  This is necessary, because this requests are blocking (they wait for answer-disconnect
      *  message). The problem is, that to get the answer - services should be in unblocked state.

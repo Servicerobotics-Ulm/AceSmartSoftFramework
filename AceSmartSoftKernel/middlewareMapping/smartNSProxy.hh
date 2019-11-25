@@ -80,12 +80,13 @@ public:
 					  const ACE_NS_WString &value_in,
 					  const char *type_in = "");
 
-	/// Delete a name from a ACE_Name_Space (Wide charcter strings
-	/// Interface).
+	/// Delete a name from a ACE_Name_Space (Wide charcter strings Interface).
 	virtual int unbind (const ACE_NS_WString &name_in);
 
-	/// Get value and type of a given name binding (Wide chars).  The
-	/// caller is responsible for deleting both <value_out> and <type_out>!
+	/** Get value and type of a given name binding (Wide chars).
+	 *
+	 * The caller is responsible for deleting both value_out and type_out!
+	 */
 	virtual int resolve (const ACE_NS_WString &name_in,
 					   ACE_NS_WString &value_out,
 					   char *&type_out);

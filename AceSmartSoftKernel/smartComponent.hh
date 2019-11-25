@@ -71,10 +71,9 @@ namespace SmartACE {
     /** @internal
      *  ShutdownTimer
      *
-     *<alexej date="2009-07-30"/>
      * This class implements a watchdog timer, which kills the component (given in the constructor)
      * after a timeout. This helps to stop a component, even if the tasks of this component 
-     * do not cooperate to shut-down and thus must be killed.
+     * do not cooperate to shut-down and thus must be force-killed.
      */
     class ShutdownTimer : public SmartACE::TimerHandler {
     private:

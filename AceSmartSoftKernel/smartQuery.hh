@@ -606,8 +606,9 @@ namespace SmartACE {
      *
      *  (Currently exception not thrown)
      *
-     *  @param component management class of the component
-     *  @param service   name of the service
+     *  @param component     management class of the component
+     *  @param service       name of the service
+     *  @param query_handler an optional query_handler
      */
     QueryServer(SmartComponent* component, const std::string& service, IQueryServerHandlerPtr query_handler = nullptr);
 
