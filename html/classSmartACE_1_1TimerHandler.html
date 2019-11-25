@@ -66,7 +66,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classSmartACE_1_1TimerHandler-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">SmartACE::TimerHandler Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
+<div class="title">SmartACE::TimerHandler Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -90,15 +90,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a997e55d4ae11afc15043694574900592"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8904d4fa14071fba35b03ee2aae06278"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#a8904d4fa14071fba35b03ee2aae06278">~TimerHandler</a> ()</td></tr>
 <tr class="separator:a8904d4fa14071fba35b03ee2aae06278"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c5a54a2a612ab15f3e51c82bf0814cc"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#a6c5a54a2a612ab15f3e51c82bf0814cc">timerExpired</a> (const std::chrono::system_clock::time_point &amp;abs_time, const void *arg)=0</td></tr>
-<tr class="memdesc:a6c5a54a2a612ab15f3e51c82bf0814cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">hook called on timer expiration  <a href="#a6c5a54a2a612ab15f3e51c82bf0814cc">More...</a><br /></td></tr>
-<tr class="separator:a6c5a54a2a612ab15f3e51c82bf0814cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7c88c2fd0f9951f8279aa0ebfc8f03d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#ab7c88c2fd0f9951f8279aa0ebfc8f03d">timerCancelled</a> ()</td></tr>
-<tr class="memdesc:ab7c88c2fd0f9951f8279aa0ebfc8f03d"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called when the timer is cancelled.  <a href="#ab7c88c2fd0f9951f8279aa0ebfc8f03d">More...</a><br /></td></tr>
-<tr class="separator:ab7c88c2fd0f9951f8279aa0ebfc8f03d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c9e542fffa6dfac3d2c3e7fee1a2a3f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#a2c9e542fffa6dfac3d2c3e7fee1a2a3f">timerDeleted</a> (const void *arg) override</td></tr>
-<tr class="memdesc:a2c9e542fffa6dfac3d2c3e7fee1a2a3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called when the timer queue is destroyed and the timer is still contained in it.  <a href="#a2c9e542fffa6dfac3d2c3e7fee1a2a3f">More...</a><br /></td></tr>
-<tr class="separator:a2c9e542fffa6dfac3d2c3e7fee1a2a3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5de05ffda1d7b3da9cd033dfce6ddae"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#ac5de05ffda1d7b3da9cd033dfce6ddae">timerCancelled</a> () override</td></tr>
+<tr class="memdesc:ac5de05ffda1d7b3da9cd033dfce6ddae"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called when the timer is cancelled.  <a href="#ac5de05ffda1d7b3da9cd033dfce6ddae">More...</a><br /></td></tr>
+<tr class="separator:ac5de05ffda1d7b3da9cd033dfce6ddae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad813c8f3defb40c7e177ede349cc6c48"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#ad813c8f3defb40c7e177ede349cc6c48">timerDeleted</a> (const void *act) override</td></tr>
+<tr class="memdesc:ad813c8f3defb40c7e177ede349cc6c48"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called when the timer queue is destroyed and the timer is still contained in it.  <a href="#ad813c8f3defb40c7e177ede349cc6c48">More...</a><br /></td></tr>
+<tr class="separator:ad813c8f3defb40c7e177ede349cc6c48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Interface to receive notification from a TimerThread. </p>
@@ -147,8 +144,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab7c88c2fd0f9951f8279aa0ebfc8f03d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7c88c2fd0f9951f8279aa0ebfc8f03d">&#9670;&nbsp;</a></span>timerCancelled()</h2>
+<a id="ac5de05ffda1d7b3da9cd033dfce6ddae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5de05ffda1d7b3da9cd033dfce6ddae">&#9670;&nbsp;</a></span>timerCancelled()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -165,7 +162,7 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -174,8 +171,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a2c9e542fffa6dfac3d2c3e7fee1a2a3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c9e542fffa6dfac3d2c3e7fee1a2a3f">&#9670;&nbsp;</a></span>timerDeleted()</h2>
+<a id="ad813c8f3defb40c7e177ede349cc6c48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad813c8f3defb40c7e177ede349cc6c48">&#9670;&nbsp;</a></span>timerDeleted()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -187,7 +184,7 @@ Public Member Functions</h2></td></tr>
           <td class="memname">virtual void SmartACE::TimerHandler::timerDeleted </td>
           <td>(</td>
           <td class="paramtype">const void *&#160;</td>
-          <td class="paramname"><em>arg</em></td><td>)</td>
+          <td class="paramname"><em>act</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -199,46 +196,6 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>This method is called when the timer queue is destroyed and the timer is still contained in it. </p>
-
-</div>
-</div>
-<a id="a6c5a54a2a612ab15f3e51c82bf0814cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c5a54a2a612ab15f3e51c82bf0814cc">&#9670;&nbsp;</a></span>timerExpired()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void SmartACE::TimerHandler::timerExpired </td>
-          <td>(</td>
-          <td class="paramtype">const std::chrono::system_clock::time_point &amp;&#160;</td>
-          <td class="paramname"><em>abs_time</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const void *&#160;</td>
-          <td class="paramname"><em>arg</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>hook called on timer expiration </p>
-
-<p>Implemented in <a class="el" href="classSmartACE_1_1ShutdownTimer.html#aa23c92b7c738e3ad33a067a06fb2769b">SmartACE::ShutdownTimer</a>.</p>
 
 </div>
 </div>

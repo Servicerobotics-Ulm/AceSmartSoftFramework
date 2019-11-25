@@ -87,28 +87,27 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a90a80e688daa5f3511a09ed55fc7bd12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad475325184b1929f49b77728ab81c906"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1ShutdownTimer.html#ad475325184b1929f49b77728ab81c906">~ShutdownTimer</a> ()</td></tr>
 <tr class="separator:ad475325184b1929f49b77728ab81c906"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae789262e8b17cb4ad542a141ec4160f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1ShutdownTimer.html#ae789262e8b17cb4ad542a141ec4160f5">start</a> (const std::chrono::steady_clock::duration &amp;timeout=std::chrono::seconds(2))</td></tr>
-<tr class="separator:ae789262e8b17cb4ad542a141ec4160f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a834b22c0ccd9be319c90331dc3c232d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1ShutdownTimer.html#a834b22c0ccd9be319c90331dc3c232d8">start</a> (const Smart::Duration &amp;timeout=std::chrono::seconds(2))</td></tr>
+<tr class="separator:a834b22c0ccd9be319c90331dc3c232d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1db1405d4f39c1f442cb30a8389fad4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1ShutdownTimer.html#ab1db1405d4f39c1f442cb30a8389fad4">stop</a> ()</td></tr>
 <tr class="separator:ab1db1405d4f39c1f442cb30a8389fad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa23c92b7c738e3ad33a067a06fb2769b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1ShutdownTimer.html#aa23c92b7c738e3ad33a067a06fb2769b">timerExpired</a> (const std::chrono::system_clock::time_point &amp;abs_time, const void *arg)</td></tr>
-<tr class="memdesc:aa23c92b7c738e3ad33a067a06fb2769b"><td class="mdescLeft">&#160;</td><td class="mdescRight">hook called on timer expiration  <a href="#aa23c92b7c738e3ad33a067a06fb2769b">More...</a><br /></td></tr>
-<tr class="separator:aa23c92b7c738e3ad33a067a06fb2769b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a46dfd3a342a6035645f22080933704"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1ShutdownTimer.html#a0a46dfd3a342a6035645f22080933704">timerExpired</a> (const Smart::TimePoint &amp;abs_time, const void *act) override</td></tr>
+<tr class="separator:a0a46dfd3a342a6035645f22080933704"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classSmartACE_1_1TimerHandler"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classSmartACE_1_1TimerHandler')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classSmartACE_1_1TimerHandler.html">SmartACE::TimerHandler</a></td></tr>
 <tr class="memitem:a997e55d4ae11afc15043694574900592 inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#a997e55d4ae11afc15043694574900592">TimerHandler</a> ()</td></tr>
 <tr class="separator:a997e55d4ae11afc15043694574900592 inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8904d4fa14071fba35b03ee2aae06278 inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#a8904d4fa14071fba35b03ee2aae06278">~TimerHandler</a> ()</td></tr>
 <tr class="separator:a8904d4fa14071fba35b03ee2aae06278 inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7c88c2fd0f9951f8279aa0ebfc8f03d inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#ab7c88c2fd0f9951f8279aa0ebfc8f03d">timerCancelled</a> ()</td></tr>
-<tr class="memdesc:ab7c88c2fd0f9951f8279aa0ebfc8f03d inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called when the timer is cancelled.  <a href="classSmartACE_1_1TimerHandler.html#ab7c88c2fd0f9951f8279aa0ebfc8f03d">More...</a><br /></td></tr>
-<tr class="separator:ab7c88c2fd0f9951f8279aa0ebfc8f03d inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c9e542fffa6dfac3d2c3e7fee1a2a3f inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#a2c9e542fffa6dfac3d2c3e7fee1a2a3f">timerDeleted</a> (const void *arg) override</td></tr>
-<tr class="memdesc:a2c9e542fffa6dfac3d2c3e7fee1a2a3f inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called when the timer queue is destroyed and the timer is still contained in it.  <a href="classSmartACE_1_1TimerHandler.html#a2c9e542fffa6dfac3d2c3e7fee1a2a3f">More...</a><br /></td></tr>
-<tr class="separator:a2c9e542fffa6dfac3d2c3e7fee1a2a3f inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5de05ffda1d7b3da9cd033dfce6ddae inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#ac5de05ffda1d7b3da9cd033dfce6ddae">timerCancelled</a> () override</td></tr>
+<tr class="memdesc:ac5de05ffda1d7b3da9cd033dfce6ddae inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called when the timer is cancelled.  <a href="classSmartACE_1_1TimerHandler.html#ac5de05ffda1d7b3da9cd033dfce6ddae">More...</a><br /></td></tr>
+<tr class="separator:ac5de05ffda1d7b3da9cd033dfce6ddae inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad813c8f3defb40c7e177ede349cc6c48 inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1TimerHandler.html#ad813c8f3defb40c7e177ede349cc6c48">timerDeleted</a> (const void *act) override</td></tr>
+<tr class="memdesc:ad813c8f3defb40c7e177ede349cc6c48 inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is called when the timer queue is destroyed and the timer is still contained in it.  <a href="classSmartACE_1_1TimerHandler.html#ad813c8f3defb40c7e177ede349cc6c48">More...</a><br /></td></tr>
+<tr class="separator:ad813c8f3defb40c7e177ede349cc6c48 inherit pub_methods_classSmartACE_1_1TimerHandler"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classSmartACE_1_1ShutdownTimer.html">ShutdownTimer</a></p>
-<p>&lt;alexej date="2009-07-30"&gt; This class implements a watchdog timer, which kills the component (given in the constructor) after a timeout. This helps to stop a component, even if the tasks of this component do not cooperate to shut-down and thus must be killed. </p>
+<p>This class implements a watchdog timer, which kills the component (given in the constructor) after a timeout. This helps to stop a component, even if the tasks of this component do not cooperate to shut-down and thus must be force-killed. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a90a80e688daa5f3511a09ed55fc7bd12"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a90a80e688daa5f3511a09ed55fc7bd12">&#9670;&nbsp;</a></span>ShutdownTimer()</h2>
@@ -154,8 +153,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae789262e8b17cb4ad542a141ec4160f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae789262e8b17cb4ad542a141ec4160f5">&#9670;&nbsp;</a></span>start()</h2>
+<a id="a834b22c0ccd9be319c90331dc3c232d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a834b22c0ccd9be319c90331dc3c232d8">&#9670;&nbsp;</a></span>start()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -163,7 +162,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void SmartACE::ShutdownTimer::start </td>
           <td>(</td>
-          <td class="paramtype">const std::chrono::steady_clock::duration &amp;&#160;</td>
+          <td class="paramtype">const Smart::Duration &amp;&#160;</td>
           <td class="paramname"><em>timeout</em> = <code>std::chrono::seconds(2)</code></td><td>)</td>
           <td></td>
         </tr>
@@ -189,8 +188,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aa23c92b7c738e3ad33a067a06fb2769b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa23c92b7c738e3ad33a067a06fb2769b">&#9670;&nbsp;</a></span>timerExpired()</h2>
+<a id="a0a46dfd3a342a6035645f22080933704"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a46dfd3a342a6035645f22080933704">&#9670;&nbsp;</a></span>timerExpired()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -201,14 +200,14 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual void SmartACE::ShutdownTimer::timerExpired </td>
           <td>(</td>
-          <td class="paramtype">const std::chrono::system_clock::time_point &amp;&#160;</td>
+          <td class="paramtype">const Smart::TimePoint &amp;&#160;</td>
           <td class="paramname"><em>abs_time</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const void *&#160;</td>
-          <td class="paramname"><em>arg</em>&#160;</td>
+          <td class="paramname"><em>act</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -218,14 +217,10 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>hook called on timer expiration </p>
-
-<p>Implements <a class="el" href="classSmartACE_1_1TimerHandler.html#a6c5a54a2a612ab15f3e51c82bf0814cc">SmartACE::TimerHandler</a>.</p>
 
 </div>
 </div>

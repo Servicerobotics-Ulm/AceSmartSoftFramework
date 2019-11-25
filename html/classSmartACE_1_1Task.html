@@ -81,13 +81,11 @@ Inheritance diagram for SmartACE::Task:</div>
  <div class="center">
   <img src="classSmartACE_1_1Task.png" usemap="#SmartACE::Task_map" alt=""/>
   <map id="SmartACE::Task_map" name="SmartACE::Task_map">
-<area href="classSmartACE_1_1ManagedTask.html" title="Wrapper for active objects. " alt="SmartACE::ManagedTask" shape="rect" coords="0,112,679,136"/>
-<area href="classSmartACE_1_1ReactorTask.html" alt="SmartACE::ReactorTask" shape="rect" coords="689,112,1368,136"/>
-<area href="classSmartACE_1_1SIDhandler.html" alt="SmartACE::SIDhandler" shape="rect" coords="1378,112,2057,136"/>
-<area href="classSmartACE_1_1ThreadQueueQueryHandler.html" title="Decorator for QueryServerHandler to defer handling to another thread. " alt="SmartACE::ThreadQueueQueryHandler&lt; R, A &gt;" shape="rect" coords="2067,112,2746,136"/>
-<area href="classSmartACE_1_1ThreadQueueQueryHandler.html" alt="SmartACE::ThreadQueueQueryHandler&lt; SmartACE::CommParameterRequest, SmartACE::CommParameterResponse &gt;" shape="rect" coords="2756,112,3435,136"/>
-<area href="classSmartACE_1_1ThreadQueueQueryHandler.html" alt="SmartACE::ThreadQueueQueryHandler&lt; SmartACE::SmartCommWiring, SmartACE::SmartCommWiring &gt;" shape="rect" coords="3445,112,4124,136"/>
-<area href="classSmartACE_1_1StateUpdateThread.html" alt="SmartACE::StateUpdateThread" shape="rect" coords="0,168,679,192"/>
+<area href="classSmartACE_1_1ManagedTask.html" title="Wrapper for active objects. " alt="SmartACE::ManagedTask" shape="rect" coords="0,112,411,136"/>
+<area href="classSmartACE_1_1ReactorTask.html" alt="SmartACE::ReactorTask" shape="rect" coords="421,112,832,136"/>
+<area href="classSmartACE_1_1SIDhandler.html" alt="SmartACE::SIDhandler" shape="rect" coords="842,112,1253,136"/>
+<area href="classSmartACE_1_1ThreadQueueQueryHandler.html" title="Decorator for QueryServerHandler to defer handling to another thread. " alt="SmartACE::ThreadQueueQueryHandler&lt; RequestType, AnswerType &gt;" shape="rect" coords="1263,112,1674,136"/>
+<area href="classSmartACE_1_1StateUpdateThread.html" alt="SmartACE::StateUpdateThread" shape="rect" coords="0,168,411,192"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -114,9 +112,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:afaa4f75b3104b79b724ac1593f190766"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1Task.html#afaa4f75b3104b79b724ac1593f190766">test_canceled</a> ()</td></tr>
 <tr class="memdesc:afaa4f75b3104b79b724ac1593f190766"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests whether the thread has been signaled to stop.  <a href="#afaa4f75b3104b79b724ac1593f190766">More...</a><br /></td></tr>
 <tr class="separator:afaa4f75b3104b79b724ac1593f190766"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65ca41185ddd52fc704080c005745810"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1Task.html#a65ca41185ddd52fc704080c005745810">sleep_for</a> (const std::chrono::steady_clock::duration &amp;rel_time)</td></tr>
-<tr class="memdesc:a65ca41185ddd52fc704080c005745810"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocks execution of the calling thread during the span of time specified by rel_time.  <a href="#a65ca41185ddd52fc704080c005745810">More...</a><br /></td></tr>
-<tr class="separator:a65ca41185ddd52fc704080c005745810"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34f5f1f14576c1079024a2550cb8bce0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1Task.html#a34f5f1f14576c1079024a2550cb8bce0">sleep_for</a> (const Smart::Duration &amp;rel_time)</td></tr>
+<tr class="memdesc:a34f5f1f14576c1079024a2550cb8bce0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocks execution of the calling thread during the span of time specified by rel_time.  <a href="#a34f5f1f14576c1079024a2550cb8bce0">More...</a><br /></td></tr>
+<tr class="separator:a34f5f1f14576c1079024a2550cb8bce0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8f9dd77f9027690c73cc67646335ea5"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1Task.html#ad8f9dd77f9027690c73cc67646335ea5">svc</a> (void)</td></tr>
 <tr class="memdesc:ad8f9dd77f9027690c73cc67646335ea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">implements ACE_Task&lt;ACE_MT_SYNCH&gt;  <a href="#ad8f9dd77f9027690c73cc67646335ea5">More...</a><br /></td></tr>
 <tr class="separator:ad8f9dd77f9027690c73cc67646335ea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -228,8 +226,8 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a65ca41185ddd52fc704080c005745810"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65ca41185ddd52fc704080c005745810">&#9670;&nbsp;</a></span>sleep_for()</h2>
+<a id="a34f5f1f14576c1079024a2550cb8bce0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34f5f1f14576c1079024a2550cb8bce0">&#9670;&nbsp;</a></span>sleep_for()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -240,7 +238,7 @@ Protected Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual void SmartACE::Task::sleep_for </td>
           <td>(</td>
-          <td class="paramtype">const std::chrono::steady_clock::duration &amp;&#160;</td>
+          <td class="paramtype">const Smart::Duration &amp;&#160;</td>
           <td class="paramname"><em>rel_time</em></td><td>)</td>
           <td></td>
         </tr>
@@ -287,6 +285,8 @@ Protected Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Creates and starts a new thread (if not yet started) </p>
+
+<p>Reimplemented in <a class="el" href="classSmartACE_1_1ThreadQueueQueryHandler.html#ac925f3c1fd5a4351dc8e4421fc7dc456">SmartACE::ThreadQueueQueryHandler&lt; RequestType, AnswerType &gt;</a>.</p>
 
 </div>
 </div>
@@ -353,6 +353,8 @@ Protected Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Closes currently active thread (if it was started before) </p>
+
+<p>Reimplemented in <a class="el" href="classSmartACE_1_1ThreadQueueQueryHandler.html#aa8f274edfab8454617b5119667a21c7a">SmartACE::ThreadQueueQueryHandler&lt; RequestType, AnswerType &gt;</a>.</p>
 
 </div>
 </div>

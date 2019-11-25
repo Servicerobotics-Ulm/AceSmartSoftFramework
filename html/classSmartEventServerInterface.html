@@ -81,10 +81,10 @@ Inheritance diagram for SmartEventServerInterface:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a33ff6a59b53308b3deafa503814af32f"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventServerInterface.html#a33ff6a59b53308b3deafa503814af32f">~SmartEventServerInterface</a> ()</td></tr>
 <tr class="separator:a33ff6a59b53308b3deafa503814af32f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a644e721f61e0894bdf4434b274150414"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventServerInterface.html#a644e721f61e0894bdf4434b274150414">activate</a> (int mode, int aid, const <a class="el" href="namespaceSmartACE.html#a38f00f810296d9df17bf0ef1216a902b">SmartACE::SmartMessageBlock</a> *parameter)=0</td></tr>
-<tr class="separator:a644e721f61e0894bdf4434b274150414"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f2d57b36393fb0a673cc52df178a627"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventServerInterface.html#a4f2d57b36393fb0a673cc52df178a627">deactivate</a> (int aid)=0</td></tr>
-<tr class="separator:a4f2d57b36393fb0a673cc52df178a627"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8d1356394df06ee033a5b6258ec123a"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventServerInterface.html#ae8d1356394df06ee033a5b6258ec123a">activate</a> (int mode, size_t aid, const <a class="el" href="namespaceSmartACE.html#a38f00f810296d9df17bf0ef1216a902b">SmartACE::SmartMessageBlock</a> *parameter)=0</td></tr>
+<tr class="separator:ae8d1356394df06ee033a5b6258ec123a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f42c40cac7c568eadac3780d8ea5daf"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventServerInterface.html#a2f42c40cac7c568eadac3780d8ea5daf">deactivate</a> (size_t aid)=0</td></tr>
+<tr class="separator:a2f42c40cac7c568eadac3780d8ea5daf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41e0727f3d624567d60a09e3f73f3418"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventServerInterface.html#a41e0727f3d624567d60a09e3f73f3418">connect</a> (int cid, const ACE_Utils::UUID &amp;serviceID)=0</td></tr>
 <tr class="separator:a41e0727f3d624567d60a09e3f73f3418"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3eb2f403fc8d36e801793cfc6df273e3"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventServerInterface.html#a3eb2f403fc8d36e801793cfc6df273e3">disconnect</a> ()=0</td></tr>
@@ -119,8 +119,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a644e721f61e0894bdf4434b274150414"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a644e721f61e0894bdf4434b274150414">&#9670;&nbsp;</a></span>activate()</h2>
+<a id="ae8d1356394df06ee033a5b6258ec123a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8d1356394df06ee033a5b6258ec123a">&#9670;&nbsp;</a></span>activate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -137,7 +137,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
+          <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>aid</em>, </td>
         </tr>
         <tr>
@@ -159,7 +159,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classSmartACE_1_1EventClientServiceHandler.html#a599a26ee27c528b5426647d1b29ed931">SmartACE::EventClientServiceHandler</a>.</p>
+<p>Implemented in <a class="el" href="classSmartACE_1_1EventClientServiceHandler.html#a64f4bb14863d1a904989c30c4337d67d">SmartACE::EventClientServiceHandler</a>.</p>
 
 </div>
 </div>
@@ -201,8 +201,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a4f2d57b36393fb0a673cc52df178a627"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4f2d57b36393fb0a673cc52df178a627">&#9670;&nbsp;</a></span>deactivate()</h2>
+<a id="a2f42c40cac7c568eadac3780d8ea5daf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f42c40cac7c568eadac3780d8ea5daf">&#9670;&nbsp;</a></span>deactivate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -213,7 +213,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual Smart::StatusCode SmartEventServerInterface::deactivate </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
+          <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>aid</em></td><td>)</td>
           <td></td>
         </tr>
@@ -225,7 +225,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classSmartACE_1_1EventClientServiceHandler.html#a7077331a21366247e7627e6894af32e8">SmartACE::EventClientServiceHandler</a>.</p>
+<p>Implemented in <a class="el" href="classSmartACE_1_1EventClientServiceHandler.html#abc3b6a7f6ba9a7b3d90a81ea1ee00685">SmartACE::EventClientServiceHandler</a>.</p>
 
 </div>
 </div>

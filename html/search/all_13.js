@@ -5,16 +5,14 @@ var searchData=
   ['test',['test',['../classSmartACE_1_1SmartCntCondClass.html#a048e064633085cbac048ee3ee7a5a173',1,'SmartACE::SmartCntCondClass']]],
   ['test_5fcanceled',['test_canceled',['../classSmartACE_1_1Task.html#afaa4f75b3104b79b724ac1593f190766',1,'SmartACE::Task']]],
   ['testevent',['testEvent',['../classSmartACE_1_1EventTestHandler.html#affae122b0282bd0922faad905800d431',1,'SmartACE::EventTestHandler']]],
-  ['threadqueuequeryhandler',['ThreadQueueQueryHandler',['../classSmartACE_1_1ThreadQueueQueryHandler.html',1,'SmartACE::ThreadQueueQueryHandler&lt; R, A &gt;'],['../classSmartACE_1_1ThreadQueueQueryHandler.html#a1b85378de8f56f25f6409d01f8e08020',1,'SmartACE::ThreadQueueQueryHandler::ThreadQueueQueryHandler()']]],
-  ['threadqueuequeryhandler_3c_20smartace_3a_3acommparameterrequest_2c_20smartace_3a_3acommparameterresponse_20_3e',['ThreadQueueQueryHandler&lt; SmartACE::CommParameterRequest, SmartACE::CommParameterResponse &gt;',['../classSmartACE_1_1ThreadQueueQueryHandler.html',1,'SmartACE']]],
-  ['threadqueuequeryhandler_3c_20smartace_3a_3asmartcommwiring_2c_20smartace_3a_3asmartcommwiring_20_3e',['ThreadQueueQueryHandler&lt; SmartACE::SmartCommWiring, SmartACE::SmartCommWiring &gt;',['../classSmartACE_1_1ThreadQueueQueryHandler.html',1,'SmartACE']]],
+  ['threadqueuequeryhandler',['ThreadQueueQueryHandler',['../classSmartACE_1_1ThreadQueueQueryHandler.html',1,'SmartACE::ThreadQueueQueryHandler&lt; RequestType, AnswerType &gt;'],['../classSmartACE_1_1ThreadQueueQueryHandler.html#a7e46e19f8f9198283ff158e6e68a065f',1,'SmartACE::ThreadQueueQueryHandler::ThreadQueueQueryHandler()']]],
   ['timeout',['timeout',['../classSmartACE_1_1TimerHandlerHandleUpcall.html#af7112af97cc06b91ce334a7171d8e6a1',1,'SmartACE::TimerHandlerHandleUpcall']]],
   ['timeout_5ftime',['timeout_time',['../classSmartACE_1_1SmartMonitor.html#a1d6774b90d1dc1c03e8f7e4acf5fa11b',1,'SmartACE::SmartMonitor']]],
   ['timer_5fevent_5f',['timer_event_',['../classSmartACE_1_1TimerManagerThread.html#a406e3ba8ca97fbf2fbff24fe6bf1e952',1,'SmartACE::TimerManagerThread']]],
-  ['timer_5fqueue',['timer_queue',['../classSmartACE_1_1TimerManagerThread.html#a0d3721063518eb6d57e8f86698764bc8',1,'SmartACE::TimerManagerThread::timer_queue()'],['../classSmartACE_1_1TimerHandlerHandleUpcall.html#a1f75f16feb0ef4c963e3a8c3fa5b18fa',1,'SmartACE::TimerHandlerHandleUpcall::TIMER_QUEUE()']]],
-  ['timercancelled',['timerCancelled',['../classSmartACE_1_1TimerHandler.html#ab7c88c2fd0f9951f8279aa0ebfc8f03d',1,'SmartACE::TimerHandler']]],
-  ['timerdeleted',['timerDeleted',['../classSmartACE_1_1TimerHandler.html#a2c9e542fffa6dfac3d2c3e7fee1a2a3f',1,'SmartACE::TimerHandler']]],
-  ['timerexpired',['timerExpired',['../classSmartACE_1_1TimerHandler.html#a6c5a54a2a612ab15f3e51c82bf0814cc',1,'SmartACE::TimerHandler::timerExpired()'],['../classSmartACE_1_1ShutdownTimer.html#aa23c92b7c738e3ad33a067a06fb2769b',1,'SmartACE::ShutdownTimer::timerExpired()']]],
+  ['timer_5fqueue',['TIMER_QUEUE',['../classSmartACE_1_1TimerHandlerHandleUpcall.html#a1f75f16feb0ef4c963e3a8c3fa5b18fa',1,'SmartACE::TimerHandlerHandleUpcall::TIMER_QUEUE()'],['../classSmartACE_1_1TimerManagerThread.html#a0d3721063518eb6d57e8f86698764bc8',1,'SmartACE::TimerManagerThread::timer_queue()']]],
+  ['timercancelled',['timerCancelled',['../classSmartACE_1_1TimerHandler.html#ac5de05ffda1d7b3da9cd033dfce6ddae',1,'SmartACE::TimerHandler']]],
+  ['timerdeleted',['timerDeleted',['../classSmartACE_1_1TimerHandler.html#ad813c8f3defb40c7e177ede349cc6c48',1,'SmartACE::TimerHandler']]],
+  ['timerexpired',['timerExpired',['../classSmartACE_1_1ShutdownTimer.html#a0a46dfd3a342a6035645f22080933704',1,'SmartACE::ShutdownTimer']]],
   ['timerhandler',['TimerHandler',['../classSmartACE_1_1TimerHandler.html',1,'SmartACE::TimerHandler'],['../classSmartACE_1_1TimerHandler.html#a997e55d4ae11afc15043694574900592',1,'SmartACE::TimerHandler::TimerHandler()']]],
   ['timerhandlerhandleupcall',['TimerHandlerHandleUpcall',['../classSmartACE_1_1TimerHandlerHandleUpcall.html',1,'SmartACE::TimerHandlerHandleUpcall&lt; ACE_LOCK &gt;'],['../classSmartACE_1_1TimerHandlerHandleUpcall.html#acd5cb7b17a94d91fa62672246a636233',1,'SmartACE::TimerHandlerHandleUpcall::TimerHandlerHandleUpcall()']]],
   ['timerheap',['TimerHeap',['../namespaceSmartACE.html#ac8eb67016befb84a9cb98be46065faba',1,'SmartACE']]],
@@ -25,5 +23,5 @@ var searchData=
   ['trigger_5fshutdown',['trigger_shutdown',['../classSmartACE_1_1ServiceHandler.html#acdeb9dc1509acae637f00cd18f81c3b6',1,'SmartACE::ServiceHandler']]],
   ['tryacquire',['tryAcquire',['../classSmartACE_1_1StateSlave.html#a556cc1bc5a545be20c2fbf7a3d93d089',1,'SmartACE::StateSlave']]],
   ['tryaddfilefromargs',['tryAddFileFromArgs',['../classSmartACE_1_1SmartIniParameter.html#ae9d4756dca422c9575d39c8282ad4ee4',1,'SmartACE::SmartIniParameter']]],
-  ['tryevent',['tryEvent',['../classSmartACE_1_1EventClient.html#a2da9071978d5a6055b8acba00664ad80',1,'SmartACE::EventClient']]]
+  ['tryevent',['tryEvent',['../classSmartACE_1_1EventClient.html#a63dfe22ff6a226e45224df5813d10d7e',1,'SmartACE::EventClient']]]
 ];

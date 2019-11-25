@@ -63,6 +63,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classSmartACE_1_1QueryServer-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -83,17 +84,22 @@ Inheritance diagram for SmartACE::QueryServer&lt; R, A &gt;:</div>
 </map>
  </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:aafe66a31f191bf55830a5664314ac143"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServer.html#aafe66a31f191bf55830a5664314ac143">IQueryServerBase</a> = Smart::IQueryServerPattern&lt; R, A &gt;</td></tr>
+<tr class="separator:aafe66a31f191bf55830a5664314ac143"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac552186d919f2f997e61d06f8975af5e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServer.html#ac552186d919f2f997e61d06f8975af5e">QueryServer</a> (<a class="el" href="classSmartACE_1_1SmartComponent.html">SmartComponent</a> *component, const std::string &amp;service)</td></tr>
-<tr class="memdesc:ac552186d919f2f997e61d06f8975af5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ac552186d919f2f997e61d06f8975af5e">More...</a><br /></td></tr>
-<tr class="separator:ac552186d919f2f997e61d06f8975af5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68f9dbe33c35be2faa3edd333453a12d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServer.html#a68f9dbe33c35be2faa3edd333453a12d">QueryServer</a> (<a class="el" href="classSmartACE_1_1SmartComponent.html">SmartComponent</a> *component, const std::string &amp;service, IQueryServerHandlerPtr query_handler=nullptr)</td></tr>
+<tr class="memdesc:a68f9dbe33c35be2faa3edd333453a12d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a68f9dbe33c35be2faa3edd333453a12d">More...</a><br /></td></tr>
+<tr class="separator:a68f9dbe33c35be2faa3edd333453a12d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e08446770908c7be8416b5387d9b116"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServer.html#a1e08446770908c7be8416b5387d9b116">~QueryServer</a> ()</td></tr>
 <tr class="memdesc:a1e08446770908c7be8416b5387d9b116"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="#a1e08446770908c7be8416b5387d9b116">More...</a><br /></td></tr>
 <tr class="separator:a1e08446770908c7be8416b5387d9b116"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b429c2b472e78513cd956476a45f0d4"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServer.html#a2b429c2b472e78513cd956476a45f0d4">answer</a> (const <a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;id, const A &amp;answer)</td></tr>
-<tr class="memdesc:a2b429c2b472e78513cd956476a45f0d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provide answer to be sent back to the requestor.  <a href="#a2b429c2b472e78513cd956476a45f0d4">More...</a><br /></td></tr>
-<tr class="separator:a2b429c2b472e78513cd956476a45f0d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af78c0679fa93ce6f892e80e07878ee75"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServer.html#af78c0679fa93ce6f892e80e07878ee75">answer</a> (const Smart::QueryIdPtr id, const A &amp;answer)</td></tr>
+<tr class="memdesc:af78c0679fa93ce6f892e80e07878ee75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provide answer to be sent back to the requestor.  <a href="#af78c0679fa93ce6f892e80e07878ee75">More...</a><br /></td></tr>
+<tr class="separator:af78c0679fa93ce6f892e80e07878ee75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class R, class A&gt;<br />
@@ -106,9 +112,26 @@ class SmartACE::QueryServer&lt; R, A &gt;</h3>
 <li><b>A</b>: answer (reply) class (Communication Object)</li>
 </ul>
 <p>Demonstrated in <a href="/drupal/?q=node/51#first-example">first example</a> and <a href="/drupal/?q=node/51#third-example">third example</a> </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac552186d919f2f997e61d06f8975af5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac552186d919f2f997e61d06f8975af5e">&#9670;&nbsp;</a></span>QueryServer()</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="aafe66a31f191bf55830a5664314ac143"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafe66a31f191bf55830a5664314ac143">&#9670;&nbsp;</a></span>IQueryServerBase</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class R, class A&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classSmartACE_1_1QueryServer.html">SmartACE::QueryServer</a>&lt; R, A &gt;::<a class="el" href="classSmartACE_1_1QueryServer.html#aafe66a31f191bf55830a5664314ac143">IQueryServerBase</a> =  Smart::IQueryServerPattern&lt;R,A&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a68f9dbe33c35be2faa3edd333453a12d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68f9dbe33c35be2faa3edd333453a12d">&#9670;&nbsp;</a></span>QueryServer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -125,7 +148,13 @@ template&lt;class R, class A&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>service</em>&#160;</td>
+          <td class="paramname"><em>service</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IQueryServerHandlerPtr&#160;</td>
+          <td class="paramname"><em>query_handler</em> = <code>nullptr</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -142,6 +171,7 @@ template&lt;class R, class A&gt; </div>
   <table class="params">
     <tr><td class="paramname">component</td><td>management class of the component </td></tr>
     <tr><td class="paramname">service</td><td>name of the service </td></tr>
+    <tr><td class="paramname">query_handler</td><td>an optional query_handler </td></tr>
   </table>
   </dd>
 </dl>
@@ -179,8 +209,8 @@ template&lt;class R, class A&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a2b429c2b472e78513cd956476a45f0d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b429c2b472e78513cd956476a45f0d4">&#9670;&nbsp;</a></span>answer()</h2>
+<a id="af78c0679fa93ce6f892e80e07878ee75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af78c0679fa93ce6f892e80e07878ee75">&#9670;&nbsp;</a></span>answer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -190,7 +220,7 @@ template&lt;class R, class A&gt; </div>
         <tr>
           <td class="memname">Smart::StatusCode <a class="el" href="classSmartACE_1_1QueryServer.html">SmartACE::QueryServer</a>&lt; R, A &gt;::answer </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;&#160;</td>
+          <td class="paramtype">const Smart::QueryIdPtr&#160;</td>
           <td class="paramname"><em>id</em>, </td>
         </tr>
         <tr>

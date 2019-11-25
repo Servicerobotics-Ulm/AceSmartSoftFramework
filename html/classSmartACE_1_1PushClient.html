@@ -109,9 +109,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac0cdd1b46ff74fe6efe169c32fb812e8"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1PushClient.html#ac0cdd1b46ff74fe6efe169c32fb812e8">disconnect</a> ()</td></tr>
 <tr class="memdesc:ac0cdd1b46ff74fe6efe169c32fb812e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disconnect the service requestor from the service provider.  <a href="#ac0cdd1b46ff74fe6efe169c32fb812e8">More...</a><br /></td></tr>
 <tr class="separator:ac0cdd1b46ff74fe6efe169c32fb812e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad50eb6a0838b37d251cc22417f78ee6f"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1PushClient.html#ad50eb6a0838b37d251cc22417f78ee6f">subscribe</a> (const int &amp;prescale=1)</td></tr>
-<tr class="memdesc:ad50eb6a0838b37d251cc22417f78ee6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscribe at the server to periodically get every n-th update.  <a href="#ad50eb6a0838b37d251cc22417f78ee6f">More...</a><br /></td></tr>
-<tr class="separator:ad50eb6a0838b37d251cc22417f78ee6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abafec9d0ce534237b3afbe2b302dbcfc"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1PushClient.html#abafec9d0ce534237b3afbe2b302dbcfc">subscribe</a> (const unsigned int &amp;prescale=1)</td></tr>
+<tr class="memdesc:abafec9d0ce534237b3afbe2b302dbcfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscribe at the server to periodically get every n-th update.  <a href="#abafec9d0ce534237b3afbe2b302dbcfc">More...</a><br /></td></tr>
+<tr class="separator:abafec9d0ce534237b3afbe2b302dbcfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44ff7cacfd3b3f1838bb085791afc9c8"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1PushClient.html#a44ff7cacfd3b3f1838bb085791afc9c8">unsubscribe</a> ()</td></tr>
 <tr class="memdesc:a44ff7cacfd3b3f1838bb085791afc9c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unsubscribe to get no more updates.  <a href="#a44ff7cacfd3b3f1838bb085791afc9c8">More...</a><br /></td></tr>
 <tr class="separator:a44ff7cacfd3b3f1838bb085791afc9c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -121,9 +121,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6a350612004d1d1b9096c2e37b77dbbf"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1PushClient.html#a6a350612004d1d1b9096c2e37b77dbbf">getUpdate</a> (DataType &amp;d)</td></tr>
 <tr class="memdesc:a6a350612004d1d1b9096c2e37b77dbbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-blocking call to immediately return the latest available data buffered at the client side from the most recent update.  <a href="#a6a350612004d1d1b9096c2e37b77dbbf">More...</a><br /></td></tr>
 <tr class="separator:a6a350612004d1d1b9096c2e37b77dbbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4b146c163344e391f71777bc06e1dff"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1PushClient.html#ab4b146c163344e391f71777bc06e1dff">getUpdateWait</a> (DataType &amp;d, const std::chrono::steady_clock::duration &amp;timeout=std::chrono::steady_clock::duration::zero())</td></tr>
-<tr class="memdesc:ab4b146c163344e391f71777bc06e1dff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocking call which waits until the next update is received.  <a href="#ab4b146c163344e391f71777bc06e1dff">More...</a><br /></td></tr>
-<tr class="separator:ab4b146c163344e391f71777bc06e1dff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0581a0065fbe3ecb5e6713378837c0cd"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1PushClient.html#a0581a0065fbe3ecb5e6713378837c0cd">getUpdateWait</a> (DataType &amp;d, const Smart::Duration &amp;timeout=Smart::Duration::max())</td></tr>
+<tr class="memdesc:a0581a0065fbe3ecb5e6713378837c0cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocking call which waits until the next update is received.  <a href="#a0581a0065fbe3ecb5e6713378837c0cd">More...</a><br /></td></tr>
+<tr class="separator:a0581a0065fbe3ecb5e6713378837c0cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adab2db7beb0ccde9d121eddc964629b1"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1PushClient.html#adab2db7beb0ccde9d121eddc964629b1">getServerInfo</a> (<a class="el" href="namespaceSmartACE.html#ad07f92a3e28489a6b04d1b30b9953f20">SmartTimeValue</a> &amp;t, bool &amp;r)</td></tr>
 <tr class="memdesc:adab2db7beb0ccde9d121eddc964629b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get cycle time and server state.  <a href="#adab2db7beb0ccde9d121eddc964629b1">More...</a><br /></td></tr>
 <tr class="separator:adab2db7beb0ccde9d121eddc964629b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -412,7 +412,7 @@ template&lt;class DataType &gt; </div>
 
 <p>Connect this service requestor to the denoted service provider. </p>
 <p>An already established connection is first disconnected. See <a class="el" href="classSmartACE_1_1PushClient.html#ac0cdd1b46ff74fe6efe169c32fb812e8" title="Disconnect the service requestor from the service provider. ">disconnect()</a> for implications on pending data reception in that case.</p>
-<p>It is no problem to change the connection to a service provider at any point of time irrespective of any calls to <a class="el" href="classSmartACE_1_1PushClient.html#a6a350612004d1d1b9096c2e37b77dbbf" title="Non-blocking call to immediately return the latest available data buffered at the client side from th...">getUpdate()</a> / <a class="el" href="classSmartACE_1_1PushClient.html#ab4b146c163344e391f71777bc06e1dff" title="Blocking call which waits until the next update is received. ">getUpdateWait()</a>.</p>
+<p>It is no problem to change the connection to a service provider at any point of time irrespective of any calls to <a class="el" href="classSmartACE_1_1PushClient.html#a6a350612004d1d1b9096c2e37b77dbbf" title="Non-blocking call to immediately return the latest available data buffered at the client side from th...">getUpdate()</a> / <a class="el" href="classSmartACE_1_1PushClient.html#a0581a0065fbe3ecb5e6713378837c0cd" title="Blocking call which waits until the next update is received. ">getUpdateWait()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">server</td><td>name of the server </td></tr>
@@ -449,8 +449,8 @@ template&lt;class DataType &gt; </div>
 </div><div class="memdoc">
 
 <p>Disconnect the service requestor from the service provider. </p>
-<p>A disconnect always first performs an unsubscribe. See unsubsribe() for implications on <a class="el" href="classSmartACE_1_1PushClient.html#a6a350612004d1d1b9096c2e37b77dbbf" title="Non-blocking call to immediately return the latest available data buffered at the client side from th...">getUpdate()</a> and <a class="el" href="classSmartACE_1_1PushClient.html#ab4b146c163344e391f71777bc06e1dff" title="Blocking call which waits until the next update is received. ">getUpdateWait()</a>.</p>
-<p>It is no problem to change the connection to a service provider at any point of time irrespective of any calls to <a class="el" href="classSmartACE_1_1PushClient.html#a6a350612004d1d1b9096c2e37b77dbbf" title="Non-blocking call to immediately return the latest available data buffered at the client side from th...">getUpdate()</a> / <a class="el" href="classSmartACE_1_1PushClient.html#ab4b146c163344e391f71777bc06e1dff" title="Blocking call which waits until the next update is received. ">getUpdateWait()</a>.</p>
+<p>A disconnect always first performs an unsubscribe. See unsubsribe() for implications on <a class="el" href="classSmartACE_1_1PushClient.html#a6a350612004d1d1b9096c2e37b77dbbf" title="Non-blocking call to immediately return the latest available data buffered at the client side from th...">getUpdate()</a> and <a class="el" href="classSmartACE_1_1PushClient.html#a0581a0065fbe3ecb5e6713378837c0cd" title="Blocking call which waits until the next update is received. ">getUpdateWait()</a>.</p>
+<p>It is no problem to change the connection to a service provider at any point of time irrespective of any calls to <a class="el" href="classSmartACE_1_1PushClient.html#a6a350612004d1d1b9096c2e37b77dbbf" title="Non-blocking call to immediately return the latest available data buffered at the client side from th...">getUpdate()</a> / <a class="el" href="classSmartACE_1_1PushClient.html#a0581a0065fbe3ecb5e6713378837c0cd" title="Blocking call which waits until the next update is received. ">getUpdateWait()</a>.</p>
 <dl class="section return"><dt>Returns</dt><dd>status code<ul>
 <li>SMART_OK : everything is OK and service requestor is disconnected from the service provider.</li>
 <li>SMART_ERROR_COMMUNICATION : something went wrong at the level of the intercomponent communication. At least the service requestor is in the disconnected state irrespective of the service provider side clean up procedures.</li>
@@ -545,8 +545,8 @@ template&lt;class DataType &gt; </div>
 
 </div>
 </div>
-<a id="ab4b146c163344e391f71777bc06e1dff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4b146c163344e391f71777bc06e1dff">&#9670;&nbsp;</a></span>getUpdateWait()</h2>
+<a id="a0581a0065fbe3ecb5e6713378837c0cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0581a0065fbe3ecb5e6713378837c0cd">&#9670;&nbsp;</a></span>getUpdateWait()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -562,8 +562,8 @@ template&lt;class DataType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::chrono::steady_clock::duration &amp;&#160;</td>
-          <td class="paramname"><em>timeout</em> = <code>std::chrono::steady_clock::duration::zero()</code>&#160;</td>
+          <td class="paramtype">const Smart::Duration &amp;&#160;</td>
+          <td class="paramname"><em>timeout</em> = <code>Smart::Duration::max()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -578,7 +578,7 @@ template&lt;class DataType &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">d</td><td>is set to the newest currently available data </td></tr>
-    <tr><td class="paramname">timeout</td><td>allows to release the blocking wait after a given timeout time (the default max_time means infinite blocking)</td></tr>
+    <tr><td class="paramname">timeout</td><td>allows to release the blocking wait after a given timeout time (the default max time means infinite blocking)</td></tr>
   </table>
   </dd>
 </dl>
@@ -621,8 +621,8 @@ template&lt;class DataType &gt; </div>
 
 </div>
 </div>
-<a id="ad50eb6a0838b37d251cc22417f78ee6f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad50eb6a0838b37d251cc22417f78ee6f">&#9670;&nbsp;</a></span>subscribe()</h2>
+<a id="abafec9d0ce534237b3afbe2b302dbcfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abafec9d0ce534237b3afbe2b302dbcfc">&#9670;&nbsp;</a></span>subscribe()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -632,7 +632,7 @@ template&lt;class DataType &gt; </div>
         <tr>
           <td class="memname">Smart::StatusCode <a class="el" href="classSmartACE_1_1PushClient.html">SmartACE::PushClient</a>&lt; DataType &gt;::subscribe </td>
           <td>(</td>
-          <td class="paramtype">const int &amp;&#160;</td>
+          <td class="paramtype">const unsigned int &amp;&#160;</td>
           <td class="paramname"><em>prescale</em> = <code>1</code></td><td>)</td>
           <td></td>
         </tr>

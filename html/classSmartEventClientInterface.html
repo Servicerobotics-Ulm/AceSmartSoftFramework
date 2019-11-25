@@ -81,16 +81,16 @@ Inheritance diagram for SmartEventClientInterface:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a6a87a1137f232a2ce313e1ecbba066da"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventClientInterface.html#a6a87a1137f232a2ce313e1ecbba066da">~SmartEventClientInterface</a> ()</td></tr>
 <tr class="separator:a6a87a1137f232a2ce313e1ecbba066da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d82c1eeab1beb76d1496b91d3511178"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventClientInterface.html#a9d82c1eeab1beb76d1496b91d3511178">event</a> (const <a class="el" href="namespaceSmartACE.html#a38f00f810296d9df17bf0ef1216a902b">SmartACE::SmartMessageBlock</a> *user, int id)=0</td></tr>
-<tr class="separator:a9d82c1eeab1beb76d1496b91d3511178"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0aa545aa9addc4fc47c84d7c7cd3e43b"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventClientInterface.html#a0aa545aa9addc4fc47c84d7c7cd3e43b">event</a> (const <a class="el" href="namespaceSmartACE.html#a38f00f810296d9df17bf0ef1216a902b">SmartACE::SmartMessageBlock</a> *user, size_t id)=0</td></tr>
+<tr class="separator:a0aa545aa9addc4fc47c84d7c7cd3e43b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0300a5ea7fd44c0b0d87c5a9ca2776c9"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventClientInterface.html#a0300a5ea7fd44c0b0d87c5a9ca2776c9">serverInitiatedDisconnect</a> (int cid)=0</td></tr>
 <tr class="separator:a0300a5ea7fd44c0b0d87c5a9ca2776c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab117d16207766cf14b9d346810fab574"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventClientInterface.html#ab117d16207766cf14b9d346810fab574">acknowledgmentConnect</a> (int cid, int status)=0</td></tr>
 <tr class="separator:ab117d16207766cf14b9d346810fab574"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01c6ece06238e5e4dde0f06e8089f5bf"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventClientInterface.html#a01c6ece06238e5e4dde0f06e8089f5bf">acknowledgmentDisconnect</a> ()=0</td></tr>
 <tr class="separator:a01c6ece06238e5e4dde0f06e8089f5bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a406c938264a3778765ff1360050c5f3d"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventClientInterface.html#a406c938264a3778765ff1360050c5f3d">acknowledgmentActivate</a> (int status)=0</td></tr>
-<tr class="separator:a406c938264a3778765ff1360050c5f3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab25e12b5116d813d29d17e27bfbfeb43"><td class="memItemLeft" align="right" valign="top">virtual Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartEventClientInterface.html#ab25e12b5116d813d29d17e27bfbfeb43">acknowledgmentActivate</a> (size_t event_id)=0</td></tr>
+<tr class="separator:ab25e12b5116d813d29d17e27bfbfeb43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a6a87a1137f232a2ce313e1ecbba066da"></a>
@@ -119,8 +119,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a406c938264a3778765ff1360050c5f3d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a406c938264a3778765ff1360050c5f3d">&#9670;&nbsp;</a></span>acknowledgmentActivate()</h2>
+<a id="ab25e12b5116d813d29d17e27bfbfeb43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab25e12b5116d813d29d17e27bfbfeb43">&#9670;&nbsp;</a></span>acknowledgmentActivate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -131,8 +131,8 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual Smart::StatusCode SmartEventClientInterface::acknowledgmentActivate </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>status</em></td><td>)</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>event_id</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -143,7 +143,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classSmartACE_1_1EventServerServiceHandler.html#a85f70bf8d20726c75515d03d6af431d3">SmartACE::EventServerServiceHandler</a>.</p>
+<p>Implemented in <a class="el" href="classSmartACE_1_1EventServerServiceHandler.html#a6b25bc8fc202a1ba41da1d4f1662f3fc">SmartACE::EventServerServiceHandler</a>.</p>
 
 </div>
 </div>
@@ -212,8 +212,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a9d82c1eeab1beb76d1496b91d3511178"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d82c1eeab1beb76d1496b91d3511178">&#9670;&nbsp;</a></span>event()</h2>
+<a id="a0aa545aa9addc4fc47c84d7c7cd3e43b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0aa545aa9addc4fc47c84d7c7cd3e43b">&#9670;&nbsp;</a></span>event()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -230,7 +230,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
+          <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>id</em>&#160;</td>
         </tr>
         <tr>
@@ -246,7 +246,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classSmartACE_1_1EventServerServiceHandler.html#af4ecf42ec1e8b2a1004eebaddcdd335a">SmartACE::EventServerServiceHandler</a>.</p>
+<p>Implemented in <a class="el" href="classSmartACE_1_1EventServerServiceHandler.html#a43933860cb00af9d3954b76644d8fab8">SmartACE::EventServerServiceHandler</a>.</p>
 
 </div>
 </div>

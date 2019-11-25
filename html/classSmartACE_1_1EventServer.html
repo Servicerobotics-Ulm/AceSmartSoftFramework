@@ -63,6 +63,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classSmartACE_1_1EventServer-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -83,11 +84,16 @@ Inheritance diagram for SmartACE::EventServer&lt; P, E, S &gt;:</div>
 </map>
  </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:afcfd7db3ec7aba5ce7d7cc77b7fe6d01"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1EventServer.html#afcfd7db3ec7aba5ce7d7cc77b7fe6d01">IEventServerBase</a> = Smart::IEventServerPattern&lt; P, E, S &gt;</td></tr>
+<tr class="separator:afcfd7db3ec7aba5ce7d7cc77b7fe6d01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aeffd151cf8b8350fb10d0c3acb3f80e8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1EventServer.html#aeffd151cf8b8350fb10d0c3acb3f80e8">EventServer</a> (<a class="el" href="classSmartACE_1_1SmartComponent.html">SmartComponent</a> *component, const std::string &amp;service, Smart::IEventTestHandler&lt; P, E, S &gt; *handler)</td></tr>
-<tr class="memdesc:aeffd151cf8b8350fb10d0c3acb3f80e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#aeffd151cf8b8350fb10d0c3acb3f80e8">More...</a><br /></td></tr>
-<tr class="separator:aeffd151cf8b8350fb10d0c3acb3f80e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a982830774e72e7c2be22222794503ac1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1EventServer.html#a982830774e72e7c2be22222794503ac1">EventServer</a> (<a class="el" href="classSmartACE_1_1SmartComponent.html">SmartComponent</a> *component, const std::string &amp;service, IEventTestHandlerPtr handler)</td></tr>
+<tr class="memdesc:a982830774e72e7c2be22222794503ac1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a982830774e72e7c2be22222794503ac1">More...</a><br /></td></tr>
+<tr class="separator:a982830774e72e7c2be22222794503ac1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26cbd52747dac9ed5d8da3a6206aeb09"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1EventServer.html#a26cbd52747dac9ed5d8da3a6206aeb09">~EventServer</a> ()</td></tr>
 <tr class="memdesc:a26cbd52747dac9ed5d8da3a6206aeb09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="#a26cbd52747dac9ed5d8da3a6206aeb09">More...</a><br /></td></tr>
 <tr class="separator:a26cbd52747dac9ed5d8da3a6206aeb09"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -96,7 +102,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a60f69d1cf2e9fb215f7188fff730aee2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;class P, class E, class S&gt;<br />
+<div class="textblock"><h3>template&lt;class P, class E, class S = E&gt;<br />
 class SmartACE::EventServer&lt; P, E, S &gt;</h3>
 
 <p>Template for generating a class which handles the event service on server side. </p>
@@ -106,14 +112,31 @@ class SmartACE::EventServer&lt; P, E, S &gt;</h3>
 <li><b>S</b>: State class (provides current information needed in testEvent() to check whether an event activation fires or not)</li>
 </ul>
 <p>Demonstrated in <a href="/drupal/?q=node/51#fifth-example">fifth example</a> </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aeffd151cf8b8350fb10d0c3acb3f80e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeffd151cf8b8350fb10d0c3acb3f80e8">&#9670;&nbsp;</a></span>EventServer()</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="afcfd7db3ec7aba5ce7d7cc77b7fe6d01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afcfd7db3ec7aba5ce7d7cc77b7fe6d01">&#9670;&nbsp;</a></span>IEventServerBase</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class P , class E , class S &gt; </div>
+template&lt;class P , class E , class S  = E&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classSmartACE_1_1EventServer.html">SmartACE::EventServer</a>&lt; P, E, S &gt;::<a class="el" href="classSmartACE_1_1EventServer.html#afcfd7db3ec7aba5ce7d7cc77b7fe6d01">IEventServerBase</a> =  Smart::IEventServerPattern&lt;P,E,S&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a982830774e72e7c2be22222794503ac1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a982830774e72e7c2be22222794503ac1">&#9670;&nbsp;</a></span>EventServer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class P , class E , class S  = E&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classSmartACE_1_1EventServer.html">SmartACE::EventServer</a>&lt; P, E, S &gt;::<a class="el" href="classSmartACE_1_1EventServer.html">EventServer</a> </td>
@@ -130,7 +153,7 @@ template&lt;class P , class E , class S &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Smart::IEventTestHandler&lt; P, E, S &gt; *&#160;</td>
+          <td class="paramtype">IEventTestHandlerPtr&#160;</td>
           <td class="paramname"><em>handler</em>&#160;</td>
         </tr>
         <tr>
@@ -159,7 +182,7 @@ template&lt;class P , class E , class S &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class P , class E , class S &gt; </div>
+template&lt;class P , class E , class S  = E&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -190,7 +213,7 @@ template&lt;class P , class E , class S &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class P , class E , class S &gt; </div>
+template&lt;class P , class E , class S  = E&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">Smart::StatusCode <a class="el" href="classSmartACE_1_1EventServer.html">SmartACE::EventServer</a>&lt; P, E, S &gt;::put </td>

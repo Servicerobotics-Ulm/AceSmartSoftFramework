@@ -115,18 +115,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a974413e8317bf8e2e282bc8ed3022a99"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClient.html#a974413e8317bf8e2e282bc8ed3022a99">query</a> (const R &amp;request, A &amp;answer)</td></tr>
 <tr class="memdesc:a974413e8317bf8e2e282bc8ed3022a99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocking Query.  <a href="#a974413e8317bf8e2e282bc8ed3022a99">More...</a><br /></td></tr>
 <tr class="separator:a974413e8317bf8e2e282bc8ed3022a99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d87bb10950c8f3b1b3be5286f43107e"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClient.html#a9d87bb10950c8f3b1b3be5286f43107e">queryRequest</a> (const R &amp;request, <a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;id)</td></tr>
-<tr class="memdesc:a9d87bb10950c8f3b1b3be5286f43107e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronous Query.  <a href="#a9d87bb10950c8f3b1b3be5286f43107e">More...</a><br /></td></tr>
-<tr class="separator:a9d87bb10950c8f3b1b3be5286f43107e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37219af970b82541f98c53ee041457af"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClient.html#a37219af970b82541f98c53ee041457af">queryReceive</a> (const <a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;id, A &amp;answer)</td></tr>
-<tr class="memdesc:a37219af970b82541f98c53ee041457af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if answer is available.  <a href="#a37219af970b82541f98c53ee041457af">More...</a><br /></td></tr>
-<tr class="separator:a37219af970b82541f98c53ee041457af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7195d9442102dce426db2355cff94a57"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClient.html#a7195d9442102dce426db2355cff94a57">queryReceiveWait</a> (const <a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;id, A &amp;answer, const std::chrono::steady_clock::duration &amp;timeout=std::chrono::steady_clock::duration::zero())</td></tr>
-<tr class="memdesc:a7195d9442102dce426db2355cff94a57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for reply.  <a href="#a7195d9442102dce426db2355cff94a57">More...</a><br /></td></tr>
-<tr class="separator:a7195d9442102dce426db2355cff94a57"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a291cb689084bf335c390fb94e395cb"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClient.html#a6a291cb689084bf335c390fb94e395cb">queryDiscard</a> (const <a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;id)</td></tr>
-<tr class="memdesc:a6a291cb689084bf335c390fb94e395cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discard the pending answer with the identifier <em>id</em>  <a href="#a6a291cb689084bf335c390fb94e395cb">More...</a><br /></td></tr>
-<tr class="separator:a6a291cb689084bf335c390fb94e395cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a813140217aab118404cd04f57e0ca78c"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClient.html#a813140217aab118404cd04f57e0ca78c">queryRequest</a> (const R &amp;request, Smart::QueryIdPtr &amp;id)</td></tr>
+<tr class="memdesc:a813140217aab118404cd04f57e0ca78c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronous Query.  <a href="#a813140217aab118404cd04f57e0ca78c">More...</a><br /></td></tr>
+<tr class="separator:a813140217aab118404cd04f57e0ca78c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5770e30cc880253606363b3adb92bdf"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClient.html#af5770e30cc880253606363b3adb92bdf">queryReceive</a> (const Smart::QueryIdPtr id, A &amp;answer)</td></tr>
+<tr class="memdesc:af5770e30cc880253606363b3adb92bdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if answer is available.  <a href="#af5770e30cc880253606363b3adb92bdf">More...</a><br /></td></tr>
+<tr class="separator:af5770e30cc880253606363b3adb92bdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a349cc48ae90bcf0c2b10de0d8c1952aa"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClient.html#a349cc48ae90bcf0c2b10de0d8c1952aa">queryReceiveWait</a> (const Smart::QueryIdPtr id, A &amp;answer, const Smart::Duration &amp;timeout=Smart::Duration::max())</td></tr>
+<tr class="memdesc:a349cc48ae90bcf0c2b10de0d8c1952aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for reply.  <a href="#a349cc48ae90bcf0c2b10de0d8c1952aa">More...</a><br /></td></tr>
+<tr class="separator:a349cc48ae90bcf0c2b10de0d8c1952aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5a9070e5d60a4aee1e8cc9919f815d8"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClient.html#ab5a9070e5d60a4aee1e8cc9919f815d8">queryDiscard</a> (const Smart::QueryIdPtr id)</td></tr>
+<tr class="memdesc:ab5a9070e5d60a4aee1e8cc9919f815d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discard the pending answer with the identifier <em>id</em>  <a href="#ab5a9070e5d60a4aee1e8cc9919f815d8">More...</a><br /></td></tr>
+<tr class="separator:ab5a9070e5d60a4aee1e8cc9919f815d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class R, class A&gt;<br />
@@ -412,7 +412,7 @@ template&lt;class R, class A&gt; </div>
 
 <p>Connect this service requestor to the denoted service provider. </p>
 <p>An already established connection is first disconnected. See <a class="el" href="classSmartACE_1_1QueryClient.html#aa999d4616a807f9c0dbc4cf037d5fb1d" title="Disconnect the service requestor from the service provider. ">disconnect()</a> for implications on running or pending queries in that case.</p>
-<p>It is no problem to change the connection to a service provider at any point of time irrespective of any calls to <a class="el" href="classSmartACE_1_1QueryClient.html#a974413e8317bf8e2e282bc8ed3022a99" title="Blocking Query. ">query()</a> / <a class="el" href="classSmartACE_1_1QueryClient.html#a9d87bb10950c8f3b1b3be5286f43107e" title="Asynchronous Query. ">queryRequest()</a> / <a class="el" href="classSmartACE_1_1QueryClient.html#a37219af970b82541f98c53ee041457af" title="Check if answer is available. ">queryReceive()</a> or <a class="el" href="classSmartACE_1_1QueryClient.html#a7195d9442102dce426db2355cff94a57" title="Wait for reply. ">queryReceiveWait()</a>.</p>
+<p>It is no problem to change the connection to a service provider at any point of time irrespective of any calls to <a class="el" href="classSmartACE_1_1QueryClient.html#a974413e8317bf8e2e282bc8ed3022a99" title="Blocking Query. ">query()</a> / <a class="el" href="classSmartACE_1_1QueryClient.html#a813140217aab118404cd04f57e0ca78c" title="Asynchronous Query. ">queryRequest()</a> / <a class="el" href="classSmartACE_1_1QueryClient.html#af5770e30cc880253606363b3adb92bdf" title="Check if answer is available. ">queryReceive()</a> or <a class="el" href="classSmartACE_1_1QueryClient.html#a349cc48ae90bcf0c2b10de0d8c1952aa" title="Wait for reply. ">queryReceiveWait()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">server</td><td>name of the server </td></tr>
@@ -449,8 +449,8 @@ template&lt;class R, class A&gt; </div>
 </div><div class="memdoc">
 
 <p>Disconnect the service requestor from the service provider. </p>
-<p>All blocking queries are aborted with the SMART_DISCONNECTED status code. Already received but not yet picked up answers keep valid and can still be picked up with <a class="el" href="classSmartACE_1_1QueryClient.html#a37219af970b82541f98c53ee041457af" title="Check if answer is available. ">queryReceive()</a>/queryReceiveWait(). Not yet received answers at the time of disconnection are lost and calls to <a class="el" href="classSmartACE_1_1QueryClient.html#a37219af970b82541f98c53ee041457af" title="Check if answer is available. ">queryReceive()</a>/queryReceiveWait() return with SMART_DISCONNECTED.</p>
-<p>It is no problem to change the connection to a service provider at any point of time irrespective of any calls to <a class="el" href="classSmartACE_1_1QueryClient.html#a974413e8317bf8e2e282bc8ed3022a99" title="Blocking Query. ">query()</a> / <a class="el" href="classSmartACE_1_1QueryClient.html#a9d87bb10950c8f3b1b3be5286f43107e" title="Asynchronous Query. ">queryRequest()</a> / <a class="el" href="classSmartACE_1_1QueryClient.html#a37219af970b82541f98c53ee041457af" title="Check if answer is available. ">queryReceive()</a> or <a class="el" href="classSmartACE_1_1QueryClient.html#a7195d9442102dce426db2355cff94a57" title="Wait for reply. ">queryReceiveWait()</a>.</p>
+<p>All blocking queries are aborted with the SMART_DISCONNECTED status code. Already received but not yet picked up answers keep valid and can still be picked up with <a class="el" href="classSmartACE_1_1QueryClient.html#af5770e30cc880253606363b3adb92bdf" title="Check if answer is available. ">queryReceive()</a>/queryReceiveWait(). Not yet received answers at the time of disconnection are lost and calls to <a class="el" href="classSmartACE_1_1QueryClient.html#af5770e30cc880253606363b3adb92bdf" title="Check if answer is available. ">queryReceive()</a>/queryReceiveWait() return with SMART_DISCONNECTED.</p>
+<p>It is no problem to change the connection to a service provider at any point of time irrespective of any calls to <a class="el" href="classSmartACE_1_1QueryClient.html#a974413e8317bf8e2e282bc8ed3022a99" title="Blocking Query. ">query()</a> / <a class="el" href="classSmartACE_1_1QueryClient.html#a813140217aab118404cd04f57e0ca78c" title="Asynchronous Query. ">queryRequest()</a> / <a class="el" href="classSmartACE_1_1QueryClient.html#af5770e30cc880253606363b3adb92bdf" title="Check if answer is available. ">queryReceive()</a> or <a class="el" href="classSmartACE_1_1QueryClient.html#a349cc48ae90bcf0c2b10de0d8c1952aa" title="Wait for reply. ">queryReceiveWait()</a>.</p>
 <dl class="section return"><dt>Returns</dt><dd>status code<ul>
 <li>SMART_OK : everything is OK and service requestor is disconnected from the service provider.</li>
 <li>SMART_ERROR_COMMUNICATION : something went wrong at the level of the intercomponent communication. At least the service requestor is in the disconnected state irrespective of the service provider side clean up procedures.</li>
@@ -508,8 +508,8 @@ template&lt;class R, class A&gt; </div>
 
 </div>
 </div>
-<a id="a6a291cb689084bf335c390fb94e395cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a291cb689084bf335c390fb94e395cb">&#9670;&nbsp;</a></span>queryDiscard()</h2>
+<a id="ab5a9070e5d60a4aee1e8cc9919f815d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5a9070e5d60a4aee1e8cc9919f815d8">&#9670;&nbsp;</a></span>queryDiscard()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -519,7 +519,7 @@ template&lt;class R, class A&gt; </div>
         <tr>
           <td class="memname">Smart::StatusCode <a class="el" href="classSmartACE_1_1QueryClient.html">SmartACE::QueryClient</a>&lt; R, A &gt;::queryDiscard </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;&#160;</td>
+          <td class="paramtype">const Smart::QueryIdPtr&#160;</td>
           <td class="paramname"><em>id</em></td><td>)</td>
           <td></td>
         </tr>
@@ -527,10 +527,10 @@ template&lt;class R, class A&gt; </div>
 </div><div class="memdoc">
 
 <p>Discard the pending answer with the identifier <em>id</em> </p>
-<p>Call this member function if you do not want to get the answer of a request anymore which was invoked by <a class="el" href="classSmartACE_1_1QueryClient.html#a9d87bb10950c8f3b1b3be5286f43107e" title="Asynchronous Query. ">queryRequest()</a>. This member function invalidates the identifier <em>id</em>.</p>
+<p>Call this member function if you do not want to get the answer of a request anymore which was invoked by <a class="el" href="classSmartACE_1_1QueryClient.html#a813140217aab118404cd04f57e0ca78c" title="Asynchronous Query. ">queryRequest()</a>. This member function invalidates the identifier <em>id</em>.</p>
 <dl class="section warning"><dt>Warning</dt><dd>This member function does NOT abort blocking calls ! This is done by the <a class="el" href="classSmartACE_1_1QueryClient.html#a2b248d14ec39ac4ca13f0eeb7bcdd744" title="Allow or abort and reject blocking calls. ">blocking()</a> member function. It has to be called if you have not yet received an answer and the identifier is still valid, for example due to a CANCELLED return value, and you don't want to get the answer anymore.</dd>
 <dd>
-It is not allowed to call <a class="el" href="classSmartACE_1_1QueryClient.html#a37219af970b82541f98c53ee041457af" title="Check if answer is available. ">queryReceive()</a>, <a class="el" href="classSmartACE_1_1QueryClient.html#a7195d9442102dce426db2355cff94a57" title="Wait for reply. ">queryReceiveWait()</a> or <a class="el" href="classSmartACE_1_1QueryClient.html#a6a291cb689084bf335c390fb94e395cb" title="Discard the pending answer with the identifier id ">queryDiscard()</a> concurrently with the <em>same</em> query id (which is not a restriction since it makes no sense !)</dd></dl>
+It is not allowed to call <a class="el" href="classSmartACE_1_1QueryClient.html#af5770e30cc880253606363b3adb92bdf" title="Check if answer is available. ">queryReceive()</a>, <a class="el" href="classSmartACE_1_1QueryClient.html#a349cc48ae90bcf0c2b10de0d8c1952aa" title="Wait for reply. ">queryReceiveWait()</a> or <a class="el" href="classSmartACE_1_1QueryClient.html#ab5a9070e5d60a4aee1e8cc9919f815d8" title="Discard the pending answer with the identifier id ">queryDiscard()</a> concurrently with the <em>same</em> query id (which is not a restriction since it makes no sense !)</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">id</td><td>provides the identifier of the query</td></tr>
@@ -546,8 +546,8 @@ It is not allowed to call <a class="el" href="classSmartACE_1_1QueryClient.html#
 
 </div>
 </div>
-<a id="a37219af970b82541f98c53ee041457af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a37219af970b82541f98c53ee041457af">&#9670;&nbsp;</a></span>queryReceive()</h2>
+<a id="af5770e30cc880253606363b3adb92bdf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5770e30cc880253606363b3adb92bdf">&#9670;&nbsp;</a></span>queryReceive()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -557,7 +557,7 @@ template&lt;class R, class A&gt; </div>
         <tr>
           <td class="memname">Smart::StatusCode <a class="el" href="classSmartACE_1_1QueryClient.html">SmartACE::QueryClient</a>&lt; R, A &gt;::queryReceive </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;&#160;</td>
+          <td class="paramtype">const Smart::QueryIdPtr&#160;</td>
           <td class="paramname"><em>id</em>, </td>
         </tr>
         <tr>
@@ -576,7 +576,7 @@ template&lt;class R, class A&gt; </div>
 
 <p>Check if answer is available. </p>
 <p>Non-blocking call to fetch the answer belonging to the given identifier. Returns immediately. Member function is thread safe and reentrant.</p>
-<dl class="section warning"><dt>Warning</dt><dd>It is not allowed to call <a class="el" href="classSmartACE_1_1QueryClient.html#a37219af970b82541f98c53ee041457af" title="Check if answer is available. ">queryReceive()</a>, <a class="el" href="classSmartACE_1_1QueryClient.html#a7195d9442102dce426db2355cff94a57" title="Wait for reply. ">queryReceiveWait()</a> or <a class="el" href="classSmartACE_1_1QueryClient.html#a6a291cb689084bf335c390fb94e395cb" title="Discard the pending answer with the identifier id ">queryDiscard()</a> concurrently with the <em>same</em> query id (which is not a restriction since it makes no sense !)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>It is not allowed to call <a class="el" href="classSmartACE_1_1QueryClient.html#af5770e30cc880253606363b3adb92bdf" title="Check if answer is available. ">queryReceive()</a>, <a class="el" href="classSmartACE_1_1QueryClient.html#a349cc48ae90bcf0c2b10de0d8c1952aa" title="Wait for reply. ">queryReceiveWait()</a> or <a class="el" href="classSmartACE_1_1QueryClient.html#ab5a9070e5d60a4aee1e8cc9919f815d8" title="Discard the pending answer with the identifier id ">queryDiscard()</a> concurrently with the <em>same</em> query id (which is not a restriction since it makes no sense !)</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">id</td><td>provides the identifier of the query </td></tr>
@@ -595,8 +595,8 @@ template&lt;class R, class A&gt; </div>
 
 </div>
 </div>
-<a id="a7195d9442102dce426db2355cff94a57"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7195d9442102dce426db2355cff94a57">&#9670;&nbsp;</a></span>queryReceiveWait()</h2>
+<a id="a349cc48ae90bcf0c2b10de0d8c1952aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a349cc48ae90bcf0c2b10de0d8c1952aa">&#9670;&nbsp;</a></span>queryReceiveWait()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -606,7 +606,7 @@ template&lt;class R, class A&gt; </div>
         <tr>
           <td class="memname">Smart::StatusCode <a class="el" href="classSmartACE_1_1QueryClient.html">SmartACE::QueryClient</a>&lt; R, A &gt;::queryReceiveWait </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;&#160;</td>
+          <td class="paramtype">const Smart::QueryIdPtr&#160;</td>
           <td class="paramname"><em>id</em>, </td>
         </tr>
         <tr>
@@ -618,8 +618,8 @@ template&lt;class R, class A&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::chrono::steady_clock::duration &amp;&#160;</td>
-          <td class="paramname"><em>timeout</em> = <code>std::chrono::steady_clock::duration::zero()</code>&#160;</td>
+          <td class="paramtype">const Smart::Duration &amp;&#160;</td>
+          <td class="paramname"><em>timeout</em> = <code>Smart::Duration::max()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -631,19 +631,19 @@ template&lt;class R, class A&gt; </div>
 
 <p>Wait for reply. </p>
 <p>Blocking call to fetch the answer belonging to the given identifier. Waits until the answer is received.</p>
-<dl class="section warning"><dt>Warning</dt><dd>It is not allowed to call <a class="el" href="classSmartACE_1_1QueryClient.html#a37219af970b82541f98c53ee041457af" title="Check if answer is available. ">queryReceive()</a>, <a class="el" href="classSmartACE_1_1QueryClient.html#a7195d9442102dce426db2355cff94a57" title="Wait for reply. ">queryReceiveWait()</a> or <a class="el" href="classSmartACE_1_1QueryClient.html#a6a291cb689084bf335c390fb94e395cb" title="Discard the pending answer with the identifier id ">queryDiscard()</a> concurrently with the <em>same</em> query id (which is not a restriction since it makes no sense !)</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>It is not allowed to call <a class="el" href="classSmartACE_1_1QueryClient.html#af5770e30cc880253606363b3adb92bdf" title="Check if answer is available. ">queryReceive()</a>, <a class="el" href="classSmartACE_1_1QueryClient.html#a349cc48ae90bcf0c2b10de0d8c1952aa" title="Wait for reply. ">queryReceiveWait()</a> or <a class="el" href="classSmartACE_1_1QueryClient.html#ab5a9070e5d60a4aee1e8cc9919f815d8" title="Discard the pending answer with the identifier id ">queryDiscard()</a> concurrently with the <em>same</em> query id (which is not a restriction since it makes no sense !)</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">id</td><td>provides the identifier of the query </td></tr>
     <tr><td class="paramname">answer</td><td>is set to the answer returned from the server if it was available </td></tr>
-    <tr><td class="paramname">timeout</td><td>the optional maximum waiting time for a query answer (default value zero: method blocks indefinitelly)</td></tr>
+    <tr><td class="paramname">timeout</td><td>the optional maximum waiting time for a query answer (default value max: method blocks indefinitely)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>status code:<ul>
 <li>SMART_OK : everything is ok and <em>answer</em> contains the answer</li>
 <li>SMART_WRONGID : no pending query with this identifier available, therefore no valid <em>answer</em> returned.</li>
-<li>SMART_CANCELLED : blocking call is not allowed or is not allowed anymore and therefore blocking call is aborted and no valid <em>answer</em> is returned. The query identifier <em>id</em> keeps valid and one can either again call <a class="el" href="classSmartACE_1_1QueryClient.html#a37219af970b82541f98c53ee041457af" title="Check if answer is available. ">queryReceive()</a>, <a class="el" href="classSmartACE_1_1QueryClient.html#a7195d9442102dce426db2355cff94a57" title="Wait for reply. ">queryReceiveWait()</a> or discard the answer by calling <a class="el" href="classSmartACE_1_1QueryClient.html#a6a291cb689084bf335c390fb94e395cb" title="Discard the pending answer with the identifier id ">queryDiscard()</a>.</li>
+<li>SMART_CANCELLED : blocking call is not allowed or is not allowed anymore and therefore blocking call is aborted and no valid <em>answer</em> is returned. The query identifier <em>id</em> keeps valid and one can either again call <a class="el" href="classSmartACE_1_1QueryClient.html#af5770e30cc880253606363b3adb92bdf" title="Check if answer is available. ">queryReceive()</a>, <a class="el" href="classSmartACE_1_1QueryClient.html#a349cc48ae90bcf0c2b10de0d8c1952aa" title="Wait for reply. ">queryReceiveWait()</a> or discard the answer by calling <a class="el" href="classSmartACE_1_1QueryClient.html#ab5a9070e5d60a4aee1e8cc9919f815d8" title="Discard the pending answer with the identifier id ">queryDiscard()</a>.</li>
 <li>SMART_DISCONNECTED : blocking call is aborted and the answer belonging to <em>id</em> can not be received anymore since client got disconnected. <em>id</em> is not valid any longer and <em>answer</em> contains no valid answer.</li>
 <li>SMART_ERROR : something went wrong, <em>answer</em> contains no answer and <em>id</em> is not valid any longer. </li>
 </ul>
@@ -651,8 +651,8 @@ template&lt;class R, class A&gt; </div>
 
 </div>
 </div>
-<a id="a9d87bb10950c8f3b1b3be5286f43107e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d87bb10950c8f3b1b3be5286f43107e">&#9670;&nbsp;</a></span>queryRequest()</h2>
+<a id="a813140217aab118404cd04f57e0ca78c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a813140217aab118404cd04f57e0ca78c">&#9670;&nbsp;</a></span>queryRequest()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -668,7 +668,7 @@ template&lt;class R, class A&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;&#160;</td>
+          <td class="paramtype">Smart::QueryIdPtr &amp;&#160;</td>
           <td class="paramname"><em>id</em>&#160;</td>
         </tr>
         <tr>

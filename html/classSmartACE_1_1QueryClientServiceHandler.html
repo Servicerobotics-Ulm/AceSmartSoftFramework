@@ -88,10 +88,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:abdf9e5ff590480a0edd2e171783f4f9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ce4d1b5ac84c62efd770b8eac9dc4ef"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClientServiceHandler.html#a6ce4d1b5ac84c62efd770b8eac9dc4ef">~QueryClientServiceHandler</a> ()</td></tr>
 <tr class="separator:a6ce4d1b5ac84c62efd770b8eac9dc4ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f5801503e78f1d03ddb07fc79ea7d17"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClientServiceHandler.html#a0f5801503e78f1d03ddb07fc79ea7d17">setCallbackFkts</a> (void *, void(*)(void *, const <a class="el" href="namespaceSmartACE.html#a38f00f810296d9df17bf0ef1216a902b">SmartACE::SmartMessageBlock</a> *, int), void(*)(void *, int, int), void(*)(void *, int), void(*)(void *))</td></tr>
-<tr class="separator:a0f5801503e78f1d03ddb07fc79ea7d17"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae44361888e90246f7adf4851402a49c0"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClientServiceHandler.html#ae44361888e90246f7adf4851402a49c0">request</a> (const <a class="el" href="namespaceSmartACE.html#a38f00f810296d9df17bf0ef1216a902b">SmartACE::SmartMessageBlock</a> *message, int id)</td></tr>
-<tr class="separator:ae44361888e90246f7adf4851402a49c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3619b27e0352327d31a44b48c111eefe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClientServiceHandler.html#a3619b27e0352327d31a44b48c111eefe">setCallbackFkts</a> (void *, void(*)(void *, const <a class="el" href="namespaceSmartACE.html#a38f00f810296d9df17bf0ef1216a902b">SmartACE::SmartMessageBlock</a> *, size_t), void(*)(void *, int, int), void(*)(void *, int), void(*)(void *))</td></tr>
+<tr class="separator:a3619b27e0352327d31a44b48c111eefe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e200bf03f47e572e4290af95cdd9e2f"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClientServiceHandler.html#a8e200bf03f47e572e4290af95cdd9e2f">request</a> (const <a class="el" href="namespaceSmartACE.html#a38f00f810296d9df17bf0ef1216a902b">SmartACE::SmartMessageBlock</a> *message, size_t qid)</td></tr>
+<tr class="separator:a8e200bf03f47e572e4290af95cdd9e2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf52f9a2dcfe46e44cdecd35a137111b"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClientServiceHandler.html#abf52f9a2dcfe46e44cdecd35a137111b">connect</a> (int cid, const ACE_Utils::UUID &amp;serviceID)</td></tr>
 <tr class="separator:abf52f9a2dcfe46e44cdecd35a137111b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e61ade4df7786888d111a53b845302b"><td class="memItemLeft" align="right" valign="top">Smart::StatusCode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryClientServiceHandler.html#a0e61ade4df7786888d111a53b845302b">discard</a> ()</td></tr>
@@ -284,8 +284,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ae44361888e90246f7adf4851402a49c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae44361888e90246f7adf4851402a49c0">&#9670;&nbsp;</a></span>request()</h2>
+<a id="a8e200bf03f47e572e4290af95cdd9e2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e200bf03f47e572e4290af95cdd9e2f">&#9670;&nbsp;</a></span>request()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -302,8 +302,8 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>id</em>&#160;</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>qid</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -318,12 +318,12 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classSmartACE_1_1SmartQueryServerInterface.html#a39baa861ad07f59247ca4d09212f7354">SmartACE::SmartQueryServerInterface</a>.</p>
+<p>Implements <a class="el" href="classSmartACE_1_1SmartQueryServerInterface.html#ae5579bec7f9d98b184017bf29c59f0ba">SmartACE::SmartQueryServerInterface</a>.</p>
 
 </div>
 </div>
-<a id="a0f5801503e78f1d03ddb07fc79ea7d17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f5801503e78f1d03ddb07fc79ea7d17">&#9670;&nbsp;</a></span>setCallbackFkts()</h2>
+<a id="a3619b27e0352327d31a44b48c111eefe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3619b27e0352327d31a44b48c111eefe">&#9670;&nbsp;</a></span>setCallbackFkts()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -337,7 +337,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">void(*)(void *, const <a class="el" href="namespaceSmartACE.html#a38f00f810296d9df17bf0ef1216a902b">SmartACE::SmartMessageBlock</a> *, int)&#160;</td>
+          <td class="paramtype">void(*)(void *, const <a class="el" href="namespaceSmartACE.html#a38f00f810296d9df17bf0ef1216a902b">SmartACE::SmartMessageBlock</a> *, size_t)&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>

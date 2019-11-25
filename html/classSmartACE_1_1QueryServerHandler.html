@@ -63,6 +63,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classSmartACE_1_1QueryServerHandler-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -83,63 +84,49 @@ Inheritance diagram for SmartACE::QueryServerHandler&lt; R, A &gt;:</div>
 </map>
  </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a37a98a6f8a3325cc7793d1b13ebbc5ea"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServerHandler.html#a37a98a6f8a3325cc7793d1b13ebbc5ea">IQueryServer</a> = Smart::IQueryServerPattern&lt; R, A &gt;</td></tr>
+<tr class="memdesc:a37a98a6f8a3325cc7793d1b13ebbc5ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">this Alias simplifies usage in the handleQuery method  <a href="#a37a98a6f8a3325cc7793d1b13ebbc5ea">More...</a><br /></td></tr>
+<tr class="separator:a37a98a6f8a3325cc7793d1b13ebbc5ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac2fd86effd538e8e0eab016945ba8402"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServerHandler.html#ac2fd86effd538e8e0eab016945ba8402">QueryServerHandler</a> (<a class="el" href="classSmartACE_1_1QueryServer.html">QueryServer</a>&lt; R, A &gt; *server)</td></tr>
-<tr class="memdesc:ac2fd86effd538e8e0eab016945ba8402"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#ac2fd86effd538e8e0eab016945ba8402">More...</a><br /></td></tr>
-<tr class="separator:ac2fd86effd538e8e0eab016945ba8402"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb9ace7f9afe3e57e4d3899405f63560"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServerHandler.html#aeb9ace7f9afe3e57e4d3899405f63560">~QueryServerHandler</a> ()</td></tr>
-<tr class="separator:aeb9ace7f9afe3e57e4d3899405f63560"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbbc2bc2e4cfb3aaaf8764d410354f6c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServerHandler.html#abbbc2bc2e4cfb3aaaf8764d410354f6c">handleQuery</a> (const <a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;id, const R &amp;request)=0</td></tr>
-<tr class="memdesc:abbbc2bc2e4cfb3aaaf8764d410354f6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler method for an incoming query request.  <a href="#abbbc2bc2e4cfb3aaaf8764d410354f6c">More...</a><br /></td></tr>
-<tr class="separator:abbbc2bc2e4cfb3aaaf8764d410354f6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a163215bc08689810097a0248fa8e9ef0"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServerHandler.html#a163215bc08689810097a0248fa8e9ef0">~QueryServerHandler</a> ()=default</td></tr>
+<tr class="separator:a163215bc08689810097a0248fa8e9ef0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2c3b9a243bc3ea3dc3764c2077f9d67"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1QueryServerHandler.html#ae2c3b9a243bc3ea3dc3764c2077f9d67">handleQuery</a> (<a class="el" href="classSmartACE_1_1QueryServerHandler.html#a37a98a6f8a3325cc7793d1b13ebbc5ea">IQueryServer</a> &amp;server, const Smart::QueryIdPtr &amp;id, const R &amp;request)=0</td></tr>
+<tr class="memdesc:ae2c3b9a243bc3ea3dc3764c2077f9d67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler method for an incoming query request.  <a href="#ae2c3b9a243bc3ea3dc3764c2077f9d67">More...</a><br /></td></tr>
+<tr class="separator:ae2c3b9a243bc3ea3dc3764c2077f9d67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class R, class A&gt;<br />
 class SmartACE::QueryServerHandler&lt; R, A &gt;</h3>
 
 <p>Handler Class for <a class="el" href="classSmartACE_1_1QueryServer.html" title="server query template. ">QueryServer</a> for incoming requests. </p>
-<p>Used by the <a class="el" href="classSmartACE_1_1QueryServer.html" title="server query template. ">QueryServer</a> to handle incoming queries. The user should provide the <a class="el" href="classSmartACE_1_1QueryServerHandler.html#abbbc2bc2e4cfb3aaaf8764d410354f6c" title="Handler method for an incoming query request. ">handleQuery()</a> method by subclassing and register an instance of this handler class with the <a class="el" href="classSmartACE_1_1QueryServer.html" title="server query template. ">QueryServer</a>. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac2fd86effd538e8e0eab016945ba8402"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac2fd86effd538e8e0eab016945ba8402">&#9670;&nbsp;</a></span>QueryServerHandler()</h2>
+<p>Used by the <a class="el" href="classSmartACE_1_1QueryServer.html" title="server query template. ">QueryServer</a> to handle incoming queries. The user should provide the <a class="el" href="classSmartACE_1_1QueryServerHandler.html#ae2c3b9a243bc3ea3dc3764c2077f9d67" title="Handler method for an incoming query request. ">handleQuery()</a> method by subclassing and register an instance of this handler class with the <a class="el" href="classSmartACE_1_1QueryServer.html" title="server query template. ">QueryServer</a>. </p>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a37a98a6f8a3325cc7793d1b13ebbc5ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37a98a6f8a3325cc7793d1b13ebbc5ea">&#9670;&nbsp;</a></span>IQueryServer</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class R, class A&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classSmartACE_1_1QueryServerHandler.html">SmartACE::QueryServerHandler</a>&lt; R, A &gt;::<a class="el" href="classSmartACE_1_1QueryServerHandler.html">QueryServerHandler</a> </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classSmartACE_1_1QueryServer.html">QueryServer</a>&lt; R, A &gt; *&#160;</td>
-          <td class="paramname"><em>server</em></td><td>)</td>
-          <td></td>
+          <td class="memname">using <a class="el" href="classSmartACE_1_1QueryServerHandler.html">SmartACE::QueryServerHandler</a>&lt; R, A &gt;::<a class="el" href="classSmartACE_1_1QueryServerHandler.html#a37a98a6f8a3325cc7793d1b13ebbc5ea">IQueryServer</a> =  Smart::IQueryServerPattern&lt;R,A&gt;</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
-<p>Default constructor. </p>
-<p>This constructor expects a pointer to the related <a class="el" href="classSmartACE_1_1QueryServer.html" title="server query template. ">QueryServer</a> as the main argument. A <a class="el" href="classSmartACE_1_1QueryServer.html" title="server query template. ">QueryServer</a> uses this handler to process server-side query-requests. A user needs to implement the handleQuery method.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">server</td><td>a pointer to the related <a class="el" href="classSmartACE_1_1QueryServer.html" title="server query template. ">QueryServer</a> </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>this Alias simplifies usage in the handleQuery method </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classSmartACE_1_1QueryServerHandler.html#ae2c3b9a243bc3ea3dc3764c2077f9d67" title="Handler method for an incoming query request. ">handleQuery</a> </dd></dl>
 
 </div>
 </div>
-<a id="aeb9ace7f9afe3e57e4d3899405f63560"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb9ace7f9afe3e57e4d3899405f63560">&#9670;&nbsp;</a></span>~QueryServerHandler()</h2>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a163215bc08689810097a0248fa8e9ef0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a163215bc08689810097a0248fa8e9ef0">&#9670;&nbsp;</a></span>~QueryServerHandler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -158,7 +145,7 @@ template&lt;class R, class A&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -166,8 +153,8 @@ template&lt;class R, class A&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="abbbc2bc2e4cfb3aaaf8764d410354f6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abbbc2bc2e4cfb3aaaf8764d410354f6c">&#9670;&nbsp;</a></span>handleQuery()</h2>
+<a id="ae2c3b9a243bc3ea3dc3764c2077f9d67"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2c3b9a243bc3ea3dc3764c2077f9d67">&#9670;&nbsp;</a></span>handleQuery()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -180,7 +167,13 @@ template&lt;class R, class A&gt; </div>
         <tr>
           <td class="memname">virtual void <a class="el" href="classSmartACE_1_1QueryServerHandler.html">SmartACE::QueryServerHandler</a>&lt; R, A &gt;::handleQuery </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespaceSmartACE.html#a597660c1501221ab0266addc38cdc47a">QueryId</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classSmartACE_1_1QueryServerHandler.html#a37a98a6f8a3325cc7793d1b13ebbc5ea">IQueryServer</a> &amp;&#160;</td>
+          <td class="paramname"><em>server</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Smart::QueryIdPtr &amp;&#160;</td>
           <td class="paramname"><em>id</em>, </td>
         </tr>
         <tr>
@@ -207,13 +200,15 @@ template&lt;class R, class A&gt; </div>
 <p>Usually the request and the id will be inserted into a queue and another working thread processes the request and provides the result. The ThreadedQueryHandler decorator provides such a processing pattern.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">id</td><td>id of new query </td></tr>
-    <tr><td class="paramname">request</td><td>the request itself </td></tr>
+    <tr><td class="paramname">server</td><td>a reference to the "parent" query-server that triggers this handler callback; can be used to provide the query-answer </td></tr>
+    <tr><td class="paramname">id</td><td>the query-id can be used to provide the query answer </td></tr>
+    <tr><td class="paramname">request</td><td>the request itself</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classSmartACE_1_1QueryServerHandler.html#a37a98a6f8a3325cc7793d1b13ebbc5ea" title="this Alias simplifies usage in the handleQuery method ">IQueryServer</a> </dd></dl>
 
-<p>Implemented in <a class="el" href="classSmartACE_1_1StateSlaveHandler.html#a6ac49bf32c938f7ec5662f16dfb6ea40">SmartACE::StateSlaveHandler</a>, and <a class="el" href="classSmartACE_1_1WiringHandler.html#af3e2cc0d09737f27d663919a1cf45f61">SmartACE::WiringHandler</a>.</p>
+<p>Implemented in <a class="el" href="classSmartACE_1_1StateSlaveHandler.html#a6115b12729e0fb82ff2272144c02a0d7">SmartACE::StateSlaveHandler</a>, and <a class="el" href="classSmartACE_1_1WiringHandler.html#a84e3b9c1ed6788e176bd9373055dda93">SmartACE::WiringHandler</a>.</p>
 
 </div>
 </div>

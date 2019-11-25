@@ -85,11 +85,8 @@ Inheritance diagram for SmartACE::SendServerHandler&lt; C &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7cc2c63841098041748311904e7e6264"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1SendServerHandler.html#a7cc2c63841098041748311904e7e6264">SendServerHandler</a> (<a class="el" href="classSmartACE_1_1SendServer.html">SendServer</a>&lt; C &gt; *server)</td></tr>
-<tr class="memdesc:a7cc2c63841098041748311904e7e6264"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#a7cc2c63841098041748311904e7e6264">More...</a><br /></td></tr>
-<tr class="separator:a7cc2c63841098041748311904e7e6264"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e804b31a5967904c3f7ed0a61d273e8"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1SendServerHandler.html#a3e804b31a5967904c3f7ed0a61d273e8">~SendServerHandler</a> ()</td></tr>
-<tr class="separator:a3e804b31a5967904c3f7ed0a61d273e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b2daa432562aaa484724588ce6ba0bd"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1SendServerHandler.html#a5b2daa432562aaa484724588ce6ba0bd">~SendServerHandler</a> ()=default</td></tr>
+<tr class="separator:a5b2daa432562aaa484724588ce6ba0bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aadd17c41a9ffe8bf055d11e831f051e0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1SendServerHandler.html#aadd17c41a9ffe8bf055d11e831f051e0">handleSend</a> (const C &amp;cmd)=0</td></tr>
 <tr class="memdesc:aadd17c41a9ffe8bf055d11e831f051e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handler method for an incoming command.  <a href="#aadd17c41a9ffe8bf055d11e831f051e0">More...</a><br /></td></tr>
 <tr class="separator:aadd17c41a9ffe8bf055d11e831f051e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -101,45 +98,8 @@ class SmartACE::SendServerHandler&lt; C &gt;</h3>
 <p>Handler Class for <a class="el" href="classSmartACE_1_1SendServer.html" title="Server part of one-way communication pattern. ">SendServer</a> for incoming commands. </p>
 <p>Used by the <a class="el" href="classSmartACE_1_1SendServer.html" title="Server part of one-way communication pattern. ">SendServer</a> to handle incoming commands. The user should provide the <a class="el" href="classSmartACE_1_1SendServerHandler.html#aadd17c41a9ffe8bf055d11e831f051e0" title="Handler method for an incoming command. ">handleSend()</a> method by subclassing and register an instance of this handler class with the <a class="el" href="classSmartACE_1_1SendServer.html" title="Server part of one-way communication pattern. ">SendServer</a>. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a7cc2c63841098041748311904e7e6264"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cc2c63841098041748311904e7e6264">&#9670;&nbsp;</a></span>SendServerHandler()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class C &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classSmartACE_1_1SendServerHandler.html">SmartACE::SendServerHandler</a>&lt; C &gt;::<a class="el" href="classSmartACE_1_1SendServerHandler.html">SendServerHandler</a> </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classSmartACE_1_1SendServer.html">SendServer</a>&lt; C &gt; *&#160;</td>
-          <td class="paramname"><em>server</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Default constructor. </p>
-<p>This constructor expects a pointer to the related <a class="el" href="classSmartACE_1_1SendServer.html" title="Server part of one-way communication pattern. ">SendServer</a> as the main argument. A <a class="el" href="classSmartACE_1_1SendServer.html" title="Server part of one-way communication pattern. ">SendServer</a> uses this handler to process server-side send-requests. A user needs to implement the handleSend method.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">server</td><td>a pointer to the related <a class="el" href="classSmartACE_1_1SendServer.html" title="Server part of one-way communication pattern. ">SendServer</a> </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a3e804b31a5967904c3f7ed0a61d273e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e804b31a5967904c3f7ed0a61d273e8">&#9670;&nbsp;</a></span>~SendServerHandler()</h2>
+<a id="a5b2daa432562aaa484724588ce6ba0bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b2daa432562aaa484724588ce6ba0bd">&#9670;&nbsp;</a></span>~SendServerHandler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -158,7 +118,7 @@ template&lt;class C &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

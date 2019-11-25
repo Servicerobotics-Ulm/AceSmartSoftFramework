@@ -85,8 +85,8 @@ Inheritance diagram for SmartACE::EventTestHandler&lt; P, E, S &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4e818add4a85c1e27af06b96ee338114"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1EventTestHandler.html#a4e818add4a85c1e27af06b96ee338114">~EventTestHandler</a> ()</td></tr>
-<tr class="separator:a4e818add4a85c1e27af06b96ee338114"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ddd3b53e07a6158e9fd84fc2ba4e943"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1EventTestHandler.html#a1ddd3b53e07a6158e9fd84fc2ba4e943">~EventTestHandler</a> ()=default</td></tr>
+<tr class="separator:a1ddd3b53e07a6158e9fd84fc2ba4e943"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affae122b0282bd0922faad905800d431"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSmartACE_1_1EventTestHandler.html#affae122b0282bd0922faad905800d431">testEvent</a> (P &amp;p, E &amp;e, const S &amp;s)=0</td></tr>
 <tr class="memdesc:affae122b0282bd0922faad905800d431"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the test method which decides whether the event fires or not.  <a href="#affae122b0282bd0922faad905800d431">More...</a><br /></td></tr>
 <tr class="separator:affae122b0282bd0922faad905800d431"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -95,18 +95,18 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a36252ed3c801ba173e63e979393836e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;class P, class E, class S&gt;<br />
+<div class="textblock"><h3>template&lt;class P, class E, class S = E&gt;<br />
 class SmartACE::EventTestHandler&lt; P, E, S &gt;</h3>
 
 <p>Condition Test Handler (decides at server whether event fires or not). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a4e818add4a85c1e27af06b96ee338114"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e818add4a85c1e27af06b96ee338114">&#9670;&nbsp;</a></span>~EventTestHandler()</h2>
+<a id="a1ddd3b53e07a6158e9fd84fc2ba4e943"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ddd3b53e07a6158e9fd84fc2ba4e943">&#9670;&nbsp;</a></span>~EventTestHandler()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class P , class E , class S &gt; </div>
+template&lt;class P , class E , class S  = E&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -120,7 +120,7 @@ template&lt;class P , class E , class S &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -134,7 +134,7 @@ template&lt;class P , class E , class S &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class P , class E , class S &gt; </div>
+template&lt;class P , class E , class S  = E&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -171,7 +171,7 @@ template&lt;class P , class E , class S &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class P , class E , class S &gt; </div>
+template&lt;class P , class E , class S  = E&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
