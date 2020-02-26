@@ -29,7 +29,7 @@
 
 echo "Usage: sudo ./INSTALL-ACE-6.0.2.sh [INSTALL-DIR]";
 
-ACE=ACE-6.0.2
+ACE=ACE-6.5.8
 
 if [ $# -eq 1 ]; then
 	INSTALL_DIR=$1;
