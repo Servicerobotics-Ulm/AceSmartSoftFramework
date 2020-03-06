@@ -27,7 +27,7 @@
 #
 
 
-echo "Usage: sudo ./INSTALL-ACE-6.0.2.sh [INSTALL-DIR]";
+echo "Usage: sudo ./INSTALL-ACE-6.5.8.sh [INSTALL-DIR]";
 
 ACE=ACE-6.5.8
 
