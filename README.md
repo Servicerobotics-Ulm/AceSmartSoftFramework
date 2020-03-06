@@ -27,12 +27,12 @@ sudo apt-get install build-essential pkg-config cmake
 
 ### Installing the ADAPTIVE Communication Environment (ACE)
 
-For installing the ACE middleware you can use the shipped [**installation script**](https://github.com/Servicerobotics-Ulm/AceSmartSoftFramework/blob/master/INSTALL-ACE-6.0.2.sh). Download the script and execute it within a terminal as follows:
+For installing the ACE middleware you can use the shipped [**installation script**](https://github.com/MiRON-project/AceSmartSoftFramework/blob/master/INSTALL-ACE-6.5.8.sh). Download the script and execute it within a terminal as follows:
 
 ```bash
-> wget https://raw.githubusercontent.com/Servicerobotics-Ulm/AceSmartSoftFramework/master/INSTALL-ACE-6.0.2.sh
-> chmod +x INSTALL-ACE-6.0.2.sh
-> sudo ./INSTALL-ACE-6.0.2.sh
+> wget https://github.com/MiRON-project/AceSmartSoftFramework/blob/master/INSTALL-ACE-6.5.8.sh
+> chmod +x INSTALL-ACE-6.5.8.sh
+> sudo ./INSTALL-ACE-6.5.8.sh
 ```
 The default location for the installed ACE library is (on Linux) **/opt/ACE_wrappers**. However, you can select any custom locaiton of your choice. In order for the ACE/SmartSoft framework to find your ACE library installation the environment variable named **ACE_ROOT** is used which needs the be specified after the above installation. The best way is to use the **~/.pfile** for this as follows:
 
@@ -68,7 +68,7 @@ First, checkout a copy of the ACE/SmartSoft github repository into any location 
 ```
 > mkdir ~/SOFTWARE/smartsoft/repos
 > cd ~/SOFTWARE/smartsoft/repos
-> git clone https://github.com/Servicerobotics-Ulm/AceSmartSoftFramework.git
+> git clone git@github.com:MiRON-project/AceSmartSoftFramework.git
 ```
 
 Next, select a location where all the locally compiled binaries, libraries, headers and all other files should be installed. For instance, this can be the location **~/SOFTWARE/smartsoft**. This location should be specified using the environment variable called **SMART_ROOT_ACE** (use .profile as above to make this variable persistent). After that you can compile and install ACE/SmartSoft like this:
