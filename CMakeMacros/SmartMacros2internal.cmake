@@ -27,22 +27,34 @@ FUNCTION(INTERNAL_FIND_PACKAGE PACKAGE_NAME)
         LIST(GET CONFIG_FILES 0 ${PACKAGE_NAME}ConfigFile)
       ENDIF(${LENGTH} GREATER 0)
     ENDFOREACH(DIR)
-  ELSE(DEFINED ENV{SMART_PACKAGE_PATH})
-    MESSAGE(FATAL_ERROR "UNDEFINED ENV{SMART_PACKAGE_PATH}!")
   ENDIF(DEFINED ENV{SMART_PACKAGE_PATH})
 
   IF(${PACKAGE_NAME}ConfigFile)
     # get the root directory of the comm-object
     GET_FILENAME_COMPONENT(PACKAGE_ROOT ${${PACKAGE_NAME}ConfigFile} DIRECTORY)
-    IF(NOT EXISTS ${PACKAGE_ROOT}/CMakeLists.txt)
+    IF(EXISTS ${PACKAGE_ROOT}/CMakeLists.txt)
+      # this is the return value of this function
+      SET(${PACKAGE_NAME}_SOURCE_DIR ${PACKAGE_ROOT} PARENT_SCOPE)
+      SET(${PACKAGE_NAME}_FOUND TRUE PARENT_SCOPE)
+    ELSE(EXISTS ${PACKAGE_ROOT}/CMakeLists.txt)
       # get the parent folder (assuming that this is the atual root folder)
       GET_FILENAME_COMPONENT(PACKAGE_ROOT ${PACKAGE_ROOT} DIRECTORY)
-    ENDIF(NOT EXISTS ${PACKAGE_ROOT}/CMakeLists.txt)
-    # this is the return value of this function
-    SET(${PACKAGE_NAME}_ROOT ${PACKAGE_ROOT} PARENT_SCOPE)
-  ELSE()
-    MESSAGE(FATAL_ERROR "${PACKAGE_NAME}Config.cmake.in not found!")
-  ENDIF()
+      IF(EXISTS ${PACKAGE_ROOT}/CMakeLists.txt)
+        # this is the return value of this function
+        SET(${PACKAGE_NAME}_SOURCE_DIR ${PACKAGE_ROOT} PARENT_SCOPE)
+        SET(${PACKAGE_NAME}_FOUND TRUE PARENT_SCOPE)
+      ENDIF(EXISTS ${PACKAGE_ROOT}/CMakeLists.txt) 
+    ENDIF(EXISTS ${PACKAGE_ROOT}/CMakeLists.txt)
+  ENDIF(${PACKAGE_NAME}ConfigFile)
+
+  IF(NOT ${PACKAGE_NAME}_SOURCE_DIR)
+    # if no source tree is found, we try to find the installed version as a second search strategy
+    FIND_PACKAGE(${PACKAGE_NAME} PATHS $ENV{SMART_ROOT_ACE}/modules /opt/smartSoftAce/modules)
+  ENDIF(NOT ${PACKAGE_NAME}_SOURCE_DIR)
+
+  IF(NOT ${PACKAGE_NAME}_FOUND)
+    MESSAGE(FATAL_ERROR "Package ${PACKAGE_NAME} NOT FOUND! Make sure it is either checked out under SMART_PACKAGE_PATH with sources, or it is installed in SMART_ROOT_ACE/modules or /opt/smartSoftAce/modules")
+  ENDIF(NOT ${PACKAGE_NAME}_FOUND)
 ENDFUNCTION(INTERNAL_FIND_PACKAGE PACKAGE_NAME)
 
 ############################################################
@@ -95,48 +107,48 @@ ENDMACRO(INTERNAL_ADD_ALL_DEPENDENCIES PACKAGE_NAME PACKAGE_ROOT)
 ## internal API (do not use in SmartSoft projects directly)
 ############################################################
 MACRO(INTERNAL_ADD_PACKAGE PACKAGE_NAME)
-  # An optional second argument can be used to provide an alternative root folder 
-  # (which should be an absolute path to a folder that contains the main 
-  #  CMakeLists.txt file of the external package)
-  IF(${ARGC} GREATER 1)
-    # local root folder given using the optional argument
-    SET(${PACKAGE_NAME}_ROOT ${ARGV1})
-  ELSEIF(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}/CMakeLists.txt)
-    # the default behavior is to assume that the local root folder 
-    # is named the same as the PACKAGE_NAME
-    SET(${PACKAGE_NAME}_ROOT ${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME})
-  ELSEIF(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}/smartsoft/CMakeLists.txt)
-    # some package use the smartsoft subfolder as the main CMake root folder
-    SET(${PACKAGE_NAME}_ROOT ${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}/smartsoft)
-  ELSE()
-    # search for the external definition
-    INTERNAL_FIND_PACKAGE(${PACKAGE_NAME})
-  ENDIF()
-
-  # check if the given root folder contains the file CMakeLists.txt
-  IF(NOT EXISTS ${${PACKAGE_NAME}_ROOT}/CMakeLists.txt)
-    MESSAGE(FATAL_ERROR "Invalid root-folder: ${${PACKAGE_NAME}_ROOT}")
-  ENDIF(NOT EXISTS ${${PACKAGE_NAME}_ROOT}/CMakeLists.txt)
-
-  # run CMake configure command if needed
-  INTERNAL_CMAKE_CONFIGURE(${${PACKAGE_NAME}_ROOT})
-
-  # add all package dependencies
-  # this macro will call INTERNAL_ADD_PACKAGE recursivelly
-  # to collect all dependencies and the dependencies of the
-  # dependencies, etc.
-  INTERNAL_ADD_ALL_DEPENDENCIES(${PACKAGE_NAME} ${${PACKAGE_NAME}_ROOT})
-
-#MESSAGE("${PACKAGE_NAME}_EXTERNAL_DEPENDENCIES: ${${PACKAGE_NAME}_EXTERNAL_DEPENDENCIES}")
-
   # only add an ExternalProject if it has not yet been defined
   IF(NOT TARGET ${PACKAGE_NAME}External)
+    # An optional second argument can be used to provide an alternative root folder 
+    # (which should be an absolute path to a folder that contains the main 
+    #  CMakeLists.txt file of the external package)
+    IF(${ARGC} GREATER 1)
+      # local root folder given using the optional argument
+      SET(${PACKAGE_NAME}_SOURCE_DIR ${ARGV1})
+    ELSEIF(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}/CMakeLists.txt)
+      # the default behavior is to assume that the local root folder 
+      # is named the same as the PACKAGE_NAME
+      SET(${PACKAGE_NAME}_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME})
+    ELSEIF(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}/smartsoft/CMakeLists.txt)
+      # some package use the smartsoft subfolder as the main CMake root folder
+      SET(${PACKAGE_NAME}_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}/smartsoft)
+    ELSE()
+      # search for the external definition
+      INTERNAL_FIND_PACKAGE(${PACKAGE_NAME})
+    ENDIF()
+
+    # check if the given root folder contains the file CMakeLists.txt
+    IF(NOT EXISTS ${${PACKAGE_NAME}_SOURCE_DIR}/CMakeLists.txt)
+      MESSAGE(FATAL_ERROR "Build tree for package ${PACKAGE_NAME} NOT FOUND!\nHint: use the cmake flag -DBUILD_DEPENDENCIES=OFF if you don't want to autobuild external dependencies.")
+    ENDIF(NOT EXISTS ${${PACKAGE_NAME}_SOURCE_DIR}/CMakeLists.txt)
+
+    # run CMake configure command if needed
+    INTERNAL_CMAKE_CONFIGURE(${${PACKAGE_NAME}_SOURCE_DIR})
+
+    # add all package dependencies
+    # this macro will call INTERNAL_ADD_PACKAGE recursivelly
+    # to collect all dependencies and the dependencies of the
+    # dependencies, etc.
+    INTERNAL_ADD_ALL_DEPENDENCIES(${PACKAGE_NAME} ${${PACKAGE_NAME}_SOURCE_DIR})
+
+    #MESSAGE("${PACKAGE_NAME}_EXTERNAL_DEPENDENCIES: ${${PACKAGE_NAME}_EXTERNAL_DEPENDENCIES}")
+
     # add package as an ExternalProject
     ExternalProject_Add(${PACKAGE_NAME}External
       DEPENDS ${${PACKAGE_NAME}_EXTERNAL_DEPENDENCIES}
       PREFIX ${PACKAGE_NAME}
-      SOURCE_DIR ${${PACKAGE_NAME}_ROOT}
-      BINARY_DIR ${${PACKAGE_NAME}_ROOT}/build
+      SOURCE_DIR ${${PACKAGE_NAME}_SOURCE_DIR}
+      BINARY_DIR ${${PACKAGE_NAME}_SOURCE_DIR}/build
       CMAKE_ARGS -DBUILD_DEPENDENCIES=OFF
       INSTALL_COMMAND ""
     )
@@ -146,7 +158,7 @@ MACRO(INTERNAL_ADD_PACKAGE PACKAGE_NAME)
       ${PACKAGE_NAME}External
       ${PACKAGE_NAME}Step1
       DEPENDEES install
-      WORKING_DIRECTORY ${${PACKAGE_NAME}_ROOT}/build
+      WORKING_DIRECTORY ${${PACKAGE_NAME}_SOURCE_DIR}/build
       COMMAND ${CMAKE_COMMAND} -DBUILD_DEPENDENCIES=ON .
       COMMENT "Reset BUILD_DEPENDENCIES of '${PACKAGE_NAME}External'"
     )
@@ -203,21 +215,31 @@ ENDMACRO(INTERNAL_IMPORT_ALL_DEPENDENCIES PACKAGE_NAME PACKAGE_ROOT)
 ## internal API (do not use in SmartSoft projects directly)
 ############################################################
 MACRO(INTERNAL_IMPORT_PACKAGE PACKAGE_NAME)
-  # get the root folder of the external package
-  INTERNAL_FIND_PACKAGE(${PACKAGE_NAME})
-
   IF(NOT TARGET ${PACKAGE_NAME})
-    # run CMake configure command if needed
-    INTERNAL_CMAKE_CONFIGURE(${${PACKAGE_NAME}_ROOT})
+    # try finding the package
+    INTERNAL_FIND_PACKAGE(${PACKAGE_NAME})
 
-    # include ${PACKAGE_NAME}Config.cmake file from the external project
-    MESSAGE("-- Include ${${PACKAGE_NAME}_ROOT}/build/${PACKAGE_NAME}Config.cmake")
-    INCLUDE(${${PACKAGE_NAME}_ROOT}/build/${PACKAGE_NAME}Config.cmake)
+    IF(${PACKAGE_NAME}_SOURCE_DIR)
+      #package is found with sources, so the build tree version is used
 
-    # make sure that the external project is automatically rebuilt for the imported target
-    IF(TARGET ${PACKAGE_NAME}External)
-      ADD_DEPENDENCIES(${PACKAGE_NAME} ${PACKAGE_NAME}External)
-    ENDIF(TARGET ${PACKAGE_NAME}External)
+      # run CMake configure command if needed
+      INTERNAL_CMAKE_CONFIGURE(${${PACKAGE_NAME}_SOURCE_DIR})
+
+      # include ${PACKAGE_NAME}Config.cmake file from the build tree of the external project
+      MESSAGE("-- Include ${${PACKAGE_NAME}_SOURCE_DIR}/build/${PACKAGE_NAME}Config.cmake")
+      INCLUDE(${${PACKAGE_NAME}_SOURCE_DIR}/build/${PACKAGE_NAME}Config.cmake)
+
+      # make sure that the external project is automatically rebuilt for the imported target
+      IF(TARGET ${PACKAGE_NAME}External)
+        ADD_DEPENDENCIES(${PACKAGE_NAME} ${PACKAGE_NAME}External)
+      ENDIF(TARGET ${PACKAGE_NAME}External)
+    ELSEIF(${PACKAGE_NAME}_DIR)
+      # package is found as installed version, so we use then installation tree
+      # we don't need to actually include anything as this is already done by the find_package command implicitly
+      MESSAGE("-- Found installed package ${PACKAGE_NAME} in ${${PACKAGE_NAME}_DIR}")
+    ELSE()
+      MESSAGE(FATAL_ERROR "Package {${PACKAGE_NAME} NOT FOUND!")
+    ENDIF()
   ENDIF(NOT TARGET ${PACKAGE_NAME})
 ENDMACRO(INTERNAL_IMPORT_PACKAGE PACKAGE_NAME)
 
