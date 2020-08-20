@@ -27,7 +27,16 @@ sudo apt-get install build-essential pkg-config cmake
 
 ### Installing the ADAPTIVE Communication Environment (ACE)
 
-For installing the ACE middleware you can use the shipped [**installation script**](https://github.com/Servicerobotics-Ulm/AceSmartSoftFramework/blob/master/INSTALL-ACE-6.0.2.sh). Download the script and execute it within a terminal as follows:
+The installation of the ACE middleware with **Ubuntu 18.04 and 20.04** can be done using the shipped Debian package from the default repos:
+
+```bash
+> sudo apt-get install libace-dev
+```
+Nothing further has to be done when using the packages!
+
+
+
+With older or other Linux systems you can install the ACE middleware by using the shipped [**installation script**](https://github.com/Servicerobotics-Ulm/AceSmartSoftFramework/blob/master/INSTALL-ACE-6.0.2.sh). Download the script and execute it within a terminal as follows:
 
 ```bash
 > wget https://raw.githubusercontent.com/Servicerobotics-Ulm/AceSmartSoftFramework/master/INSTALL-ACE-6.0.2.sh
