@@ -52,7 +52,7 @@ namespace {
     int convertStringToNSKey(const ACE_TString &name, SmartACE::NSKeyType &key)
     {
         ACE_TRACE ("convertStringToNSKey");
-        int openBracket=0, closeBracket=0;
+        size_t openBracket=0, closeBracket=0;
         ssize_t start=0, length=0;
 
         // parse with the syntax: "<CompName><namePattern><...>"

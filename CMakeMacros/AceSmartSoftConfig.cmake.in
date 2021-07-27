@@ -57,7 +57,12 @@ ENDIF()
 FIND_PACKAGE(ACE 6.0.2 PATHS $ENV{SMART_ROOT_ACE}/CMakeMacros /opt/smartSoftAce/CMakeMacros)
 
 # find the SmartSoft Component-Developer API package
-FIND_PACKAGE(SmartSoft_CD_API 1.0 PATHS $ENV{SMART_ROOT_ACE}/modules)
+FIND_PACKAGE(SmartSoft_CD_API 1.2 PATHS $ENV{SMART_ROOT_ACE})
+
+FIND_FILE(SMART_MACROS SmartMacros2.cmake PATHS $ENV{SMART_ROOT_ACE} /opt/smartSoftAce /opt/smartsoft PATH_SUFFIXES CMakeMacros)
+IF(SMART_MACROS)
+  INCLUDE(${SMART_MACROS})
+ENDIF(SMART_MACROS)
 
 # always add the Kernel component by default and always as the first element
 IF(DEFINED @PROJECT_NAME@_FIND_COMPONENTS)

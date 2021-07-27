@@ -153,6 +153,7 @@ NameAcceptor::parse_args (int argc, ACE_TCHAR *argv[])
   if(sched_str == "") {
     processor_scheduling_policy_ = -1;
   } else {
+#if defined(ACE_HAS_PTHREADS)
     if(sched_str == "FIFO") {
       processor_scheduling_policy_ = ACE_SCHED_FIFO;
       processor_scheduling_priority_ = ACE_THR_PRI_FIFO_MIN;
@@ -160,6 +161,15 @@ NameAcceptor::parse_args (int argc, ACE_TCHAR *argv[])
       processor_scheduling_policy_ = ACE_SCHED_RR;
       processor_scheduling_priority_ = ACE_THR_PRI_RR_MIN;
     }
+#elif defined (ACE_HAS_WTHREADS)
+    if (sched_str == "FIFO") {
+        processor_scheduling_policy_ = ACE_SCHED_FIFO;
+    }
+    else if (sched_str == "RR") {
+        processor_scheduling_policy_ = ACE_SCHED_RR;
+    }
+    processor_scheduling_priority_ = THREAD_PRIORITY_IDLE;
+#endif
   }
 
   const char* env_var = ACE_OS::getenv("SMART_NS_ADDR");

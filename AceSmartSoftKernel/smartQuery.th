@@ -868,7 +868,6 @@ template<class R, class A> Smart::StatusCode SmartACE::QueryClient<R,A>::queryRe
   QueryClientList *lptr  = 0;
   QueryClientList *hlptr = 0;
   Smart::StatusCode  result;
-  int status;
 
   result = Smart::SMART_ERROR;
 
@@ -1422,7 +1421,7 @@ inline SmartACE::QueryServer<R,A>::QueryServer(SmartComponent* component, const 
 //
 template<class R, class A> inline SmartACE::QueryServer<R,A>::~QueryServer(void) 
 {
-  this->serverInitiatedDisconnect();
+   this->serverInitiatedDisconnect();
 
    //<alexej date="2010-03-18">
    if(component->getName().compare(SMART_NONS) != 0)
@@ -1436,6 +1435,9 @@ template<class R, class A> inline SmartACE::QueryServer<R,A>::~QueryServer(void)
 
       SmartACE::NAMING::instance()->unbind(key);
    }
+   
+   acceptor->close();
+   delete acceptor;
 
    if(service_identifier != 0)
       delete service_identifier;
@@ -1510,9 +1512,6 @@ template<class R, class A> void SmartACE::QueryServer<R,A>::serverInitiatedDisco
 
 	   monitorServerInitiatedDisconnect.wait();
 	   component->removeSmartMonitor(&monitorServerInitiatedDisconnect);
-
-	   acceptor->close();
-	   delete acceptor;
 }
 
 //

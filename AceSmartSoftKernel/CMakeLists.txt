@@ -39,7 +39,7 @@ IF(NOT TARGET ACE)
 ENDIF(NOT TARGET ACE)
 
 # find the SmartSoft Component-Developer API package
-FIND_PACKAGE(SmartSoft_CD_API 1.1 PATHS $ENV{SMART_ROOT_ACE}/modules)
+FIND_PACKAGE(SmartSoft_CD_API 1.2 PATHS $ENV{SMART_ROOT_ACE})
 
 # create a ConfigFile including the current SmartSoft version
 CONFIGURE_FILE(
@@ -114,7 +114,7 @@ INSTALL(TARGETS ${PROJECT_NAME}
 )
 
 # install the pseudo target export (creates SmartSoftKernelTargets.cmake)
-INSTALL(EXPORT ${PROJECT_NAME}Targets DESTINATION modules)
+INSTALL(EXPORT ${PROJECT_NAME}Targets DESTINATION lib/cmake/${PARENT_NAME})
 
 # install header-files as part of the SmartSoft Kernel library into the target/include location
 INSTALL(FILES 

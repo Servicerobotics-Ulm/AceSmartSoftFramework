@@ -35,7 +35,7 @@
 
 struct ExampleTime
 {
-  long int seconds;
+   long long seconds;
 };
 
 #endif

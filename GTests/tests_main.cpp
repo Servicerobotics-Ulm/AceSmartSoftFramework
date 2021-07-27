@@ -43,6 +43,9 @@
 #include <SmartSoftTests/AllTests.h>
 #include "TestingEnvironmentACE.h"
 
+// this include is required for a proper socket initialization in windows
+#include <ace/OS.h>
+
 int main(int argc, char **argv) {
 	::testing::InitGoogleTest(&argc, argv);
 	::testing::AddGlobalTestEnvironment(Smart::TEST_ENVIRONMENT());

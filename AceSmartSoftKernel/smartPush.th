@@ -1421,6 +1421,9 @@ template<class T> inline SmartACE::PushServer<T>::~PushServer(void)
       SmartACE::NAMING::instance()->unbind(key);
    }
 
+   acceptor->close();
+   delete acceptor;
+
    if(service_identifier != 0)
       delete service_identifier;
   //</alexej>
@@ -1495,9 +1498,6 @@ template<class T> inline void SmartACE::PushServer<T>::serverInitiatedDisconnect
 	   //<alexej date="2009-04-29">
 	   monitorServerInitiatedDisconnect.wait();
 	   component->removeSmartMonitor(&monitorServerInitiatedDisconnect);
-
-	   acceptor->close();
-	   delete acceptor;
 	   //</alexej>
 }
 

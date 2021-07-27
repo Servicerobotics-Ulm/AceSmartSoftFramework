@@ -33,6 +33,7 @@
 #ifndef _SMARTTASK_HH
 #define _SMARTTASK_HH
 
+#include <atomic>
 #include <smartITask.h>
 #include "smartOSMapping.hh"
 
@@ -90,7 +91,7 @@ namespace SmartACE {
 
   private:
 		/// @internal variable to consider only the first call of start() function
-		bool thread_started;
+		std::atomic<bool> thread_started;
 
 		/// @internal Mutex
 		SmartRecursiveMutex mutex;

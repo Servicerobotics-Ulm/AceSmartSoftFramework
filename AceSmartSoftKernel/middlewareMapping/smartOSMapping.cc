@@ -54,7 +54,7 @@ namespace SmartACE {
     }
     std::chrono::seconds sec = std::chrono::duration_cast<std::chrono::seconds>(dur);
     std::chrono::microseconds us = std::chrono::duration_cast<std::chrono::microseconds>(dur-sec);
-    return ACE_Time_Value(sec.count(), us.count());
+    return ACE_Time_Value(sec.count(), ACE_Utils::truncate_cast<suseconds_t>(us.count()));
   }
 }
 

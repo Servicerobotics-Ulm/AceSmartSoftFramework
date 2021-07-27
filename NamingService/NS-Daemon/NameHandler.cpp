@@ -94,6 +94,7 @@ int NameHandler::handle_close(ACE_HANDLE handle, ACE_Reactor_Mask close_mask)
 {
 	connectionResetByReactor = true;
 	this->destroy();
+	return 0;
 }
 
 // Create and send a reply to the client.

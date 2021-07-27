@@ -91,6 +91,18 @@ void CommParameterRequest::setTag(const std::string &value)
 	setString("slot", value);
 }
 
+
+
+void CommParameterRequest::setParameterDataMode(const ParameterDataMode& mode)
+{
+	setInteger("paramDataMode", mode.value);
+}
+
+ParameterDataMode CommParameterRequest::getParameterDataMode() const
+{
+	return ParameterDataMode(getInteger("paramDataMode"));
+}
+
 /*
 void CommParameterRequest::get(ACE_Message_Block *&msg) const
 {

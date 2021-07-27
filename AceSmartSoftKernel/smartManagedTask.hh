@@ -44,12 +44,14 @@ namespace SmartACE {
    class ManagedTask : public Smart::IManagedTask, public Task
       // = TITLE
    {
+   protected:
+	   using Smart::IManagedTask::on_shutdown;
    public:
 		/// default constructor
 		ManagedTask(Smart::IComponent *component, Smart::TaskTriggerSubject *trigger=0);
 
 		/// default destructor
-		virtual ~ManagedTask();
+		virtual ~ManagedTask() = default;
 
 		/// user hook that is called once at the <b>beginning</b> of the internal thread
 		virtual int on_entry();

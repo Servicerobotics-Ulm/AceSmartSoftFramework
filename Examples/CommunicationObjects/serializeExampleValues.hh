@@ -19,7 +19,7 @@ ACE_CDR::Boolean operator<<(ACE_OutputCDR &cdr, const SmartACE::CommExampleValue
 	ACE_CDR::Boolean good_bit = true;
 	// serialize list-element newState
 	good_bit = good_bit && cdr << ACE_Utils::truncate_cast<ACE_CDR::ULong>(obj.values.size());
-	good_bit = good_bit && cdr.write_long_array(obj.values.data(), obj.values.size());
+	good_bit = good_bit && cdr.write_long_array(obj.values.data(), ACE_Utils::truncate_cast<ACE_CDR::ULong>(obj.values.size()));
 
 	return good_bit;
 }

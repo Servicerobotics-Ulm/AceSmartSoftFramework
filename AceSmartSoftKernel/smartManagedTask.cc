@@ -38,11 +38,6 @@ ManagedTask::ManagedTask(Smart::IComponent *component, Smart::TaskTriggerSubject
 ,	Task(component)
 {  }
 
-ManagedTask::~ManagedTask()
-{
-	// nothing to do here
-}
-
 int ManagedTask::on_entry()
 {
    return 0;

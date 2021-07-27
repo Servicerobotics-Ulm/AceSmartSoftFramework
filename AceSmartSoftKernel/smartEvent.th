@@ -1734,6 +1734,9 @@ template<class P, class E, class S> inline SmartACE::EventServer<P,E,S>::~EventS
       SmartACE::NAMING::instance()->unbind(key);
    }
 
+   acceptor->close();
+   delete acceptor;
+
    if(service_identifier != 0)
       delete service_identifier;
   //</alexej>
@@ -1809,9 +1812,6 @@ template<class P, class E, class S> inline void SmartACE::EventServer<P,E,S>::se
 	  //<alexej date="2009-11-10">
 		  monitorServerInitiatedDisconnect.wait();
 	     component->removeSmartMonitor(&monitorServerInitiatedDisconnect);
-
-		  acceptor->close();
-	     delete acceptor;
 	  //</alexej>
 }
 

@@ -42,7 +42,9 @@ ENDMACRO(SMART_ADD_PACKAGE PACKAGE_NAME)
 ## for SmartSoft-Components
 #############################################################
 MACRO(SMART_COMPONENT_PROJECT)
-  INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/ComponentProject.cmake)
+  IF(EXISTS ${CMAKE_CURRENT_LIST_DIR}/src-gen/ComponentProject.cmake)
+    INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/ComponentProject.cmake)
+  ENDIF(EXISTS ${CMAKE_CURRENT_LIST_DIR}/src-gen/ComponentProject.cmake)
 
   MESSAGE("-- COMPONENT_PROJECT(${PROJECT_NAME})")
 
@@ -143,9 +145,18 @@ ENDMACRO(SMART_COMPONENT_GENERATE_DOC)
 ## This macro should come last in the CMakeLists.txt file.
 ############################################################
 MACRO(SMART_COMPONENT_AUTOINSTALL)
-  # automatically run "make install" after regular "make" for the communication object
-  ADD_CUSTOM_TARGET(autoinstall ALL COMMAND ${CMAKE_COMMAND} ARGS -P cmake_install.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Install ${PROJECT_NAME}")
-  ADD_DEPENDENCIES(autoinstall ${PROJECT_NAME})
+  # this option allows deactivating automatic build (useful for debian package build)
+  OPTION(AUTOINSTALL "Optional automatic installation (default ON)." ON)
+
+  IF(AUTOINSTALL)
+    # automatically run "make install" after regular "make" for the communication object
+    if(${CMAKE_VERSION} VERSION_LESS "3.16")
+      ADD_CUSTOM_TARGET(autoinstall ALL COMMAND ${CMAKE_COMMAND} ARGS -P cmake_install.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Install ${PROJECT_NAME}")
+    else(${CMAKE_VERSION} VERSION_LESS "3.16")
+      ADD_CUSTOM_TARGET(autoinstall ALL COMMAND ${CMAKE_COMMAND} --install ./ --config Debug WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Install ${PROJECT_NAME}")
+    endif(${CMAKE_VERSION} VERSION_LESS "3.16")
+    ADD_DEPENDENCIES(autoinstall ${PROJECT_NAME})
+  ENDIF(AUTOINSTALL)
 
   # install component executable target
   INSTALL(TARGETS ${PROJECT_NAME} DESTINATION bin)
@@ -171,7 +182,9 @@ ENDMACRO(SMART_ADD_UTILITY UTILITY_NAME)
 ## for SmartSoft-CommunicationObjects
 #############################################################
 MACRO(SMART_COMMOBJECT_PROJECT)
-  INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/CommObjectProject.cmake)
+  IF(EXISTS ${CMAKE_CURRENT_LIST_DIR}/src-gen/CommObjectProject.cmake) 
+    INCLUDE(${CMAKE_CURRENT_LIST_DIR}/src-gen/CommObjectProject.cmake)
+  ENDIF(EXISTS ${CMAKE_CURRENT_LIST_DIR}/src-gen/CommObjectProject.cmake) 
 
   MESSAGE("-- COMMOBJECT_PROJECT(${PROJECT_NAME})")
 
@@ -290,9 +303,18 @@ ENDMACRO(SMART_COMMOBJECT_AUTOLINK_DEPENDENCIES)
 ## This macro should come last in the CMakeLists.txt file.
 ############################################################
 MACRO(SMART_COMMOBJECT_AUTOINSTALL)
-  # automatically run "make install" after regular "make" for the communication object
-  ADD_CUSTOM_TARGET(autoinstall ALL COMMAND ${CMAKE_COMMAND} ARGS -P cmake_install.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Install ${PROJECT_NAME}")
-  ADD_DEPENDENCIES(autoinstall ${PROJECT_NAME})
+  # this option allows deactivating automatic build (useful for debian package build)
+  OPTION(AUTOINSTALL "Optional automatic installation (default ON)." ON)
+
+  IF(AUTOINSTALL)
+    # automatically run "make install" after regular "make" for the communication object
+    if(${CMAKE_VERSION} VERSION_LESS "3.16")
+      ADD_CUSTOM_TARGET(autoinstall ALL COMMAND ${CMAKE_COMMAND} ARGS -P cmake_install.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Install ${PROJECT_NAME}")
+    else(${CMAKE_VERSION} VERSION_LESS "3.16")
+      ADD_CUSTOM_TARGET(autoinstall ALL COMMAND ${CMAKE_COMMAND} --install ./ --config Debug WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Install ${PROJECT_NAME}")
+    endif(${CMAKE_VERSION} VERSION_LESS "3.16")
+    ADD_DEPENDENCIES(autoinstall ${PROJECT_NAME})
+  ENDIF(AUTOINSTALL)
 
   IF(DEFINED ${PROJECT_NAME}_VERSION)
     SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES VERSION ${${PROJECT_NAME}_VERSION} SOVERSION ${${PROJECT_NAME}_VERSION_MAJOR})
@@ -360,9 +382,18 @@ ENDMACRO(SMART_UTILITY_PROJECT PROJ_NAME VERSION)
 
 
 MACRO(SMART_UTILITY_INSTALL TARGET_NAME)
-  # automatically run "make install" after regular "make" for the communication object
-  ADD_CUSTOM_TARGET(autoinstall ALL COMMAND ${CMAKE_COMMAND} ARGS -P cmake_install.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Install ${TARGET_NAME}")
-  ADD_DEPENDENCIES(autoinstall ${TARGET_NAME})
+  # this option allows deactivating automatic build (useful for debian package build)
+  OPTION(AUTOINSTALL "Optional automatic installation (default ON)." ON)
+
+  IF(AUTOINSTALL)
+    # automatically run "make install" after regular "make" for the communication object
+    if(${CMAKE_VERSION} VERSION_LESS "3.16")
+      ADD_CUSTOM_TARGET(autoinstall ALL COMMAND ${CMAKE_COMMAND} ARGS -P cmake_install.cmake WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Install ${TARGET_NAME}")
+    else(${CMAKE_VERSION} VERSION_LESS "3.16")
+      ADD_CUSTOM_TARGET(autoinstall ALL COMMAND ${CMAKE_COMMAND} --install ./ --config Debug WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Install ${TARGET_NAME}")
+    endif(${CMAKE_VERSION} VERSION_LESS "3.16")
+    ADD_DEPENDENCIES(autoinstall ${TARGET_NAME})
+  ENDIF(AUTOINSTALL)
 
   IF(DEFINED ${TARGET_NAME}_VERSION)
     GET_TARGET_PROPERTY(TARGET_TYPE ${TARGET_NAME} TYPE)
@@ -370,20 +401,20 @@ MACRO(SMART_UTILITY_INSTALL TARGET_NAME)
       SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES VERSION ${${TARGET_NAME}_VERSION} SOVERSION ${${TARGET_NAME}_VERSION_MAJOR})
     ENDIF("${TARGET_TYPE}" STREQUAL "SHARED_LIBRARY")
     IF(EXISTS ${PROJECT_BINARY_DIR}/${TARGET_NAME}ConfigVersion.cmake)
-      INSTALL(FILES ${PROJECT_BINARY_DIR}/${TARGET_NAME}ConfigVersion.cmake DESTINATION modules)
+      INSTALL(FILES ${PROJECT_BINARY_DIR}/${TARGET_NAME}ConfigVersion.cmake DESTINATION lib/cmake/${TARGET_NAME})
     ENDIF(EXISTS ${PROJECT_BINARY_DIR}/${TARGET_NAME}ConfigVersion.cmake)
   ENDIF(DEFINED ${TARGET_NAME}_VERSION)
 
   IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_NAME}Config.cmake.in)
     # generate config file (can be used by FIND_PROJECT)
     CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_NAME}Config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}Config.cmake @ONLY)
-    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}Config.cmake DESTINATION modules)
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}Config.cmake DESTINATION lib/cmake/${TARGET_NAME})
   ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_NAME}Config.cmake.in)
 
   # install library and target-exports
   INSTALL(TARGETS ${TARGET_NAME} EXPORT ${TARGET_NAME}Targets DESTINATION lib)
   EXPORT(EXPORT ${TARGET_NAME}Targets)
-  INSTALL(EXPORT ${TARGET_NAME}Targets DESTINATION modules)
+  INSTALL(EXPORT ${TARGET_NAME}Targets DESTINATION lib/cmake/${TARGET_NAME})
 ENDMACRO(SMART_UTILITY_INSTALL TARGET_NAME)
 
 

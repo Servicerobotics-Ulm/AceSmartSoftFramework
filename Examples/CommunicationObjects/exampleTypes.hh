@@ -15,9 +15,9 @@
       double cdr_dbl;
       float cdr_float;
       int cdr_long;
-      long int cdr_longlong;
+      long long cdr_longlong;
       unsigned int cdr_ulong;
-      unsigned long int cdr_ulonglong;
+      unsigned long long cdr_ulonglong;
       unsigned short cdr_ushort;
    };
 

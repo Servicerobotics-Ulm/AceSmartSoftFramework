@@ -52,7 +52,9 @@ SmartACE::Task::~Task()
 {  }
 
 int SmartACE::Task::svc(void) {
-	return this->task_execution();
+	int result = this->task_execution();
+	thread_started = false;
+	return result;
 }
 
 int SmartACE::Task::start() {

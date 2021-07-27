@@ -49,11 +49,11 @@ FUNCTION(INTERNAL_FIND_PACKAGE PACKAGE_NAME)
 
   IF(NOT ${PACKAGE_NAME}_SOURCE_DIR)
     # if no source tree is found, we try to find the installed version as a second search strategy
-    FIND_PACKAGE(${PACKAGE_NAME} PATHS $ENV{SMART_ROOT_ACE}/modules /opt/smartSoftAce/modules)
+    FIND_PACKAGE(${PACKAGE_NAME} PATHS $ENV{SMART_ROOT_ACE} $ENV{SMART_ROOT_ACE}/modules /opt/smartSoftAce/modules)
   ENDIF(NOT ${PACKAGE_NAME}_SOURCE_DIR)
 
   IF(NOT ${PACKAGE_NAME}_FOUND)
-    MESSAGE(FATAL_ERROR "Package ${PACKAGE_NAME} NOT FOUND! Make sure it is either checked out under SMART_PACKAGE_PATH with sources, or it is installed in SMART_ROOT_ACE/modules or /opt/smartSoftAce/modules")
+    MESSAGE(FATAL_ERROR "Package ${PACKAGE_NAME} NOT FOUND! Make sure it is either checked out under SMART_PACKAGE_PATH with sources, or it is installed in SMART_ROOT_ACE, SMART_ROOT_ACE/modules or /opt/smartSoftAce/modules")
   ENDIF(NOT ${PACKAGE_NAME}_FOUND)
 ENDFUNCTION(INTERNAL_FIND_PACKAGE PACKAGE_NAME)
 

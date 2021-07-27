@@ -735,12 +735,12 @@ void SmartACE::SmartIniParameter::getline(std::istream &is, std::string &line) c
     {
       if(!escaped)
       {
-        if(ch=='\n') break; // done.
+        if(ch=='\n' || ch=='\r') break; // done.
         oss.put(ch);
       }
       else
       {
-        if(ch!='\n') 
+        if(ch!='\n' || ch!='\r') 
         {
           oss.put('\\');
           oss.put(ch);

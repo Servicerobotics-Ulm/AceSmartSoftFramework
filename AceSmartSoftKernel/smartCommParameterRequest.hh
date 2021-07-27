@@ -64,6 +64,67 @@
 namespace SmartACE
 {
 
+
+   class ParameterDataMode {
+        public:
+                int value;
+
+                enum ENUM_ParameterDataMode {
+                        ENUM_VALUE_UNDEFINED = 0,
+			NAME = 1,
+			SEQUENCE = 2
+                };
+
+                // default constructor
+                ParameterDataMode() {
+                        value = ENUM_VALUE_UNDEFINED;
+                }
+
+                // copy constructor for enum type
+                ParameterDataMode(ENUM_ParameterDataMode e) {
+                        value = static_cast<int>(e);
+                }
+
+                // copy constructor for raw type
+                ParameterDataMode(int e) {
+                        value = e;
+                }
+
+
+                // ENUM operator
+                operator ENUM_ParameterDataMode() const {
+                        return static_cast<ENUM_ParameterDataMode>(value);
+                }
+
+                // compare operator
+                bool operator == (const ENUM_ParameterDataMode t) const {
+                        return this->value == t;
+                }
+
+                std::string to_string() const {
+                        std::string result = "";
+                        switch (value) {
+                                case NAME:
+                                        result = "ParameterDataMode::NAME";
+                                        break;
+                                case SEQUENCE:
+                                        result = "ParameterDataMode::SEQUENCE ";
+                                        break;
+                                default:
+                                        result = "ENUM_VALUE_UNDEFINED";
+                                        break;
+                        };
+                        return result;
+                }
+
+                // helper method to easily implement output stream
+                void to_ostream(std::ostream &os = std::cout) const {
+                        os << to_string();
+                }
+
+        };
+
+
 class CommParameterRequest
 {
 public:
@@ -96,6 +157,13 @@ public:
 
 	// setTag writes the string value for the top level tag
 	void setTag(const std::string &value);
+
+	// setParameterDataMode writes the data mode to the commobject
+	void setParameterDataMode(const ParameterDataMode& mode);
+
+	// getParameterDataMode reads the data mode communicated
+	ParameterDataMode getParameterDataMode() const;
+
 
 	/**
 	 * Generic setter method (expects one of primitive data types for the value)

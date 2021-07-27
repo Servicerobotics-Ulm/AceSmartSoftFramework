@@ -52,9 +52,7 @@ SmartACE::SmartComponent::SmartComponent( const std::string &name,
                                      int argc,
                                      char **argv,
                                      SmartACE::ReactorTask* reactor,
-									 const ACE_Sched_Params &sched_params,
-                                     const char *compileDate,
-                                     const char *compileTime  )
+                                     const ACE_Sched_Params &sched_params)
    :  Smart::IComponent(name)
    ,  srvInitDiscHandler(this)
    ,  shutdownWatchdog(this)
@@ -118,7 +116,7 @@ SmartACE::SmartComponent::SmartComponent( const std::string &name,
   reactorTask->startReactor(sched_params, 0);
 
   ACE_DEBUG((LM_DEBUG, ACE_TEXT("\n")));
-  SMARTSOFT_PRINT(ACE_TEXT("Component %s started (compiled on %s %s)\n\n"), name.c_str(), compileDate, compileTime);
+  SMARTSOFT_PRINT(ACE_TEXT("Component %s started (compiled on %s %s)\n\n"), name.c_str(), __DATE__, __TIME__);
   //std::cout << "\n<SmartComponent> " << name << " started\ncompiled: " << compileDate << " " << compileTime << "\n\n";
 }
 

@@ -951,6 +951,9 @@ template<class C> inline SmartACE::SendServer<C>::~SendServer(void)
 
       SmartACE::NAMING::instance()->unbind(key);
   }
+  
+  acceptor->close();
+  delete acceptor;
 
   if(service_identifier != 0)
      delete service_identifier;
@@ -1027,9 +1030,6 @@ template<class C> inline void SmartACE::SendServer<C>::serverInitiatedDisconnect
 	  //<alexej date="02.10.2008">
 	  monitorServerInitiatedDisconnect.wait();
 	  component->removeSmartMonitor(&monitorServerInitiatedDisconnect);
-
-	  acceptor->close();
-	  delete acceptor;
 	  //</alexej>
 }
 
