@@ -61,7 +61,7 @@ namespace {
         openBracket = name.find('<');
         closeBracket = name.find('>');
         // check if both brackets were successfully found
-        if(openBracket < 0 || closeBracket < 0) return -1;
+        if(openBracket == ACE_TString::npos || closeBracket == ACE_TString::npos) return -1;
         start = openBracket + 1;
         length = closeBracket - start;
         if(length <= 0) return -1;
@@ -72,7 +72,7 @@ namespace {
         openBracket = rest.find('<');
         closeBracket = rest.find('>');
         // check if both brackets were successfully found
-        if(openBracket < 0 || closeBracket < 0) return -1;
+        if(openBracket == ACE_TString::npos || closeBracket == ACE_TString::npos) return -1;
         start = openBracket + 1;
         length = closeBracket - start;
         if(length <= 0) return -1;
@@ -83,7 +83,7 @@ namespace {
         openBracket = rest.find('<');
         closeBracket = rest.find('>');
         // check if both brackets were successfully found
-        if(openBracket < 0 || closeBracket < 0) return -1;
+        if(openBracket == ACE_TString::npos || closeBracket == ACE_TString::npos) return -1;
         start = openBracket + 1;
         length = closeBracket - start;
         if(length <= 0) return -1;
@@ -94,7 +94,7 @@ namespace {
         openBracket = rest.find('<');
         closeBracket = rest.find('>');
         // check if both brackets were successfully found
-        if(openBracket < 0 || closeBracket < 0) return -1;
+        if(openBracket == ACE_TString::npos || closeBracket == ACE_TString::npos) return -1;
         start = openBracket + 1;
         length = closeBracket - start;
         if(length <= 0) return -1;
@@ -105,7 +105,7 @@ namespace {
         openBracket = rest.find('<');
         closeBracket = rest.find('>');
         // check if both brackets were successfully found
-        if(openBracket < 0 || closeBracket < 0) {
+        if(openBracket == ACE_TString::npos || closeBracket == ACE_TString::npos) {
             key.names[SmartACE::NSKeyType::COMMOBJ2_NAME] = "*";
         } else {
             start = openBracket + 1;
