@@ -29,7 +29,7 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 # --------------------------------------------------------------------------
-CMAKE_MINIMUM_REQUIRED(VERSION 2.7)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.7)
 
 # find version file contining the ACE version string
 FIND_FILE(ACE_VERSION_FILE Version.h PATHS $ENV{ACE_ROOT}/ace /usr/include/ace)
