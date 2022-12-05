@@ -33,6 +33,10 @@
 
 #include <ace/Name_Request_Reply.h>
 
+#ifdef WITH_SYSTEM_D
+	#include <systemd/sd-daemon.h> 
+#endif
+
 #include <sstream>
 
 RemoteNSTask::RemoteNSTask()
@@ -279,6 +283,11 @@ int RemoteNSTask::task_execution()
 	this->initialized = true;
 
 	std::cout << "Info: NamingService fully initialized!" << std::endl;
+	
+	//when NS-Daemon is compiled with SYSTEMD, signal the finished initialization	
+	#ifdef WITH_SYSTEM_D
+		sd_notify(0, "READY=1");
+	#endif
 
 	// now execute requests from the local end-points
 	while(true) {
